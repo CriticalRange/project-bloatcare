@@ -4,8 +4,8 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 
-const name = "Your Name";
-export const siteTitle = "Next.js Sample Website";
+const name = "BloatCare";
+export const siteTitle = "BloatCare";
 
 export default function Layout({ children, home }) {
   return (
