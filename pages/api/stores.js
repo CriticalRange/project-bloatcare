@@ -22,11 +22,20 @@ export const useLoadedStore = create((set) => ({
 }));
 
 export const useLoginProfileStore = create((set) => ({
-  profile: null,
-  setProfile: () => set((profileUpdate) => ({ profile: profileUpdate }, true)),
+  loggedInProfile: null,
+  setLoggedInProfile: () =>
+    set(
+      (loggedInProfileUpdate) => (
+        { loggedInProfile: loggedInProfileUpdate }, true
+      )
+    ),
 }));
 export const useLoginProviderStore = create((set) => ({
-  provider: "",
-  setProvider: () =>
-    set((providerUpdate) => ({ provider: providerUpdate }, true)),
+  loggedInProvider: null,
+  setLoggedInProvider: () =>
+    set(
+      (loggedInProviderUpdate) => (
+        { loggedInProvider: loggedInProviderUpdate }, true
+      )
+    ),
 }));
