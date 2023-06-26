@@ -43,7 +43,7 @@ export default function CustomNavbar() {
   const { provider, setProvider } = useLoginProviderStore();
   const { isBrowserLoaded, setBrowserLoaded } = useBrowserLoadedStore();
 
-  const REDIRECT_URI = "https://project-bloatcare.vercel.app/account/login";
+  const REDIRECT_URI = "https://localhost/account/login";
   const googleRef = useRef();
 
   useEffect(() => {
@@ -121,11 +121,11 @@ export default function CustomNavbar() {
           <div className="flex flex-row justify-around border-box">
             <LoginSocialGoogle
               ref={googleRef}
-              client_id="940521357118-6ugthop4d06i1l9hurg1vdtph1qc9bm0.apps.googleusercontent.com"
+              client_id="940521357118-kqutogsdjoo84m17sdmg4fclmlv71o8s.apps.googleusercontent.com"
               redirect_uri={REDIRECT_URI}
               onLogoutFailure={onLogoutFailure}
               onLogoutSuccess={onLogoutSuccess}
-              scope={"name email"}
+              scope={"profile email"}
               onResolve={({ provider, data }) => {
                 setProvider(provider);
                 setProfile(data);
