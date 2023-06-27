@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
 import { getSortedPostsData } from "../lib/posts";
 import Link from "next/link";
@@ -17,9 +16,6 @@ export async function getStaticProps() {
 export default function Home({ allPostsData }) {
   return (
     <div>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
       <div className="flex flex-row justify-around mt-0 p-10">
         <section>
           <h1 className="text-3xl leading-normal p-0 ml-10">

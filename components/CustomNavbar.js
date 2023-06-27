@@ -1,17 +1,21 @@
 "use client";
-
 import { Button, DarkThemeToggle, Flowbite, Navbar } from "flowbite-react";
 import Image from "next/image";
-import { siteTitle } from "./layout";
+import { siteTitle } from "../pages/_document";
 import utilStyles from "../styles/utils.module.css";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import LoginModal from "./AuthModal";
-import { useLoginModalStore } from "../pages/api/stores";
+import { useAuthModalStore } from "../pages/api/stores";
+import { shallow } from "zustand/shallow";
 
 export default function CustomNavbar() {
-  const isModalOpen = useLoginModalStore((state) => state.isModalOpen);
-  const toggleModalOpen = useLoginModalStore((state) => state.toggleModalOpen);
+  const { isModalOpen, toggleModalOpen } = useAuthModalStore(
+    (state) => ({
+      isModalOpen: state.isModalOpen,
+      toggleModalOpen: state.toggleModalOpen,
+    }),
+    shallow
+  );
 
   const { theme, setTheme } = useTheme();
 
@@ -27,9 +31,8 @@ export default function CustomNavbar() {
       <Navbar>
         <Navbar.Brand className="cursor-pointer" onClick={brandClickHandler}>
           <Image
-            priority
             src="/images/profile.jpg"
-            className={`${utilStyles.borderCircle} mr-3 h-6 sm:h-9`}
+            className={`${utilStyles.borderCircle} mr-3`}
             height={44}
             width={44}
             alt="Profile picture"
