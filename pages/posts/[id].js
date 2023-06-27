@@ -1,12 +1,11 @@
 import Head from "next/head";
-import Layout from "../../components/layout";
 import { getAllPostIds, getPostData } from "../../lib/posts";
 import Date from "../../components/date";
 import CustomBackButton from "../../components/CustomBackButton";
 
 export default function Post({ postData }) {
   return (
-    <Layout>
+    <div>
       <Head>
         <title>{`${postData.title} ← BloatCare`}</title>
       </Head>
@@ -23,7 +22,7 @@ export default function Post({ postData }) {
           dangerouslySetInnerHTML={{ __html: postData.contentHtml }}
         />
       </article>
-    </Layout>
+    </div>
   );
 }
 

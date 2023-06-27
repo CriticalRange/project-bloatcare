@@ -21,21 +21,12 @@ export const useLoadedStore = create((set) => ({
   setLoaded: () => set((state) => ({ loaded: !state.loaded })),
 }));
 
-export const useLoginProfileStore = create((set) => ({
-  loggedInProfile: null,
-  setLoggedInProfile: () =>
-    set(
-      (loggedInProfileUpdate) => (
-        { loggedInProfile: loggedInProfileUpdate }, true
-      )
-    ),
+export const useEmailStore = create((set) => ({
+  email: "",
+  setEmail: (newValue) => set((state) => ({ email: newValue })),
 }));
-export const useLoginProviderStore = create((set) => ({
-  loggedInProvider: null,
-  setLoggedInProvider: () =>
-    set(
-      (loggedInProviderUpdate) => (
-        { loggedInProvider: loggedInProviderUpdate }, true
-      )
-    ),
+
+export const usePasswordStore = create((set) => ({
+  password: "",
+  setPassword: (newValue) => set((state) => ({ password: newValue })),
 }));

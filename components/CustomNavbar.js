@@ -6,11 +6,12 @@ import { siteTitle } from "./layout";
 import utilStyles from "../styles/utils.module.css";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import LoginModal from "./LoginModal";
+import LoginModal from "./AuthModal";
 import { useLoginModalStore } from "../pages/api/stores";
 
 export default function CustomNavbar() {
-  const { isModalOpen, toggleModalOpen } = useLoginModalStore();
+  const isModalOpen = useLoginModalStore((state) => state.isModalOpen);
+  const toggleModalOpen = useLoginModalStore((state) => state.toggleModalOpen);
 
   const { theme, setTheme } = useTheme();
 
@@ -18,11 +19,7 @@ export default function CustomNavbar() {
   const isHomePage = router.pathname === "/";
 
   const brandClickHandler = () => {
-    if (isHomePage) {
-      return null;
-    } else {
-      router.push("/");
-    }
+    isHomePage ? null : router.push("/");
   };
 
   return (
@@ -52,7 +49,6 @@ export default function CustomNavbar() {
           <Button onClick={() => toggleModalOpen(!isModalOpen)}>Login</Button>
         </div>
       </Navbar>
-      <LoginModal />
     </Flowbite>
   );
 }
