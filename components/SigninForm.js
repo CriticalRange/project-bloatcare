@@ -1,23 +1,36 @@
 "use client";
 import { Button, Checkbox, HelperText, Label, TextInput } from "flowbite-react";
-import { useAuthModalStore, useCredentialsStore } from "../pages/api/stores";
-import signUp from "../firebase/auth/signup";
+import { useToggleStore, useCredentialsStore } from "../pages/api/stores";
+import signIn from "../firebase/auth/signin";
 import { shallow } from "zustand/shallow";
+import { useToast } from "@chakra-ui/react";
 
 export default function SigninForm() {
-  const { email, setEmail, password, setPassword, authType, setAuthType } =
-    useCredentialsStore(
-      (state) => ({
-        email: state.email,
-        setEmail: state.setEmail,
-        password: state.password,
-        setPassword: state.setPassword,
-        authType: state.authType,
-        setAuthType: state.setAuthType,
-      }),
-      shallow
-    );
-  const { isModalOpen, toggleModalOpen } = useAuthModalStore(
+  const toast = useToast();
+
+  const {
+    userInfo,
+    setUserInfo,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    authType,
+    setAuthType,
+  } = useCredentialsStore(
+    (state) => ({
+      userInfo: state.userInfo,
+      setUserInfo: state.setUserInfo,
+      email: state.email,
+      setEmail: state.setEmail,
+      password: state.password,
+      setPassword: state.setPassword,
+      authType: state.authType,
+      setAuthType: state.setAuthType,
+    }),
+    shallow
+  );
+  const { isModalOpen, toggleModalOpen } = useToggleStore(
     (state) => ({
       isModalOpen: state.isModalOpen,
       toggleModalOpen: state.toggleModalOpen,
@@ -28,14 +41,43 @@ export default function SigninForm() {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const { result, error } = await signUp(email, password);
+    const { result, error } = await signIn(email, password);
 
-    if (error) {
-      console.log("error came out:", error);
-    } else {
-      console.log("Success!", result);
-      toggleModalOpen(!isModalOpen);
-    }
+    !error
+      ? (setUserInfo(result),
+        console.log(
+          "Result of auth: ",
+          result,
+          " is being transferred to userInfo via setUserInfo"
+        ),
+        toggleModalOpen(!isModalOpen),
+        toast({
+          title: "Successfully logged in!.",
+          description: "Logged in to your account.",
+          status: "success",
+          duration: 1600,
+          isClosable: true,
+          position: "bottom-left",
+        }))
+      : (toggleModalOpen(!isModalOpen),
+        toast({
+          title: "There was an issue.",
+          description: `${
+            error.code === "auth/invalid-email"
+              ? "Invalid Email."
+              : error.code === "auth/invalid-password"
+              ? "Invalid Password."
+              : error.code === "auth/user-not-found"
+              ? "User couldn't be found. Did you type it incorrectly?"
+              : error.code === "auth/wrong-password"
+              ? "You typed a wrong password"
+              : error
+          }`,
+          status: "error",
+          duration: 3200,
+          isClosable: true,
+          position: "bottom-left",
+        }));
   };
 
   return (
@@ -82,7 +124,10 @@ export default function SigninForm() {
             Forgot Password?
           </p>
         </div>
-        <Button type="submit" className="block m-auto mt-2">
+        <Button
+          type="submit"
+          className="bg-[#1e40af] hover:bg-[#60a5fa] block m-auto mt-2"
+        >
           Login
         </Button>
       </form>

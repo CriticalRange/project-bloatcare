@@ -16,12 +16,15 @@ export async function getStaticProps() {
 export default function Home({ allPostsData }) {
   return (
     <div>
+      <Head>
+        <title>BloatCare</title>
+      </Head>
       <div className="flex flex-row justify-around mt-0 p-10">
         <section>
-          <h1 className="text-3xl leading-normal p-0 ml-10">
+          <h1 className="text-6xl leading-normal text-blue-800 font-bold p-0 ml-10">
             A website that has blogs in it
           </h1>
-          <p className="text-base m-10">
+          <p className="text-3xl text-black m-10">
             {`A very "never thought of before" idea right?`}{" "}
           </p>
         </section>

@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { Button, Modal } from "flowbite-react";
-import { useAuthModalStore, useCredentialsStore } from "../pages/api/stores";
+import { useToggleStore, useCredentialsStore } from "../pages/api/stores";
 import SignupForm from "./SingupForm";
 import SigninForm from "./SigninForm";
 import { shallow } from "zustand/shallow";
 
 export default function AuthModal() {
-  const { isModalOpen, toggleModalOpen } = useAuthModalStore(
+  const { isModalOpen, toggleModalOpen } = useToggleStore(
     (state) => ({
       isModalOpen: state.isModalOpen,
       toggleModalOpen: state.toggleModalOpen,
@@ -25,8 +25,7 @@ export default function AuthModal() {
 
   return (
     <Modal
-      dismissible
-      size="xl"
+      size="md"
       key="signupModal"
       show={isModalOpen && 1}
       onClose={() => {
@@ -43,12 +42,11 @@ export default function AuthModal() {
         <hr className="w-56 h-1 m-auto mt-0 bg-gray-400 rounded md:my-3 dark:bg-gray-700" />
         <div className="flex justify-around space-y-6">
           <Button
+            className="bg-[#1e40af] hover:bg-[#60a5fa]"
             onClick={() => {
-              if (authType === "signin") {
-                setAuthType("signup");
-              } else if (authType === "signup") {
-                setAuthType("signin");
-              }
+              authType === "signup"
+                ? setAuthType("signin")
+                : setAuthType("signup");
             }}
           >
             {authType === "signin" ? "Not signed up?" : "Already signed up?"}
