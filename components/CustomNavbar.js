@@ -5,11 +5,16 @@ import { siteTitle } from "../pages/_document";
 import utilStyles from "../styles/utils.module.css";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
-import { useAuthModalStore } from "../pages/api/stores";
+import { useToggleStore, useCredentialsStore } from "../pages/api/stores";
 import { shallow } from "zustand/shallow";
+import NavbarProfile from "./NavbarProfile";
 
 export default function CustomNavbar() {
-  const { isModalOpen, toggleModalOpen } = useAuthModalStore(
+  const { userInfo, setUserInfo } = useCredentialsStore((state) => ({
+    userInfo: state.userInfo,
+    setUserInfo: state.setUserInfo,
+  }));
+  const { isModalOpen, toggleModalOpen } = useToggleStore(
     (state) => ({
       isModalOpen: state.isModalOpen,
       toggleModalOpen: state.toggleModalOpen,
@@ -28,16 +33,16 @@ export default function CustomNavbar() {
 
   return (
     <Flowbite>
-      <Navbar>
+      <Navbar className="bg-white dark:bg-black">
         <Navbar.Brand className="cursor-pointer" onClick={brandClickHandler}>
           <Image
-            src="/images/profile.jpg"
+            src="/favicon.ico"
             className={`${utilStyles.borderCircle} mr-3`}
             height={44}
             width={44}
             alt="Profile picture"
           />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+          <span className="self-center whitespace-nowrap text-xl text-[#1e40af] font-bold dark:hover:bg-[#60a5fa]">
             {siteTitle}
           </span>
         </Navbar.Brand>
@@ -49,7 +54,16 @@ export default function CustomNavbar() {
               theme === "light" ? setTheme("dark") : setTheme("light");
             }}
           />
-          <Button onClick={() => toggleModalOpen(!isModalOpen)}>Login</Button>
+          {userInfo ? (
+            <NavbarProfile />
+          ) : (
+            <Button
+              className="bg-[#1e40af] hover:bg-[#60a5fa]"
+              onClick={() => toggleModalOpen(!isModalOpen)}
+            >
+              Login
+            </Button>
+          )}
         </div>
       </Navbar>
     </Flowbite>
