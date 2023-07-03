@@ -1,61 +1,37 @@
 "use client";
 import { TextInput } from "flowbite-react";
 import { Button } from "@chakra-ui/react";
-import { useCredentialsStore } from "../pages/api/stores";
-import { useToggleStore } from "../pages/api/stores";
+import { useCredentialsStore } from "../../../../pages/api/stores";
 import { shallow } from "zustand/shallow";
 import { useToast } from "@chakra-ui/react";
-import firebase_app, { db } from "../firebase/config/firebase.config";
-import { getAuth } from "firebase/auth";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { setDoc, doc, addDoc, collection } from "firebase/firestore";
-import { useState } from "react";
-
-const auth = getAuth(firebase_app);
+import { useRecoilState } from "recoil";
+import { authModalState } from "../../../../atoms/AuthModalAtom";
 
 export default function SignupForm() {
-  const [createUserWithEmailAndPassword, user, loading, fbError] =
-    useCreateUserWithEmailAndPassword(auth);
-
-  const { userUid, setUserUid } = useState("");
   const toast = useToast();
 
   const emailStandard =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const {
-    username,
-    setUsername,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    authType,
-  } = useCredentialsStore(
-    (state) => ({
-      username: state.username,
-      setUsername: state.setUsername,
-      email: state.email,
-      setEmail: state.setEmail,
-      password: state.password,
-      setPassword: state.setPassword,
-      authType: state.authType,
-    }),
-    shallow
-  );
+  const { username, setUsername, email, setEmail, password, setPassword } =
+    useCredentialsStore(
+      (state) => ({
+        username: state.username,
+        setUsername: state.setUsername,
+        email: state.email,
+        setEmail: state.setEmail,
+        password: state.password,
+        setPassword: state.setPassword,
+      }),
+      shallow
+    );
 
-  const { isModalOpen, toggleModalOpen } = useToggleStore(
-    (state) => ({
-      isModalOpen: state.isModalOpen,
-      toggleModalOpen: state.toggleModalOpen,
-    }),
-    shallow
-  );
+  const [modalState, setModalState] = useRecoilState(authModalState);
 
   const handleSignup = async (event) => {
     event.preventDefault();
 
-    try {
+    /* try {
       const emailPasswordSignupResult = await createUserWithEmailAndPassword(
         email,
         password
@@ -88,7 +64,7 @@ export default function SignupForm() {
           isClosable: true,
           position: "bottom-left",
         });
-    }
+    } */
 
     /* addDoc(dbInstance, {
       email: email,
@@ -167,9 +143,9 @@ export default function SignupForm() {
           _hover={{
             bg: "brand.secondary",
           }}
-          onClick={(value) => {
+          /* onClick={(value) => {
             emailStandard.test(value);
-          }}
+          }} */
         >
           Signup
         </Button>

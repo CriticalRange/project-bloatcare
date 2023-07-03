@@ -8,7 +8,7 @@ import {
 } from "react-icons/bs";
 import { Html, Head, Main, NextScript } from "next/document";
 import { ColorModeScript } from "@chakra-ui/react";
-import theme from "../theme";
+import theme from "../../theme";
 
 export const name = "BloatCare";
 export const siteTitle = "BloatCare";

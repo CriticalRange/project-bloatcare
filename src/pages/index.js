@@ -1,5 +1,4 @@
 import Head from "next/head";
-import utilStyles from "../styles/utils.module.css";
 import { getSortedPostsData } from "../lib/posts";
 import Link from "next/link";
 import Date from "../components/date";
@@ -28,16 +27,14 @@ export default function Home({ allPostsData }) {
             {`A very "never thought of before" idea right?`}{" "}
           </p>
         </section>
-        <section
-          className={`${utilStyles.headingMd} p-7 border-2 border-black rounded-xl`}
-        >
-          <h2 className={utilStyles.headingLg}>Favorites</h2>
-          <ul className={utilStyles.list}>
+        <section className="p-7 border-2 border-black rounded-xl">
+          <h2>Favorites</h2>
+          <ul>
             {allPostsData.map(({ id, date, title }) => (
-              <li className={utilStyles.listItem} key={id}>
+              <li key={id}>
                 <Link href={`/posts/${id}`}>{title}</Link>
                 <br />
-                <small className={utilStyles.lightText}>
+                <small>
                   <Date dateString={date} />
                 </small>
               </li>

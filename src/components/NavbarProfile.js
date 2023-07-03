@@ -13,9 +13,6 @@ import { useRouter } from "next/router";
 import ProfileIcon from "./ProfileIcon";
 import { shallow } from "zustand/shallow";
 import { useCredentialsStore } from "../pages/api/stores";
-import { signOut } from "firebase/auth";
-import firebase_app from "../firebase/config/firebase.config";
-import { getAuth } from "firebase/auth";
 import { useToast } from "@chakra-ui/react";
 import Link from "next/link";
 
@@ -23,8 +20,6 @@ export default function NavbarProfile() {
   const toast = useToast();
 
   const router = useRouter();
-
-  const auth = getAuth(firebase_app);
 
   const { userInfo, setUserInfo } = useCredentialsStore(
     (state) => ({
