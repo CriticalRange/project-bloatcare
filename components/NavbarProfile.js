@@ -14,7 +14,7 @@ import ProfileIcon from "./ProfileIcon";
 import { shallow } from "zustand/shallow";
 import { useCredentialsStore } from "../pages/api/stores";
 import { signOut } from "firebase/auth";
-import firebase_app from "../firebase/config";
+import firebase_app from "../firebase/config/firebase.config";
 import { getAuth } from "firebase/auth";
 import { useToast } from "@chakra-ui/react";
 import Link from "next/link";

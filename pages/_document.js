@@ -7,6 +7,8 @@ import {
   BsTwitter,
 } from "react-icons/bs";
 import { Html, Head, Main, NextScript } from "next/document";
+import { ColorModeScript } from "@chakra-ui/react";
+import theme from "../theme";
 
 export const name = "BloatCare";
 export const siteTitle = "BloatCare";
@@ -22,11 +24,12 @@ export default function Document() {
         />
       </Head>
       <body className="bg-white text-black dark:bg-black dark:text-white">
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Main />
         <NextScript />
         <Footer>
           <div className="w-full bg-[#1e40af]">
-            <div className="grid w-full grid-cols-2 gap-8 px-6 py-8 md:grid-cols-4">
+            <div className="grid w-full grid-cols-2 gap-8 px-12 py-8 md:grid-cols-4">
               <div>
                 <Footer.Title className="text-white" title="Company" />
                 <Footer.LinkGroup className="text-white" col>
@@ -63,7 +66,7 @@ export default function Document() {
                 </Footer.LinkGroup>
               </div>
             </div>
-            <hr className="border-white dark:border-black border-2" />
+            <hr className="border-white mx-10 dark:border-black border-10" />
             <div className="w-full bg-[#1e40af] px-4 py-6 sm:flex sm:items-center sm:justify-between">
               <Footer.Copyright
                 className="text-white"

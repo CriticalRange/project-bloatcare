@@ -1,15 +1,18 @@
 "use client";
-import { Button, DarkThemeToggle, Flowbite, Navbar } from "flowbite-react";
+import { DarkThemeToggle, Flowbite, Navbar } from "flowbite-react";
 import Image from "next/image";
 import { siteTitle } from "../pages/_document";
 import utilStyles from "../styles/utils.module.css";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
+import { Button, IconButton, useColorMode } from "@chakra-ui/react";
 import { useToggleStore, useCredentialsStore } from "../pages/api/stores";
 import { shallow } from "zustand/shallow";
 import NavbarProfile from "./NavbarProfile";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 export default function CustomNavbar() {
+  const { colorMode, toggleColorMode } = useColorMode();
   const { userInfo, setUserInfo } = useCredentialsStore((state) => ({
     userInfo: state.userInfo,
     setUserInfo: state.setUserInfo,
@@ -48,17 +51,20 @@ export default function CustomNavbar() {
         </Navbar.Brand>
 
         <div className="flex md:order-2 flex-row">
-          <DarkThemeToggle
-            className="mr-5"
-            onClick={() => {
-              theme === "light" ? setTheme("dark") : setTheme("light");
-            }}
-          />
+          <DarkThemeToggle className="mr-5" onClick={toggleColorMode} />
           {userInfo ? (
             <NavbarProfile />
           ) : (
             <Button
-              className="bg-[#1e40af] hover:bg-[#60a5fa]"
+              color="white"
+              bg="#1e40af"
+              textColor="white"
+              _hover={{
+                bg: "#60a5fa",
+              }}
+              _dark={{
+                textColor: "white",
+              }}
               onClick={() => toggleModalOpen(!isModalOpen)}
             >
               Login

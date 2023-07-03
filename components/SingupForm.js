@@ -1,43 +1,49 @@
 "use client";
-import { Button, Checkbox, HelperText, Label, TextInput } from "flowbite-react";
+import { TextInput } from "flowbite-react";
+import { Button } from "@chakra-ui/react";
 import { useCredentialsStore } from "../pages/api/stores";
 import { useToggleStore } from "../pages/api/stores";
-import signUp from "../firebase/auth/signup";
 import { shallow } from "zustand/shallow";
 import { useToast } from "@chakra-ui/react";
+import firebase_app, { db } from "../firebase/config/firebase.config";
+import { getAuth } from "firebase/auth";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { setDoc, doc, addDoc, collection } from "firebase/firestore";
+import { useState } from "react";
+
+const auth = getAuth(firebase_app);
 
 export default function SignupForm() {
+  const [createUserWithEmailAndPassword, user, loading, fbError] =
+    useCreateUserWithEmailAndPassword(auth);
+
+  const { userUid, setUserUid } = useState("");
   const toast = useToast();
 
   const emailStandard =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const {
-    userInfo,
-    setUserInfo,
-    userInfoname,
-    setUserInfoname,
+    username,
+    setUsername,
     email,
     setEmail,
     password,
     setPassword,
     authType,
-    setAuthType,
   } = useCredentialsStore(
     (state) => ({
-      userInfo: state.userInfo,
-      setUserInfo: state.setUserInfo,
-      userInfoname: state.userInfoname,
-      setUserInfoname: state.setUserInfoname,
+      username: state.username,
+      setUsername: state.setUsername,
       email: state.email,
       setEmail: state.setEmail,
       password: state.password,
       setPassword: state.setPassword,
       authType: state.authType,
-      setAuthType: state.setAuthType,
     }),
     shallow
   );
+
   const { isModalOpen, toggleModalOpen } = useToggleStore(
     (state) => ({
       isModalOpen: state.isModalOpen,
@@ -46,13 +52,15 @@ export default function SignupForm() {
     shallow
   );
 
-  const handleLogin = async (event) => {
+  const handleSignup = async (event) => {
     event.preventDefault();
 
-    const { result, error } = await signUp(email, password);
-
-    !error
-      ? (toggleModalOpen(!isModalOpen),
+    try {
+      const emailPasswordSignupResult = await createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      toggleModalOpen(!isModalOpen),
         toast({
           title: "Account created.",
           description: "Your account has been created.",
@@ -60,29 +68,47 @@ export default function SignupForm() {
           duration: 1600,
           isClosable: true,
           position: "bottom-left",
-        }))
-      : (toggleModalOpen(!isModalOpen),
+        });
+    } catch (fbError) {
+      console.log("fbError: ", fbError);
+      toggleModalOpen(!isModalOpen),
         toast({
           title: "There was an issue.",
           description: `${
-            error.code === "auth/invalid-email"
+            fbError.code === "auth/invalid-email"
               ? "You entered a wrong email, please try again"
-              : error.code === "auth/email-already-exists"
+              : fbError.code === "auth/email-already-exists"
               ? "Email you entered already exists, try logging in instead."
-              : error.code === "auth/internal-error"
+              : fbError.code === "auth/internal-error"
               ? "The authentication server encountered an unexpected error while trying to process the request."
-              : error
+              : fbError
           }`,
           status: "error",
           duration: 3200,
           isClosable: true,
           position: "bottom-left",
-        }));
+        });
+    }
+
+    /* addDoc(dbInstance, {
+      email: email,
+      password: password,
+      username: username,
+    })
+      .then(() => {
+        setEmail("");
+        setPassword("");
+        setUsername("");
+        console.log("Document has been added successfully");
+      })
+      .catch((error) => {
+        console.log("Error adding document:", error);
+      }); */
   };
 
   return (
     <div className="flex flex-col">
-      <form onSubmit={handleLogin} className="form" key="loginForm">
+      <form onSubmit={handleSignup} className="form" key="loginForm">
         <label key="usernameLabel">
           <h4>Username</h4>
           <TextInput
@@ -130,20 +156,19 @@ export default function SignupForm() {
         </label>
         <Button
           type="submit"
-          className="bg-[#1e40af] hover:bg-[#60a5fa] block m-auto mt-2"
+          display="block"
+          margin="auto"
+          marginTop="2"
+          bg="brand.primary"
+          textColor="white"
+          _dark={{
+            textColor: "white",
+          }}
+          _hover={{
+            bg: "brand.secondary",
+          }}
           onClick={(value) => {
-            emailStandard.test(value)
-              ? authType === "signup"
-                ? toast({
-                    title: "Account created.",
-                    description: "Your account has been created.",
-                    status: "success",
-                    duration: 3200,
-                    isClosable: true,
-                    position: "bottom-left",
-                  })
-                : null
-              : "Invalid Email";
+            emailStandard.test(value);
           }}
         >
           Signup

@@ -1,11 +1,18 @@
 "use client";
-import { Button, Checkbox, HelperText, Label, TextInput } from "flowbite-react";
+import { Checkbox, HelperText, Label, TextInput } from "flowbite-react";
+import { Text } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import { useToggleStore, useCredentialsStore } from "../pages/api/stores";
-import signIn from "../firebase/auth/signin";
 import { shallow } from "zustand/shallow";
-import { useToast } from "@chakra-ui/react";
+import firebase_app from "../firebase/config/firebase.config";
+import { getAuth } from "firebase/auth";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+
+const auth = getAuth(firebase_app);
 
 export default function SigninForm() {
+  const [signInWithEmailAndPassword, user, loading, fbError] =
+    useSignInWithEmailAndPassword(auth);
   const toast = useToast();
 
   const {
@@ -41,43 +48,40 @@ export default function SigninForm() {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const { result, error } = await signIn(email, password);
-
-    !error
-      ? (setUserInfo(result),
-        console.log(
-          "Result of auth: ",
-          result,
-          " is being transferred to userInfo via setUserInfo"
-        ),
-        toggleModalOpen(!isModalOpen),
-        toast({
-          title: "Successfully logged in!.",
-          description: "Logged in to your account.",
-          status: "success",
-          duration: 1600,
-          isClosable: true,
-          position: "bottom-left",
-        }))
-      : (toggleModalOpen(!isModalOpen),
+    await signInWithEmailAndPassword(email, password);
+    if (fbError === null) {
+      toast({
+        title: "Successfully logged in!",
+        description: "Logged in to your account.",
+        status: "success",
+        duration: 1600,
+        isClosable: true,
+        position: "bottom-left",
+      }),
+        toggleModalOpen(!isModalOpen);
+    } else {
+      console.log(fbError),
         toast({
           title: "There was an issue.",
           description: `${
-            error.code === "auth/invalid-email"
+            fbError === "auth/invalid-email"
               ? "Invalid Email."
-              : error.code === "auth/invalid-password"
+              : fbError === "auth/invalid-password"
               ? "Invalid Password."
-              : error.code === "auth/user-not-found"
+              : fbError === "auth/too-many-requests"
+              ? "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later."
+              : fbError === "auth/user-not-found"
               ? "User couldn't be found. Did you type it incorrectly?"
-              : error.code === "auth/wrong-password"
+              : fbError === "auth/wrong-password"
               ? "You typed a wrong password"
-              : error
+              : fbError
           }`,
           status: "error",
           duration: 3200,
           isClosable: true,
           position: "bottom-left",
-        }));
+        });
+    }
   };
 
   return (
@@ -117,7 +121,7 @@ export default function SigninForm() {
           <div className="flex-grow justify-start">
             <div className="flex items-center gap-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember">Remember me?</Label>
+              <Text fontSize="sm">Remember me?</Text>
             </div>
           </div>
           <p className=" text-sm block align-top underline text-blue-500 dark:text-blue-500 hover:no-underline cursor-pointer">
@@ -126,7 +130,17 @@ export default function SigninForm() {
         </div>
         <Button
           type="submit"
-          className="bg-[#1e40af] hover:bg-[#60a5fa] block m-auto mt-2"
+          margin="auto"
+          display="block"
+          marginTop="2"
+          textColor="white"
+          bg="#1e40af"
+          _dark={{
+            textColor: "white",
+          }}
+          _hover={{
+            bg: "#60a5fa",
+          }}
         >
           Login
         </Button>
