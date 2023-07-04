@@ -1,70 +1,53 @@
 "use client";
-import { TextInput } from "flowbite-react";
-import { Button } from "@chakra-ui/react";
-import { useCredentialsStore } from "../../../../pages/api/stores";
-import { shallow } from "zustand/shallow";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Flex,
+  Text,
+  Input,
+} from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { authModalState } from "../../../../atoms/AuthModalAtom";
+import { useState } from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "../../../../firebase/clientApp";
+import { FIREBASE_ERRORS } from "../../../../firebase/errors";
 
 export default function SignupForm() {
   const toast = useToast();
 
-  const emailStandard =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  const { username, setUsername, email, setEmail, password, setPassword } =
-    useCredentialsStore(
-      (state) => ({
-        username: state.username,
-        setUsername: state.setUsername,
-        email: state.email,
-        setEmail: state.setEmail,
-        password: state.password,
-        setPassword: state.setPassword,
-      }),
-      shallow
-    );
+  const [signupForm, setSignupForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [createUserWithEmailAndPassword, user, loading, userError] =
+    useCreateUserWithEmailAndPassword(auth);
 
   const [modalState, setModalState] = useRecoilState(authModalState);
 
   const handleSignup = async (event) => {
     event.preventDefault();
+    if (error) {
+      setError("");
+    }
+    if (signupForm.password !== signupForm.confirmPassword) {
+      toast({
+        title: "Passwords do not match.",
+        description: "Please type the same password.",
+        status: "error",
+        duration: 1600,
+        isClosable: true,
+        position: "bottom-left",
+      });
+      return;
+    }
 
-    /* try {
-      const emailPasswordSignupResult = await createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      toggleModalOpen(!isModalOpen),
-        toast({
-          title: "Account created.",
-          description: "Your account has been created.",
-          status: "success",
-          duration: 1600,
-          isClosable: true,
-          position: "bottom-left",
-        });
-    } catch (fbError) {
-      console.log("fbError: ", fbError);
-      toggleModalOpen(!isModalOpen),
-        toast({
-          title: "There was an issue.",
-          description: `${
-            fbError.code === "auth/invalid-email"
-              ? "You entered a wrong email, please try again"
-              : fbError.code === "auth/email-already-exists"
-              ? "Email you entered already exists, try logging in instead."
-              : fbError.code === "auth/internal-error"
-              ? "The authentication server encountered an unexpected error while trying to process the request."
-              : fbError
-          }`,
-          status: "error",
-          duration: 3200,
-          isClosable: true,
-          position: "bottom-left",
-        });
-    } */
+    createUserWithEmailAndPassword(signupForm.email, signupForm.password);
 
     /* addDoc(dbInstance, {
       email: email,
@@ -82,57 +65,82 @@ export default function SignupForm() {
       }); */
   };
 
+  const onFormInfoChange = (event) => {
+    const { name, value } = event.target;
+    setSignupForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
-    <div className="flex flex-col">
+    <Flex direction="column" justify="">
       <form onSubmit={handleSignup} className="form" key="loginForm">
         <label key="usernameLabel">
           <h4>Username</h4>
-          <TextInput
-            name="signupUsernameInput"
-            key="usernameInput"
-            onChange={(event) => {
-              const newValue = event.target.value;
-              setUsername(newValue);
-            }}
+          <Input
+            my="2"
+            name="username"
+            key="username"
+            /* onChange={onFormInfoChange} dont forget to add this to firestore*/
             required
             type="text"
             placeholder="Username"
             className="overflow-y-hidden block w-full h-12 rounded-md"
-          ></TextInput>
+          ></Input>
         </label>
         <label key="emailLabel">
           <h4>Email</h4>
-          <TextInput
-            name="signupEmailInput"
+          <Input
+            my="2"
+            name="email"
             key="emailInput"
-            onChange={(event) => {
-              const newValue = event.target.value;
-              setEmail(newValue);
-            }}
+            onChange={onFormInfoChange}
             required
             type="email"
             placeholder="example@mail.com"
             className="overflow-y-hidden block w-full h-12 rounded-md"
-          ></TextInput>
+          ></Input>
         </label>
         <label key="passwordLabel">
           <h4>Password</h4>
-          <TextInput
-            name="signupPasswordInput"
+          <Input
+            my="2"
+            name="password"
             key="passwordInput"
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
+            onChange={onFormInfoChange}
             required
             type="password"
             placeholder="password"
             autoComplete="on"
             className="overflow-y-hidden block w-full h-12 rounded-md"
-          ></TextInput>
+          ></Input>
         </label>
+        <label key="confirmPasswordLabel">
+          <h4>Password</h4>
+          <Input
+            my="2"
+            name="confirmPassword"
+            key="confirmPasswordInput"
+            onChange={onFormInfoChange}
+            required
+            type="password"
+            placeholder="confirmPassword"
+            autoComplete="on"
+            className="overflow-y-hidden block w-full h-12 rounded-md"
+          ></Input>
+        </label>
+        {(error || userError) && (
+          <Alert status="error" borderRadius="xl" my="2">
+            <AlertIcon />
+            <AlertTitle>
+              {error || FIREBASE_ERRORS[userError.message]}
+            </AlertTitle>
+          </Alert>
+        )}
         <Button
           type="submit"
-          display="block"
+          w="full"
           margin="auto"
           marginTop="2"
           bg="brand.primary"
@@ -143,6 +151,7 @@ export default function SignupForm() {
           _hover={{
             bg: "brand.secondary",
           }}
+          isLoading={loading}
           /* onClick={(value) => {
             emailStandard.test(value);
           }} */
@@ -150,6 +159,6 @@ export default function SignupForm() {
           Signup
         </Button>
       </form>
-    </div>
+    </Flex>
   );
 }

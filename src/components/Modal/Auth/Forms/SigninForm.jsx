@@ -1,9 +1,20 @@
 "use client";
-import { Button, Text, useToast } from "@chakra-ui/react";
-import { Checkbox, TextInput } from "flowbite-react";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Text,
+  useToast,
+  Input,
+} from "@chakra-ui/react";
+import { Checkbox } from "flowbite-react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { authModalState } from "../../../../atoms/AuthModalAtom";
+import { auth } from "../../../../firebase/clientApp";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { FIREBASE_ERRORS } from "../../../../firebase/errors";
 
 export default function SigninForm() {
   const toast = useToast();
@@ -12,47 +23,15 @@ export default function SigninForm() {
     email: "",
     password: "",
   });
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
   const [modalState, setModalState] = useRecoilState(authModalState);
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    /*  const result = await signInWithEmailAndPassword(email, password);
-    console.log(result);
-    if (result === undefined) {
-      toast({
-        title: "There was an issue.",
-        description: `${
-          loginError.code === "auth/invalid-email"
-            ? "Invalid Email."
-            : loginError === "auth/invalid-password"
-            ? "Invalid Password."
-            : loginError === "auth/too-many-requests"
-            ? "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later."
-            : loginError === "auth/user-not-found"
-            ? "User couldn't be found. Did you type it incorrectly?"
-            : loginError === "auth/wrong-password"
-            ? "You typed a wrong password"
-            : loginError
-        }`,
-        status: "error",
-        duration: 3200,
-        isClosable: true,
-        position: "bottom-left",
-      });
-    }
-    console.log(auth.userCredential, error); */
 
-    /* 
-      toast({
-        title: "Successfully logged in!",
-        description: "Logged in to your account.",
-        status: "success",
-        duration: 1600,
-        isClosable: true,
-        position: "bottom-left",
-      }),
-        toggleModalOpen(!isModalOpen); */
+    signInWithEmailAndPassword(loginForm.email, loginForm.password);
   };
 
   const onFormInfoChange = (event) => {
@@ -68,7 +47,8 @@ export default function SigninForm() {
       <form onSubmit={handleLogin} className="form" key="loginForm">
         <label key="emailLabel">
           <h4>Email</h4>
-          <TextInput
+          <Input
+            my="2"
             name="email"
             key="emailInput"
             onChange={onFormInfoChange}
@@ -76,11 +56,12 @@ export default function SigninForm() {
             type="email"
             placeholder="example@mail.com"
             className="overflow-y-hidden block w-full h-12 rounded-md"
-          ></TextInput>
+          ></Input>
         </label>
         <label key="passwordLabel">
           <h4>Password</h4>
-          <TextInput
+          <Input
+            my="2"
             name="password"
             key="passwordInput"
             onChange={onFormInfoChange}
@@ -89,7 +70,7 @@ export default function SigninForm() {
             placeholder="password"
             autoComplete="on"
             className="overflow-y-hidden block w-full h-12 rounded-md"
-          ></TextInput>
+          ></Input>
         </label>
         <div className="flex justify-end">
           <div className="flex-grow justify-start">
@@ -102,10 +83,16 @@ export default function SigninForm() {
             Forgot Password?
           </p>
         </div>
+        {error ? (
+          <Alert status="error" borderRadius="xl" my="2">
+            <AlertIcon />
+            <AlertTitle>{FIREBASE_ERRORS[error.message]}</AlertTitle>
+          </Alert>
+        ) : null}
         <Button
           type="submit"
           margin="auto"
-          display="block"
+          w="full"
           marginTop="2"
           textColor="white"
           bg="#1e40af"
@@ -115,6 +102,7 @@ export default function SigninForm() {
           _hover={{
             bg: "#60a5fa",
           }}
+          isLoading={loading}
         >
           Login
         </Button>

@@ -11,13 +11,17 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { authModalState } from "../../../atoms/AuthModalAtom";
-import SigninForm from "./Forms/SigninForm";
-import SignupForm from "./Forms/SingupForm";
+import { authModalState } from "../../../../atoms/AuthModalAtom";
+import SigninForm from "../Forms/SigninForm";
+import SignupForm from "../Forms/SingupForm";
 import OAuthButtons from "./OAuthButtons";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../../../firebase/clientApp";
 
 export default function AuthModal() {
   const [modalState, setModalState] = useRecoilState(authModalState);
+  const [user, loading, error] = useAuthState(auth);
 
   console.log("Modal state's view value is: ", modalState.view);
   const handleAuthModalClose = () => {
@@ -26,6 +30,10 @@ export default function AuthModal() {
       open: false,
     }));
   };
+
+  useEffect(() => {
+    if (user) handleAuthModalClose();
+  }, [user]);
 
   return (
     <Modal

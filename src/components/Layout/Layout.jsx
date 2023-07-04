@@ -1,4 +1,4 @@
-import AuthModal from "../Modal/Auth/AuthModal";
+import AuthModal from "../Modal/Auth/Modal/AuthModal";
 import Navbar from "../Navbar/Navbar";
 
 const Layout = ({ children }) => {
