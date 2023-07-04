@@ -21,7 +21,7 @@ export default function NavbarProfile() {
   const toast = useToast();
   const [user, loading, error] = useAuthState(auth);
   return (
-    <Flex>
+    <Flex mr="3">
       <Menu>
         <MenuButton
           as={Button}

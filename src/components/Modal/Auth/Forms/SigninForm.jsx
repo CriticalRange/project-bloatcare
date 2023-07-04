@@ -8,10 +8,10 @@ import {
   useToast,
   Input,
 } from "@chakra-ui/react";
-import { Checkbox } from "flowbite-react";
+import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { authModalState } from "../../../../atoms/AuthModalAtom";
+import { authModalAtom } from "../../../../atoms/atoms";
 import { auth } from "../../../../firebase/clientApp";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
@@ -26,7 +26,18 @@ export default function SigninForm() {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
 
-  const [modalState, setModalState] = useRecoilState(authModalState);
+  user
+    ? toast({
+        title: "Successfully logged in.",
+        description: "Logged in to your account.",
+        status: "success",
+        duration: 1600,
+        isClosable: true,
+        position: "bottom-left",
+      })
+    : null;
+
+  const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -75,13 +86,18 @@ export default function SigninForm() {
         <div className="flex justify-end">
           <div className="flex-grow justify-start">
             <div className="flex items-center gap-2">
-              <Checkbox id="remember" />
+              <Checkbox borderColor="blue.500" id="remember" />
               <Text fontSize="sm">Remember me?</Text>
             </div>
           </div>
-          <p className=" text-sm block align-top underline text-blue-500 dark:text-blue-500 hover:no-underline cursor-pointer">
+          <Text
+            onClick={() =>
+              setAuthModalState((prev) => ({ ...prev, view: "resetPassword" }))
+            }
+            className=" text-sm block align-top underline text-blue-500 dark:text-blue-500 hover:no-underline cursor-pointer"
+          >
             Forgot Password?
-          </p>
+          </Text>
         </div>
         {error ? (
           <Alert status="error" borderRadius="xl" my="2">

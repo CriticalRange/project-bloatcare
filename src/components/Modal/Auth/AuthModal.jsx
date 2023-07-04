@@ -11,23 +11,24 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { authModalState } from "../../../../atoms/AuthModalAtom";
-import SigninForm from "../Forms/SigninForm";
-import SignupForm from "../Forms/SingupForm";
+import { authModalAtom } from "../../../atoms/atoms";
+import SigninForm from "./Forms/SigninForm";
+import SignupForm from "./Forms/SingupForm";
 import OAuthButtons from "./OAuthButtons";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../../firebase/clientApp";
+import { auth } from "../../../firebase/clientApp";
+import ResetPasswordForm from "./Forms/ResetPasswordForm";
 
 export default function AuthModal() {
-  const [modalState, setModalState] = useRecoilState(authModalState);
+  const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
 
-  console.log("Modal state's view value is: ", modalState.view);
+  console.log("Modal state's view value is: ", authModalState.authModalView);
   const handleAuthModalClose = () => {
-    setModalState((prev) => ({
+    setAuthModalState((prev) => ({
       ...prev,
-      open: false,
+      openAuthModal: false,
     }));
   };
 
@@ -37,7 +38,7 @@ export default function AuthModal() {
 
   return (
     <Modal
-      isOpen={modalState.open}
+      isOpen={authModalState.openAuthModal}
       onClose={handleAuthModalClose}
       size="sm"
       key="signupModal"
@@ -52,11 +53,21 @@ export default function AuthModal() {
         }}
       >
         <ModalHeader>
-          {modalState.view === "signin" ? "Sign in to BloatCare" : "Sign up"}
+          {authModalState.authModalView === "signin"
+            ? "Sign in to BloatCare"
+            : authModalState.authModalView === "signup"
+            ? "Sign up"
+            : "Reset Password"}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody key="signupModalBody">
-          {modalState.view === "signin" ? <SigninForm /> : <SignupForm />}
+          {authModalState.authModalView === "signin" ? (
+            <SigninForm />
+          ) : authModalState.authModalView === "signup" ? (
+            <SignupForm />
+          ) : (
+            <ResetPasswordForm />
+          )}
           <hr className="w-56 h-1 m-auto mt-0 bg-gray-400 rounded md:my-3 dark:bg-gray-700" />
           <Flex justify="space-around" direction="column" className="space-y-6">
             <Button
@@ -66,12 +77,18 @@ export default function AuthModal() {
                 bg: "brand.secondary",
               }}
               onClick={() => {
-                modalState.view === "signin"
-                  ? setModalState((prev) => ({ ...prev, view: "signup" }))
-                  : setModalState((prev) => ({ ...prev, view: "signin" }));
+                authModalState.authModalView === "signin"
+                  ? setAuthModalState((prev) => ({
+                      ...prev,
+                      authModalView: "signup",
+                    }))
+                  : setAuthModalState((prev) => ({
+                      ...prev,
+                      authModalView: "signin",
+                    }));
               }}
             >
-              {modalState.view === "signin"
+              {authModalState.authModalView === "signin"
                 ? "Not signed up?"
                 : "Already signed up?"}
             </Button>

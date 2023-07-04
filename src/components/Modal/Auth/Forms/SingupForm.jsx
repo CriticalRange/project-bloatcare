@@ -5,12 +5,9 @@ import {
   AlertTitle,
   Button,
   Flex,
-  Text,
   Input,
+  useToast,
 } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { authModalState } from "../../../../atoms/AuthModalAtom";
 import { useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../../../firebase/clientApp";
@@ -27,8 +24,6 @@ export default function SignupForm() {
   const [error, setError] = useState("");
   const [createUserWithEmailAndPassword, user, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
-
-  const [modalState, setModalState] = useRecoilState(authModalState);
 
   const handleSignup = async (event) => {
     event.preventDefault();
@@ -47,8 +42,7 @@ export default function SignupForm() {
       return;
     }
 
-    createUserWithEmailAndPassword(signupForm.email, signupForm.password);
-
+    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
     /* addDoc(dbInstance, {
       email: email,
       password: password,
