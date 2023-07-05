@@ -1,32 +1,29 @@
 import Head from "next/head";
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+import theme from "../theme";
 
 export default function Home() {
   return (
-    <Flex bg="white" _dark={{ bg: "black" }}>
+    <Flex bg="white" w="100%" _dark={{ bg: "black" }} direction="row">
       <Head>
         <title>BloatCare</title>
       </Head>
-      <Flex direction="row" justify="space-around" mt="0" p="10">
+      <Box>
         <Text
           fontSize="6xl"
           textColor="blue"
-          _dark={{ textColor: "blue.500" }}
+          _dark={{ textColor: "brand.secondary" }}
           fontWeight="bold"
           p="0"
           ml="10"
         >
           A website that has blogs in it
         </Text>
-        <Text
-          fontSize="3xl"
-          textColor="black"
-          _dark={{ textColor: "white" }}
-          m="10"
-        >
-          {`A very "never thought of before" idea right?`}{" "}
-        </Text>
-      </Flex>
+        <Text fontSize="4xl" textColor="brand.primary">Some text</Text>
+        </Box>
     </Flex>
   );
 }
+
+// re-export the reusable `getServerSideProps` function
+export { getServerSideProps } from "../Chakra";

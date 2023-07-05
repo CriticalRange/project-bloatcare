@@ -1,17 +1,15 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { Chakra } from "../Chakra";
 import { RecoilRoot } from "recoil";
-import "tailwindcss/tailwind.css";
-import theme from "../../theme";
 import Layout from "../components/Layout/Layout";
 
 export default function App({ Component, pageProps }) {
   return (
     <RecoilRoot>
-      <ChakraProvider theme={theme}>
+      <Chakra cookies={pageProps.cookies}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </ChakraProvider>
+      </Chakra>
     </RecoilRoot>
   );
 }

@@ -7,6 +7,7 @@ import {
   Text,
   useToast,
   Input,
+  Flex,
 } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
@@ -54,8 +55,8 @@ export default function SigninForm() {
   };
 
   return (
-    <div className="flex flex-col">
-      <form onSubmit={handleLogin} className="form" key="loginForm">
+    <Flex direction="column">
+      <form onSubmit={handleLogin} key="loginForm">
         <label key="emailLabel">
           <h4>Email</h4>
           <Input
@@ -66,7 +67,11 @@ export default function SigninForm() {
             required
             type="email"
             placeholder="example@mail.com"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           ></Input>
         </label>
         <label key="passwordLabel">
@@ -80,25 +85,41 @@ export default function SigninForm() {
             type="password"
             placeholder="password"
             autoComplete="on"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           ></Input>
         </label>
-        <div className="flex justify-end">
-          <div className="flex-grow justify-start">
-            <div className="flex items-center gap-2">
+        <Flex justifyContent="flex-end">
+          <Flex flexGrow="1" justifyContent="flex-start">
+            <Flex justifyItems="center" gap="0.5rem">
               <Checkbox borderColor="blue.500" id="remember" />
               <Text fontSize="sm">Remember me?</Text>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
           <Text
             onClick={() =>
               setAuthModalState((prev) => ({ ...prev, view: "resetPassword" }))
             }
-            className=" text-sm block align-top underline text-blue-500 dark:text-blue-500 hover:no-underline cursor-pointer"
+            fontSize="0.875rem"
+            lineHeight="1.25rem"
+            display="block"
+            verticalAlign="top"
+            textDecorationLine="underline"
+            textColor="blue.500"
+            _dark={{
+              textColor: "blue.500",
+            }}
+            _hover={{
+              textDecorationLine: "none",
+            }}
+            cursor="pointer"
           >
             Forgot Password?
           </Text>
-        </div>
+        </Flex>
         {error ? (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
@@ -123,6 +144,6 @@ export default function SigninForm() {
           Login
         </Button>
       </form>
-    </div>
+    </Flex>
   );
 }

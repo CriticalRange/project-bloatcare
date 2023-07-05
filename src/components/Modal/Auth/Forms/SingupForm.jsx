@@ -5,22 +5,23 @@ import {
   AlertTitle,
   Button,
   Flex,
-  Icon,
-  IconButton,
   Input,
   InputGroup,
   InputRightElement,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useRecoilState } from "recoil";
 import { passwordCheckerAtom, showPasswordAtom } from "../../../../atoms/atoms";
 import { auth } from "../../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
-import ConfirmPasswordChecker from "./ConfirmPasswordChecker";
-import PasswordChecker, { passwordValidateRegex } from "./PasswordChecker";
-import { HiEye, HiEyeOff } from "react-icons/hi";
+import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
+import PasswordChecker, {
+  passwordValidateRegex,
+} from "./Checkers/PasswordChecker";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -161,8 +162,14 @@ export default function SignupForm() {
             required
             type="text"
             placeholder="Username"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           ></Input>
+          <Text>Pick something eligible :D</Text>{" "}
+          {/* Make a username checker when firestore initializes */}
         </label>
         <label key="emailLabel">
           <h4>Email</h4>
@@ -174,12 +181,16 @@ export default function SignupForm() {
             required
             type="email"
             placeholder="example@mail.com"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           />
         </label>
         <label key="passwordLabel">
           <h4>Password</h4>
-          <InputGroup size="md">
+          <InputGroup size="md" alignContent="center">
             <Input
               onFocus={onPasswordFocus}
               onBlur={() =>
@@ -193,13 +204,29 @@ export default function SignupForm() {
               key="passwordInput"
               onChange={onFormInfoChange}
               required
-              type={showPassword ? "text" : "password"}
+              type={showPassword.showPassword ? "text" : "password"}
               placeholder="Password"
               autoComplete="on"
-              className="overflow-y-hidden block w-full h-12 rounded-md"
+              overflowY="hidden"
+              display="block"
+              w="full"
+              h="12"
+              borderRadius="0.375rem"
             />
-            <InputRightElement>
-              {showPassword ? <Icon as={HiEyeOff} /> : <Icon as={HiEye} />}
+            <InputRightElement alignContent="center">
+              <Button
+                mt="4"
+                mr="2"
+                marginTop="6"
+                h="1.75rem"
+                size="sm"
+                display="block"
+                onClick={() => {
+                  setShowPassword({ showPassword: !showPassword.showPassword });
+                }}
+              >
+                {showPassword.showPassword ? <HiEye /> : <HiEyeOff />}
+              </Button>
             </InputRightElement>
           </InputGroup>
         </label>
@@ -222,7 +249,11 @@ export default function SignupForm() {
             type="password"
             placeholder="Confirm Password"
             autoComplete="on"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           />
         </label>
         {signupForm.password !== signupForm.confirmPassword &&

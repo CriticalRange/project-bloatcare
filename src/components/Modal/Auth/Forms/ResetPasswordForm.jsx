@@ -37,11 +37,7 @@ export default function SigninForm() {
 
   return (
     <div className="flex flex-col">
-      <form
-        onSubmit={handlePasswordReset}
-        className="form"
-        key="resetPasswordForm"
-      >
+      <form onSubmit={handlePasswordReset} key="resetPasswordForm">
         <label key="emailLabel">
           <h4>Email</h4>
           <Input
@@ -52,7 +48,11 @@ export default function SigninForm() {
             required
             type="email"
             placeholder="example@mail.com"
-            className="overflow-y-hidden block w-full h-12 rounded-md"
+            overflowY="hidden"
+            display="block"
+            w="full"
+            h="12"
+            borderRadius="0.375rem"
           ></Input>
         </label>
         <div className="flex justify-end">

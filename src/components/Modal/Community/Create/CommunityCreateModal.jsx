@@ -1,6 +1,5 @@
 import {
   Button,
-  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,75 +10,29 @@ import {
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { createCommunityModalAtom } from "../../../../atoms/atoms";
-import { useState } from "react";
+import CreateCommunityForm from "./Forms/CreateCommunityForm";
 
 const CreateCommunityModal = () => {
   const [createCommunityModal, setCreateCommunityModal] = useRecoilState(
     createCommunityModalAtom
   );
 
-  const [createCommunityModalForm, setCreateCommunityModalForm] = useState({
-    title: "",
-    description: "",
-  });
-
-  const onFormInfoChange = (event) => {
-    const { name, value } = event.target;
-    setCreateCommunityModalForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   return (
     <>
       <Modal
+      size="3xl"
         isOpen={createCommunityModal.openCreateCommunityModal}
         onClose={() =>
           setCreateCommunityModal({ openCreateCommunityModal: false })
         }
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg="white" _dark={{bg: "black"}}>
           <ModalHeader>Create a community</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form
-              /* onSubmit={handleCreateCommunity} */ className="form"
-              key="createCommunityForm"
-            >
-              <label key="createCommunityTitle">
-                <h4>Title</h4>
-                <Input
-                  my="2"
-                  name="title"
-                  key="createCommunityTitleInput"
-                  onChange={onFormInfoChange}
-                  required
-                  type="text"
-                  placeholder="Title"
-                  className="overflow-y-hidden block w-full h-12 rounded-md"
-                ></Input>
-              </label>
-              <label key="createCommunityDescription">
-                <h4>Description</h4>
-                <Input
-                  w="full"
-                  borderRadius="6px"
-                  my="2"
-                  name="description"
-                  key="createCommunityDescriptionInput"
-                  onChange={onFormInfoChange}
-                  required
-                  type="text"
-                  placeholder="Description"
-                ></Input>
-              </label>
-            </form>
+            <CreateCommunityForm />
           </ModalBody>
-          <ModalFooter>
-            <Button>Create</Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

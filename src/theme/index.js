@@ -1,6 +1,7 @@
+// Main theme entrypoint here.
 import { extendTheme } from "@chakra-ui/react";
 
-const theme = extendTheme({
+const themeConfig = {
   config: {
     initialColorMode: "system",
     useSystemColorMode: false,
@@ -163,6 +164,8 @@ const theme = extendTheme({
     toast: 1700,
     tooltip: 1800,
   },
-});
+};
+
+const theme = extendTheme(themeConfig);
 
 export default theme;

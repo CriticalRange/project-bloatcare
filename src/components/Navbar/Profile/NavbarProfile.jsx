@@ -9,6 +9,7 @@ import {
   MenuDivider,
   Button,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 import ProfileIcon from "./ProfileIcon";
 import { useToast } from "@chakra-ui/react";
@@ -30,8 +31,8 @@ export default function NavbarProfile() {
             textColor: "white",
           }}
           rightIcon={<ProfileIcon />}
-        >
-          {user.email}
+        ><Text display={{base: "none", md: "unset"}}>{user.email}</Text>
+          
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <MenuItem

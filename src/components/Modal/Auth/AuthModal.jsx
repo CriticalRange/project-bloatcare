@@ -10,15 +10,17 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../../atoms/atoms";
+import { auth } from "../../../firebase/clientApp";
+import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
 import SignupForm from "./Forms/SingupForm";
 import OAuthButtons from "./OAuthButtons";
-import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
-import ResetPasswordForm from "./Forms/ResetPasswordForm";
+import { Divider } from "@chakra-ui/react";
+import { chakra } from '@chakra-ui/react'
 
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
@@ -68,12 +70,20 @@ export default function AuthModal() {
           ) : (
             <ResetPasswordForm />
           )}
-          <hr className="w-56 h-1 m-auto mt-0 bg-gray-400 rounded md:my-3 dark:bg-gray-700" />
+          <Divider
+            orientation="horizontal"
+            width="56"
+            h="1"
+            mx="auto"
+            bg="gray.400"
+            borderRadius="5px"
+            my={{ base: "3", md: "3" }}
+            _dark={{ bg: "gray.700" }}
+          />
           <Flex
             justify="space-around"
             direction="column"
-            className="space-y-6"
-            mt={{ base: "3" }}
+            mt={{ base: "3", md: "1rem" }}
           >
             <Button
               textColor="white"
@@ -98,7 +108,9 @@ export default function AuthModal() {
                 : "Already signed up?"}
             </Button>
             {authModalState.authModalView === "signin" ? (
-              <OAuthButtons />
+              <Flex my="3">
+                <OAuthButtons />
+              </Flex>
             ) : null}
           </Flex>
         </ModalBody>

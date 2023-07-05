@@ -13,12 +13,15 @@ const SearchInput = () => {
     md: "Search on BloatCare",
   });
   return (
-    <Flex>
+    <Flex mr="2" w={{base: "240px", md: "auto"}}>
       <InputGroup size="md">
         <InputLeftElement pointerEvents="none">
           <SearchIcon color="gray.300" />
         </InputLeftElement>
-        <Input type="search" placeholder={searchPlaceholder} />
+        <Input type="search" _placeholder={{
+          color: "gray.500",
+          _dark: 
+          {color: "gray.300"}}} placeholder={searchPlaceholder} />
       </InputGroup>
     </Flex>
   );

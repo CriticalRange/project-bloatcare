@@ -6,7 +6,7 @@ const LightSwitch = () => {
   return (
     <>
       <IconButton
-        mr="3"
+        mr="2"
         onClick={toggleColorMode}
         aria-label="Change theme"
         icon={colorMode === "light" ? <SunIcon /> : <MoonIcon />}

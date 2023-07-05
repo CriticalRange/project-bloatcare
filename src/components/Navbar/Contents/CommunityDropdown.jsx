@@ -9,7 +9,7 @@ const CommunityDropdown = () => {
     createCommunityModalAtom
   );
   return (
-    <Flex mr="3">
+    <Flex mr="2">
       <Menu>
         <MenuButton as={IconButton} icon={<LiaPlusSolid />}></MenuButton>
         <MenuList

@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 
 export const authModalAtom = atom({
-  key: "authModalState",
+  key: "authModalAtom",
   default: {
     openAuthModal: false,
     authModalView: "signin",
@@ -9,7 +9,7 @@ export const authModalAtom = atom({
 });
 
 export const createCommunityModalAtom = atom({
-  key: "authModalState",
+  key: "createCommunityModalAtom",
   default: {
     openCreateCommunityModal: false,
   },
