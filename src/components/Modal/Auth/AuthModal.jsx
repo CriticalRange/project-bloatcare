@@ -69,7 +69,12 @@ export default function AuthModal() {
             <ResetPasswordForm />
           )}
           <hr className="w-56 h-1 m-auto mt-0 bg-gray-400 rounded md:my-3 dark:bg-gray-700" />
-          <Flex justify="space-around" direction="column" className="space-y-6">
+          <Flex
+            justify="space-around"
+            direction="column"
+            className="space-y-6"
+            mt={{ base: "3" }}
+          >
             <Button
               textColor="white"
               bg="brand.primary"
@@ -92,10 +97,14 @@ export default function AuthModal() {
                 ? "Not signed up?"
                 : "Already signed up?"}
             </Button>
-            <OAuthButtons />
+            {authModalState.authModalView === "signin" ? (
+              <OAuthButtons />
+            ) : null}
           </Flex>
         </ModalBody>
-        <ModalFooter></ModalFooter>
+        {authModalState.authModalView === "signup" ? (
+          <ModalFooter></ModalFooter>
+        ) : null}
       </ModalContent>
     </Modal>
   );
