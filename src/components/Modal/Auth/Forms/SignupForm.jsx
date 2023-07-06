@@ -14,42 +14,49 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useCreateUserWithEmailAndPassword,
+  useAuthState,
+} from "react-firebase-hooks/auth";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useRecoilState } from "recoil";
 import { passwordCheckerAtom, showPasswordAtom } from "../../../../atoms/atoms";
-import { auth } from "../../../../firebase/clientApp";
+import { app, auth, firestore } from "../../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 export default function SignupForm() {
   const toast = useToast();
 
+  // get current user
+  const [user] = useAuthState(auth);
+
+  // UseState hooks (will only use here so didn't make an atom for it)
   const [signupForm, setSignupForm] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
-  const [passwordChecker, setPasswordChecker] =
-    useRecoilState(passwordCheckerAtom);
-
-  const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
-
   const [isFormValid, setFormValid] = useState(false);
 
-  const [error, setError] = useState("");
-  const [createUserWithEmailAndPassword, user, loading, userError] =
+  // Atoms
+  const [passwordChecker, setPasswordChecker] =
+    useRecoilState(passwordCheckerAtom);
+  const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
+
+  // Firebase auth hook
+  const [createUserWithEmailAndPassword, fbUser, loading, userError] =
     useCreateUserWithEmailAndPassword(auth);
 
   const handleSignup = async (event) => {
     event.preventDefault();
-    if (error) {
-      setError("");
-    }
+
+    // Check if password and confirm password match
     if (signupForm.password !== signupForm.confirmPassword) {
       toast({
         title: "Passwords do not match.",
@@ -62,7 +69,38 @@ export default function SignupForm() {
       return;
     }
 
-    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+    // Create user (firebase)
+    await createUserWithEmailAndPassword(signupForm.email, signupForm.password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        // GET Users Ref
+        const usersDocRef = doc(firestore, "users", user?.uid);
+        const usersDoc = await getDoc(usersDocRef);
+
+        // If User info exists console log and return
+        if (usersDoc.exists()) {
+          console.log("That username is taken. Please try another one.");
+          return;
+        }
+
+        // Create the user on firestore
+        await setDoc(usersDocRef, {
+          createdAt: serverTimestamp(),
+          userUid: signupForm.username,
+        });
+
+        // Create another one so that we can query names
+        const usersQueryDocRef = doc(firestore, "users", signupForm.username);
+        await setDoc(usersQueryDocRef, {
+          createdAt: serverTimestamp(),
+          userUid: user?.uid,
+        });
+
+        console.log("User successfully created and added to Firestore.");
+      })
+      .catch((error) => {
+        console.log("Error creating user:", error);
+      });
   };
 
   const onFormInfoChange = (event) => {
@@ -159,10 +197,13 @@ export default function SignupForm() {
           <Input
             my="2"
             name="username"
+            onKeyDown={(event) => {
+              if (event.code === "Space") event.preventDefault();
+            }}
             key="username"
-            /* onChange={onFormInfoChange} dont forget to add this to firestore*/
+            onChange={onFormInfoChange}
             required
-            type="text"
+            type="username"
             placeholder="Username"
             overflowY="hidden"
             display="block"
@@ -178,6 +219,9 @@ export default function SignupForm() {
           <Input
             my="2"
             name="email"
+            onKeyDown={(event) => {
+              if (event.code === "Space") event.preventDefault();
+            }}
             key="emailInput"
             onChange={onFormInfoChange}
             required
@@ -201,6 +245,9 @@ export default function SignupForm() {
                   showPasswordChecker: false,
                 }))
               }
+              onKeyDown={(event) => {
+                if (event.code === "Space") event.preventDefault();
+              }}
               my="2"
               name="password"
               key="passwordInput"
@@ -230,6 +277,9 @@ export default function SignupForm() {
         <label key="confirmPasswordLabel">
           <h4>Confirm Password</h4>
           <Input
+            onKeyDown={(event) => {
+              if (event.code === "Space") event.preventDefault();
+            }}
             onFocus={() =>
               setPasswordChecker((prev) => ({
                 ...prev,
@@ -256,12 +306,10 @@ export default function SignupForm() {
         signupForm.password !== "" ? (
           <ConfirmPasswordChecker />
         ) : null}
-        {(error || userError) && (
+        {userError && (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>
-              {error || FIREBASE_ERRORS[userError.message]}
-            </AlertTitle>
+            <AlertTitle>{FIREBASE_ERRORS[userError.message]}</AlertTitle>
           </Alert>
         )}
         <Button

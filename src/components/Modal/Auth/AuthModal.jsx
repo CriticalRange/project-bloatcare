@@ -1,6 +1,8 @@
 "use client";
+// The most broken yet, Auth Modal
 import {
   Button,
+  Divider,
   Flex,
   Modal,
   ModalBody,
@@ -17,16 +19,13 @@ import { authModalAtom } from "../../../atoms/atoms";
 import { auth } from "../../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
-import SignupForm from "./Forms/SingupForm";
+import SignupForm from "./Forms/SignupForm";
 import OAuthButtons from "./OAuthButtons";
-import { Divider } from "@chakra-ui/react";
-import { chakra } from '@chakra-ui/react'
 
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
 
-  console.log("Modal state's view value is: ", authModalState.authModalView);
   const handleAuthModalClose = () => {
     setAuthModalState((prev) => ({
       ...prev,

@@ -1,4 +1,6 @@
 "use client";
+// Form of Community creation form
+// TODO: Add fade effect
 import {
   Box,
   Button,
@@ -21,7 +23,9 @@ import { auth, firestore } from "../../../../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 const CreateCommunityForm = () => {
+  // Get the current user info
   const [user] = useAuthState(auth);
+
   const [createCommunityModalForm, setCreateCommunityModalForm] = useState({
     title: "",
     description: "",
@@ -30,6 +34,7 @@ const CreateCommunityForm = () => {
   const [checkboxSelectedOption, setCheckboxSelectedOption] = useState("");
   const [communityName, setCommunityName] = useState("");
 
+  // Get the form info, if it's title (there aren't anything else right now) sets the community name
   const onFormInfoChange = (event) => {
     const { name, value } = event.target;
     if (name === "title") {
@@ -48,6 +53,7 @@ const CreateCommunityForm = () => {
   const handleCreateCommunity = async (event) => {
     event.preventDefault();
 
+    // Format the community name to have no special chars other than underscore, and checks if it has at least 3 chars
     const format = /[-.!"`'#%&,:;<>=@{}~\$\(\)\*\+\/\\\?\[\]\^\|]+/;
     if (format.test(communityName) || communityName.length < 3) {
       console.log(

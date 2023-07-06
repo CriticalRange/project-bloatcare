@@ -1,7 +1,7 @@
 "use client";
-import Head from "next/head";
+//Main Page
 import { Box, Flex, Text } from "@chakra-ui/react";
-import theme from "../theme";
+import Head from "next/head";
 
 export default function Home() {
   return (

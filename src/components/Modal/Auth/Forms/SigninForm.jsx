@@ -13,9 +13,10 @@ import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../../../atoms/atoms";
-import { auth } from "../../../../firebase/clientApp";
+import { auth, firestore } from "../../../../firebase/clientApp";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 export default function SigninForm() {
   const toast = useToast();
@@ -43,6 +44,7 @@ export default function SigninForm() {
   const handleLogin = async (event) => {
     event.preventDefault();
 
+    // Process sign in
     signInWithEmailAndPassword(loginForm.email, loginForm.password);
   };
 

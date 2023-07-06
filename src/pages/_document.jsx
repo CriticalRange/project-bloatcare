@@ -1,3 +1,4 @@
+// The Document that is sent to client before returning SSR document
 import { Html, Head, Main, NextScript } from "next/document";
 import { ColorModeScript } from "@chakra-ui/react";
 import theme from "../theme";

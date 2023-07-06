@@ -1,3 +1,4 @@
+// Using commonjs options
 {
   "compilerOptions": {
     "module": "commonjs",

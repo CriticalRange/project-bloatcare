@@ -1,3 +1,5 @@
+"use client";
+// Modal pops up allows you to create community
 import {
   Button,
   Modal,

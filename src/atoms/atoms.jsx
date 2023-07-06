@@ -1,5 +1,6 @@
 import { atom } from "recoil";
 
+// Atom that controls auth modal opening
 export const authModalAtom = atom({
   key: "authModalAtom",
   default: {
@@ -8,6 +9,7 @@ export const authModalAtom = atom({
   },
 });
 
+// Atom that controls create community modal opening
 export const createCommunityModalAtom = atom({
   key: "createCommunityModalAtom",
   default: {
@@ -15,6 +17,7 @@ export const createCommunityModalAtom = atom({
   },
 });
 
+// Atom that checks the password when password input is focused
 export const passwordCheckerAtom = atom({
   key: "passwordCheckerAtom",
   default: {
@@ -29,6 +32,15 @@ export const passwordCheckerAtom = atom({
   },
 });
 
+// Oauth Error Atom that slides in
+export const oauthErrorAtom = atom({
+  key: "oauthErrorAtom",
+  default: {
+    showOauthError: false,
+  },
+});
+
+// Show/hide password
 export const showPasswordAtom = atom({
   key: "showPasswordAtom",
   default: {

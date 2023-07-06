@@ -1,12 +1,18 @@
-import { Button, Flex, Image, Text } from "@chakra-ui/react";
+// Don't forget to add "use client" when you get profile pictures working!
+import { Button, Flex, Image } from "@chakra-ui/react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
+import { useRecoilState } from "recoil";
+import { oauthErrorAtom } from "../../../atoms/atoms";
 
 function OAuthButtons() {
   const [signInWithGoogle, user, loading, googleError] =
     useSignInWithGoogle(auth);
+
+  const [oauthError, setOauthError] = useRecoilState(oauthErrorAtom);
+
   return (
-    <Flex>
+    <Flex direction="column">
       <Button isLoading={loading} onClick={() => signInWithGoogle()}>
         Continue with{" "}
         <Image
@@ -17,9 +23,7 @@ function OAuthButtons() {
           alt="Google logo"
         />
       </Button>
-      {googleError && <Text>{googleError.message}</Text>}
     </Flex>
   );
 }
-
 export default OAuthButtons;

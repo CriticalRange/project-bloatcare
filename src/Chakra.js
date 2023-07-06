@@ -1,3 +1,4 @@
+// Main chakra wrapper
 import {
   ChakraProvider,
   cookieStorageManagerSSR,
