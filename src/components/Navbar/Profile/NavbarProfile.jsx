@@ -31,8 +31,10 @@ export default function NavbarProfile() {
             textColor: "white",
           }}
           rightIcon={<ProfileIcon />}
-        ><Text display={{base: "none", md: "unset"}}>{user.email}</Text>
-          
+        >
+          <Text textOverflow="ellipsis" display={{ base: "none", md: "unset" }}>
+            {user.email}
+          </Text>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <MenuItem

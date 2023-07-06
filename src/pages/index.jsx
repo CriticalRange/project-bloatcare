@@ -1,3 +1,4 @@
+"use client";
 import Head from "next/head";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import theme from "../theme";
@@ -19,8 +20,10 @@ export default function Home() {
         >
           A website that has blogs in it
         </Text>
-        <Text fontSize="4xl" textColor="brand.primary">Some text</Text>
-        </Box>
+        <Text fontSize="4xl" textColor="brand.primary">
+          Some text
+        </Text>
+      </Box>
     </Flex>
   );
 }

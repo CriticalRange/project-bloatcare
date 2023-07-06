@@ -1,3 +1,4 @@
+"use client";
 import { Chakra } from "../Chakra";
 import { RecoilRoot } from "recoil";
 import Layout from "../components/Layout/Layout";

@@ -20,14 +20,14 @@ const CreateCommunityModal = () => {
   return (
     <>
       <Modal
-      size="3xl"
+        size="3xl"
         isOpen={createCommunityModal.openCreateCommunityModal}
         onClose={() =>
           setCreateCommunityModal({ openCreateCommunityModal: false })
         }
       >
         <ModalOverlay />
-        <ModalContent bg="white" _dark={{bg: "black"}}>
+        <ModalContent bg="white" _dark={{ bg: "black" }}>
           <ModalHeader>Create a community</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
