@@ -5,6 +5,8 @@ import {
   AlertTitle,
   Button,
   Flex,
+  Icon,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
@@ -214,19 +216,13 @@ export default function SignupForm() {
               borderRadius="0.375rem"
             />
             <InputRightElement alignContent="center">
-              <Button
-                mt="4"
+              <IconButton
+                zIndex="999"
+                mt="6"
                 mr="2"
-                marginTop="6"
-                h="1.75rem"
-                size="sm"
-                display="block"
-                onClick={() => {
-                  setShowPassword({ showPassword: !showPassword.showPassword });
-                }}
-              >
-                {showPassword.showPassword ? <HiEye /> : <HiEyeOff />}
-              </Button>
+                aria-label="show Password"
+                icon={showPassword.showPassword ? <HiEye /> : <HiEyeOff />}
+              />
             </InputRightElement>
           </InputGroup>
         </label>

@@ -33,5 +33,6 @@ export const showPasswordAtom = atom({
   key: "showPasswordAtom",
   default: {
     showPassword: false,
+    showConfirmPassword: false,
   },
 });
