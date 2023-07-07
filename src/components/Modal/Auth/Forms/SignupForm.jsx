@@ -70,8 +70,8 @@ export default function SignupForm() {
     }
 
     // Create user (firebase)
-    await createUserWithEmailAndPassword(signupForm.email, signupForm.password)
-      .then(async (userCredential) => {
+    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+    /* .then(async (userCredential) => {
         const user = userCredential.user;
         // GET Users Ref
         const usersDocRef = doc(firestore, "users", user?.uid);
@@ -100,7 +100,7 @@ export default function SignupForm() {
       })
       .catch((error) => {
         console.log("Error creating user:", error);
-      });
+      }); */
   };
 
   const onFormInfoChange = (event) => {

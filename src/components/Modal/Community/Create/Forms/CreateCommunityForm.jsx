@@ -115,7 +115,13 @@ const CreateCommunityForm = () => {
                   onChange={() => handleCheckboxChange("Public")}
                   size="xl"
                 >
-                  <AiOutlineUser fill="black" size="30" />
+                  <Icon
+                    as={AiOutlineUser}
+                    fill="black"
+                    _dark={{ fill: "white" }}
+                    height={30}
+                    width={30}
+                  />
                   <Text>Public</Text>
                 </Checkbox>
                 <Text ml="10">
@@ -129,7 +135,13 @@ const CreateCommunityForm = () => {
                   onChange={() => handleCheckboxChange("Restricted")}
                   size="xl"
                 >
-                  <AiOutlineEye fill="black" size="30" />
+                  <Icon
+                    as={AiOutlineEye}
+                    fill="black"
+                    _dark={{ fill: "white" }}
+                    height={30}
+                    width={30}
+                  />
                   <Text>Restricted</Text>
                 </Checkbox>
                 <Text ml="10">
@@ -146,7 +158,13 @@ const CreateCommunityForm = () => {
                   onChange={() => handleCheckboxChange("Private")}
                   size="xl"
                 >
-                  <BiLockAlt fill="black" size="30" />
+                  <Icon
+                    as={BiLockAlt}
+                    fill="black"
+                    _dark={{ fill: "white" }}
+                    height={30}
+                    width={30}
+                  />
                   <Text>Private</Text>
                 </Checkbox>
                 <Text ml="10">
