@@ -18,13 +18,7 @@ import { useState } from "react";
 import { AiOutlineUser, AiOutlineEye } from "react-icons/ai";
 import { BiLockAlt } from "react-icons/bi";
 import { Fade } from "@chakra-ui/react";
-import {
-  doc,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, firestore } from "../../../../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -68,30 +62,20 @@ const CreateCommunityForm = () => {
     }
     // Validate the community name not taken
     const communityDocRef = doc(firestore, "communities", communityName);
+    const communityDoc = await getDoc(communityDocRef);
 
-    await runTransaction(firestore, async (transaction) => {
-      const communityDoc = await transaction.get(communityDocRef);
-      if (communityDoc.exists()) {
-        console.log("That community name is taken. Please try another one.");
+    if (communityDoc.exists()) {
+      console.log("That community name is taken. Please try another one.");
 
-        return;
-      }
-      // Create the community (firestore)
-      transaction.set(communityDocRef, {
-        creatorId: user?.uid,
-        createdAt: serverTimestamp(),
-        numberOfMembers: 1,
-        privacyType: checkboxSelectedOption,
-      });
+      return;
+    }
 
-      // Create community snippets on user
-      transaction.set(
-        doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
-        {
-          communityId: communityName,
-          isModerator: true,
-        }
-      );
+    // Create the community (firestore)
+    await setDoc(communityDocRef, {
+      creatorId: user?.uid,
+      createdAt: serverTimestamp(),
+      numberOfMembers: 1,
+      privacyType: checkboxSelectedOption,
     });
   };
 
