@@ -12,6 +12,7 @@ const SearchInput = () => {
     base: "Search",
     md: "Search on BloatCare",
   });
+
   return (
     <Flex mr="2" w={{ base: "240px", md: "auto" }}>
       <InputGroup size="md">

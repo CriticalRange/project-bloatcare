@@ -1,15 +1,16 @@
 import { Button, Flex } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/atoms";
-import { auth } from "../../../firebase/clientApp";
-import NavbarProfile from "../Profile/NavbarProfile";
-import LightSwitch from "./LightSwitch";
-import CommunityDropdown from "./CommunityDropdown";
+import { authModalAtom } from "../../../../atoms/authModalAtom";
+import { auth } from "../../../../firebase/clientApp";
+import NavbarProfile from "../LeftContent/Profile/NavbarProfile";
+import LightSwitch from "../LeftContent/LightSwitch";
+import CommunityDropdown from "../LeftContent/CommunityDropdown";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
+
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />

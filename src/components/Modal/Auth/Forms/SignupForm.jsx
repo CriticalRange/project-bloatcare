@@ -5,7 +5,6 @@ import {
   AlertTitle,
   Button,
   Flex,
-  Icon,
   IconButton,
   Input,
   InputGroup,
@@ -14,26 +13,20 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {
-  useCreateUserWithEmailAndPassword,
-  useAuthState,
-} from "react-firebase-hooks/auth";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useRecoilState } from "recoil";
-import { passwordCheckerAtom, showPasswordAtom } from "../../../../atoms/atoms";
-import { app, auth, firestore } from "../../../../firebase/clientApp";
+import { passwordCheckerAtom } from "../../../../atoms/passwordCheckerAtom";
+import { showPasswordAtom } from "../../../../atoms/showPasswordAtom";
+import { auth } from "../../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 export default function SignupForm() {
   const toast = useToast();
-
-  // get current user
-  const [user] = useAuthState(auth);
 
   // UseState hooks (will only use here so didn't make an atom for it)
   const [signupForm, setSignupForm] = useState({
@@ -71,36 +64,6 @@ export default function SignupForm() {
 
     // Create user (firebase)
     await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
-    /* .then(async (userCredential) => {
-        const user = userCredential.user;
-        // GET Users Ref
-        const usersDocRef = doc(firestore, "users", user?.uid);
-        const usersDoc = await getDoc(usersDocRef);
-
-        // If User info exists console log and return
-        if (usersDoc.exists()) {
-          console.log("That username is taken. Please try another one.");
-          return;
-        }
-
-        // Create the user on firestore
-        await setDoc(usersDocRef, {
-          createdAt: serverTimestamp(),
-          userUid: signupForm.username,
-        });
-
-        // Create another one so that we can query names
-        const usersQueryDocRef = doc(firestore, "users", signupForm.username);
-        await setDoc(usersQueryDocRef, {
-          createdAt: serverTimestamp(),
-          userUid: user?.uid,
-        });
-
-        console.log("User successfully created and added to Firestore.");
-      })
-      .catch((error) => {
-        console.log("Error creating user:", error);
-      }); */
   };
 
   const onFormInfoChange = (event) => {

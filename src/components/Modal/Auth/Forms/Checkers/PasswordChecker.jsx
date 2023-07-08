@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FcCheckmark, FcCancel } from "react-icons/fc";
-import { passwordCheckerAtom } from "../../../../../atoms/atoms";
+import { passwordCheckerAtom } from "../../../../../atoms/passwordCheckerAtom";
 import { useRecoilState } from "recoil";
 
 export const passwordValidateRegex = ["[A-Z]", "[a-z]", "[0-9]", "\\W"];

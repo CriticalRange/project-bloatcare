@@ -1,22 +1,31 @@
 import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase/clientApp";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
+import { communityDataStateAtom } from "../../../atoms/communityDataStateAtom";
 import Header from "../../../components/Community/Header";
-import { Box } from "@chakra-ui/react";
+import { firestore } from "../../../firebase/clientApp";
 
 const CommunityPage = ({ communityData }) => {
+  const [communityDataState, setCommunityDataState] = useRecoilState(
+    communityDataStateAtom
+  );
+
+  useEffect(() => {
+    setCommunityDataState((prev) => ({ ...prev, id: communityData.id }));
+  }, [communityData.id]);
+
   if (!communityData) {
     return <div>No community found with that name</div>;
   }
   return (
-    <Box>
-      <Header communityData={communityData} />
-    </Box>
+    <div>
+      <Header />
+    </div>
   );
 };
 
 export async function getServerSideProps(context) {
-  console.log(context);
   // Get community data and pass it to client
   try {
     const communityDocRef = doc(

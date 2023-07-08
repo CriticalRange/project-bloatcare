@@ -3,7 +3,7 @@ import { Button, Flex, Image } from "@chakra-ui/react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
 import { useRecoilState } from "recoil";
-import { oauthErrorAtom } from "../../../atoms/atoms";
+import { oauthErrorAtom } from "../../../atoms/oauthErrorAtom";
 
 function OAuthButtons() {
   const [signInWithGoogle, user, loading, googleError] =

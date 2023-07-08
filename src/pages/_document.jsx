@@ -9,14 +9,14 @@ export const siteTitle = "BloatCare";
 export default function Document() {
   return (
     <Html lang="en">
-      <Head>
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <meta
-          name="description"
-          content="Learn how to build a personal website using Next.js"
-        />
-      </Head>
       <body>
+        <Head>
+          <link rel="shortcut icon" href="/favicon.ico" />
+          <meta
+            name="description"
+            content="Learn how to build a personal website using Next.js"
+          />
+        </Head>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Main />
         <NextScript />

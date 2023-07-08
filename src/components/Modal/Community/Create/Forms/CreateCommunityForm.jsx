@@ -32,11 +32,11 @@ const CreateCommunityForm = () => {
   // Get the current user info
   const [user] = useAuthState(auth);
 
+  // Hooks
   const [createCommunityModalForm, setCreateCommunityModalForm] = useState({
     title: "",
     description: "",
   });
-
   const [checkboxSelectedOption, setCheckboxSelectedOption] = useState("");
   const [communityName, setCommunityName] = useState("");
 
@@ -59,13 +59,14 @@ const CreateCommunityForm = () => {
   const handleCreateCommunity = async (event) => {
     event.preventDefault();
 
-    // Format the community name to have no special chars other than underscore, and checks if it has at least 3 chars
+    // Format the community name to have no special chars other than underscore, and check if it has at least 3 chars
     const format = /[-.!"`'#%&,:;<>=@{}~\$\(\)\*\+\/\\\?\[\]\^\|]+/;
     if (format.test(communityName) || communityName.length < 3) {
       console.log(
         "Community names cannot contain special characters other than underscore, and has to be at least 3 characters."
       );
     }
+
     // Validate the community name not taken
     const communityDocRef = doc(firestore, "communities", communityName);
 
@@ -76,6 +77,7 @@ const CreateCommunityForm = () => {
 
         return;
       }
+
       // Create the community (firestore)
       transaction.set(communityDocRef, {
         creatorId: user?.uid,

@@ -1,9 +1,11 @@
 "useclient";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   ButtonGroup,
+  Editable,
   EditableInput,
+  EditablePreview,
   Flex,
   IconButton,
   Input,
@@ -12,16 +14,13 @@ import {
   Stack,
   Text,
   Tooltip,
-  useColorModeValue,
   useEditableControls,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
-import { Editable, EditablePreview } from "@chakra-ui/react";
-import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
-import { useState } from "react";
 
-const Account = () => {
+function Account() {
   const [user, authLoading, error] = useAuthState(auth);
 
   const [accountEditor, setAccountEditor] = useState({
@@ -134,6 +133,7 @@ const Account = () => {
               </Text>
               <Editable
                 ml="5"
+                placeholder="Not set. Click here to set it"
                 defaultValue={
                   user?.displayName === null ? "" : user.displayName
                 }
@@ -188,6 +188,6 @@ const Account = () => {
       )}
     </>
   );
-};
+}
 
 export default Account;

@@ -2,7 +2,7 @@ import { Flex, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { LiaPlusSolid } from "react-icons/lia";
 import { IconButton } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../atoms/atoms";
+import { createCommunityModalAtom } from "../../../../atoms/createCommunityModalAtom";
 
 const CommunityDropdown = () => {
   const [createCommunityModal, setCreateCommunityModal] = useRecoilState(

@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../../atoms/atoms";
+import { authModalAtom } from "../../../../atoms/authModalAtom";
 import { auth, firestore } from "../../../../firebase/clientApp";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
@@ -27,17 +27,6 @@ export default function SigninForm() {
   });
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
-
-  user
-    ? toast({
-        title: "Successfully logged in.",
-        description: "Logged in to your account.",
-        status: "success",
-        duration: 1600,
-        isClosable: true,
-        position: "bottom-left",
-      })
-    : null;
 
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 

@@ -11,7 +11,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../../atoms/atoms";
+import { createCommunityModalAtom } from "../../../../atoms/createCommunityModalAtom";
 import CreateCommunityForm from "./Forms/CreateCommunityForm";
 
 const CreateCommunityModal = () => {

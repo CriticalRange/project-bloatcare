@@ -10,7 +10,9 @@ const themeConfig = {
     transparent: "transparent",
     black: "#000",
     white: "#fff",
+    softCyan: "#32daf0",
     brand: {
+      bg: "#6576c7",
       primary: "#1e40af",
       secondary: "#60a5fa",
     },

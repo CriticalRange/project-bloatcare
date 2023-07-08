@@ -12,11 +12,11 @@ import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 import { auth } from "../../../../firebase/clientApp";
 
 export default function SigninForm() {
+  // Hooks
   const [resetPasswordForm, setResetPasswordForm] = useState({
     email: "",
   });
   const [resetPasswordResult, setResetPasswordResult] = useState(null);
-
   const [sendPasswordResetEmail, sending, error] =
     useSendPasswordResetEmail(auth);
 
