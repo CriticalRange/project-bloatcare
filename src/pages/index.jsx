@@ -1,11 +1,10 @@
 "use client";
 //Main Page
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
-import Head from "next/head";
 
 export default function Home() {
   return (
-    <div>
+    <div suppressHydrationWarning={true}>
       <Flex
         w="100%"
         h="100%"
@@ -13,9 +12,6 @@ export default function Home() {
         direction="column"
         alignItems="center"
       >
-        <Head>
-          <title>BloatCare</title>
-        </Head>
         <Flex direction="column" mt="12" w="100%" h="200px" alignItems="center">
           <Heading
             bgGradient="linear(to-tl, brand.primary, softCyan)"

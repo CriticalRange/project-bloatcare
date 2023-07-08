@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   Flex,
@@ -14,6 +15,7 @@ import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../../../firebase/clientApp";
 import ProfileIcon from "./ProfileIcon";
+import { useEffect } from "react";
 
 export default function NavbarProfile() {
   const toast = useToast();
@@ -30,12 +32,21 @@ export default function NavbarProfile() {
           }}
           rightIcon={<ProfileIcon />}
         >
-          <SkeletonText
-            textOverflow="ellipsis"
-            display={{ base: "none", md: "unset" }}
-          >
-            {user.displayName === null ? user.email : user.displayName}
-          </SkeletonText>
+          {loading ? (
+            <SkeletonText
+              noOfLines={1}
+              textOverflow="ellipsis"
+              display={{ base: "none", md: "unset" }}
+            />
+          ) : (
+            <SkeletonText
+              noOfLines={1}
+              textOverflow="ellipsis"
+              display={{ base: "none", md: "unset" }}
+            >
+              {user.displayName === null ? user.email : user.displayName}
+            </SkeletonText>
+          )}
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <Link href="/account">

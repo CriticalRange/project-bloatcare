@@ -1,4 +1,3 @@
-"use client";
 // Things applied to this page (especially Component) will be applied to every single page
 import "../../recoil";
 import { RecoilRoot } from "recoil";

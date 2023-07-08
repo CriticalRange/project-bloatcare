@@ -1,3 +1,4 @@
+"use client";
 import { Box, Flex } from "@chakra-ui/react";
 import { communityDataStateAtom } from "../../atoms/communityDataStateAtom";
 import { useRecoilState } from "recoil";

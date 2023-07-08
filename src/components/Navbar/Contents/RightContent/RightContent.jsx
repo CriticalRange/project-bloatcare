@@ -1,3 +1,4 @@
+"use client";
 import { Button, Flex } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
@@ -6,6 +7,7 @@ import { auth } from "../../../../firebase/clientApp";
 import NavbarProfile from "../LeftContent/Profile/NavbarProfile";
 import LightSwitch from "../LeftContent/LightSwitch";
 import CommunityDropdown from "../LeftContent/CommunityDropdown";
+import { Suspense } from "react";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
@@ -30,7 +32,10 @@ const RightContent = () => {
             textColor: "white",
           }}
           onClick={() =>
-            setAuthModalState({ openAuthModal: true, authModalView: "signin" })
+            setAuthModalState({
+              openAuthModal: true,
+              authModalView: "signin",
+            })
           }
         >
           Login

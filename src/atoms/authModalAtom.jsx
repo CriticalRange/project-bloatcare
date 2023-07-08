@@ -7,4 +7,5 @@ export const authModalAtom = atom({
     openAuthModal: false,
     authModalView: "signin",
   },
+  dangerouslyAllowMutability: true,
 });

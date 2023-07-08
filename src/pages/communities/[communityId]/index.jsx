@@ -1,3 +1,4 @@
+"use client";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
@@ -13,7 +14,7 @@ const CommunityPage = ({ communityData }) => {
 
   useEffect(() => {
     setCommunityDataState((prev) => ({ ...prev, id: communityData.id }));
-  }, [communityData.id]);
+  }, [communityData.id, setCommunityDataState]);
 
   if (!communityData) {
     return <div>No community found with that name</div>;
