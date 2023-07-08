@@ -33,24 +33,29 @@ export default function NavbarProfile() {
           rightIcon={<ProfileIcon />}
         >
           <Text textOverflow="ellipsis" display={{ base: "none", md: "unset" }}>
-            {user.email}
+            {user.displayName === null ? user.email : user.displayName}
           </Text>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
-          <MenuItem
-            bg="white"
-            textColor="black"
-            _dark={{ bg: "black", textColor: "white" }}
-          >
-            <Link href="/account">Account</Link>
-          </MenuItem>
-          <MenuItem
-            bg="white"
-            textColor="black"
-            _dark={{ bg: "black", textColor: "white" }}
-          >
-            <Link href="/settings">Settings</Link>
-          </MenuItem>
+          <Link href="/account">
+            <MenuItem
+              title="Account"
+              bg="white"
+              textColor="black"
+              _dark={{ bg: "black", textColor: "white" }}
+            >
+              Account
+            </MenuItem>
+          </Link>
+          <Link href="/settings">
+            <MenuItem
+              bg="white"
+              textColor="black"
+              _dark={{ bg: "black", textColor: "white" }}
+            >
+              Settings
+            </MenuItem>
+          </Link>
           <MenuItem
             bg="white"
             textColor="black"
