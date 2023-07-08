@@ -1,26 +1,26 @@
+"use client";
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
   Button,
   Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  SkeletonText,
   Text,
+  useToast,
 } from "@chakra-ui/react";
-import ProfileIcon from "./ProfileIcon";
-import { useToast } from "@chakra-ui/react";
+import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
-import { signOut } from "firebase/auth";
+import { auth } from "../../../../../firebase/clientApp";
+import ProfileIcon from "./ProfileIcon";
+import { useEffect } from "react";
 
 export default function NavbarProfile() {
   const toast = useToast();
   const [user, loading, error] = useAuthState(auth);
+
   return (
     <Flex mr="3">
       <Menu>
@@ -32,9 +32,21 @@ export default function NavbarProfile() {
           }}
           rightIcon={<ProfileIcon />}
         >
-          <Text textOverflow="ellipsis" display={{ base: "none", md: "unset" }}>
-            {user.displayName === null ? user.email : user.displayName}
-          </Text>
+          {loading ? (
+            <SkeletonText
+              noOfLines={1}
+              textOverflow="ellipsis"
+              display={{ base: "none", md: "unset" }}
+            />
+          ) : (
+            <SkeletonText
+              noOfLines={1}
+              textOverflow="ellipsis"
+              display={{ base: "none", md: "unset" }}
+            >
+              {user.displayName === null ? user.email : user.displayName}
+            </SkeletonText>
+          )}
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <Link href="/account">
