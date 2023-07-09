@@ -6,9 +6,9 @@ import Navbar from "../Navbar/Navbar";
 const Layout = ({ children }) => {
   return (
     <>
+      <Navbar />
       <CreateCommunityModal />
       <AuthModal />
-      <Navbar />
       <main>{children}</main>
     </>
   );

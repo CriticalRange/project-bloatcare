@@ -4,20 +4,26 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../../../atoms/authModalAtom";
 import { auth } from "../../../../firebase/clientApp";
-import NavbarProfile from "../LeftContent/Profile/NavbarProfile";
-import LightSwitch from "../LeftContent/LightSwitch";
-import CommunityDropdown from "../LeftContent/CommunityDropdown";
-import { Suspense } from "react";
+import NavbarProfile from "./Profile/NavbarProfile";
+import LightSwitch from "./LightSwitch";
+import CommunityDropdown from "./CommunityDropdown";
+import { Suspense, useEffect, useState } from "react";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
 
+  const [userIsLoaded, setUserLoaded] = useState(false);
+
+  useEffect(() => {
+    setUserLoaded(true);
+  }, []);
+
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunityDropdown />
-      {user ? (
+      {userIsLoaded ? (
         <NavbarProfile />
       ) : (
         <Button

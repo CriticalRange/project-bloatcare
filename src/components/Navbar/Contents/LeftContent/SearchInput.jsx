@@ -1,18 +1,14 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-  Flex,
   InputGroup,
   Input,
   InputLeftElement,
   useBreakpointValue,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 
 const SearchInput = () => {
-  const searchPlaceholder = useBreakpointValue({
-    base: "Search",
-    md: "Search on BloatCare",
-  });
-
   return (
     <Flex mr="2" w={{ base: "240px", md: "auto" }}>
       <InputGroup size="md">
@@ -25,7 +21,10 @@ const SearchInput = () => {
             color: "gray.500",
             _dark: { color: "gray.300" },
           }}
-          placeholder={searchPlaceholder}
+          placeholder={useBreakpointValue({
+            base: "Search",
+            md: "Search on BloatCare",
+          })}
         />
       </InputGroup>
     </Flex>
