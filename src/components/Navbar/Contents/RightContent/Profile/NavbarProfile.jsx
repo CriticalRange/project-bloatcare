@@ -12,13 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "../../../../../firebase/clientApp";
 import ProfileIcon from "./ProfileIcon";
 
 export default function NavbarProfile() {
   const toast = useToast();
-  const [user, loading, error] = useAuthState(auth);
+  const [user, userLoading, userError] = useAuthState(auth);
+  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
 
   return (
     <Flex>
@@ -32,7 +33,7 @@ export default function NavbarProfile() {
           rightIcon={<ProfileIcon />}
         >
           <SkeletonText
-            isLoaded={!loading}
+            isLoaded={!userLoading}
             noOfLines={1}
             textOverflow="ellipsis"
             display={{ base: "none", md: "unset" }}
@@ -51,21 +52,21 @@ export default function NavbarProfile() {
               Account
             </MenuItem>
           </Link>
-          <Link href="/settings">
+          <Link href="/profile">
             <MenuItem
               bg="white"
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
             >
-              Settings
+              Profile
             </MenuItem>
           </Link>
           <MenuItem
             bg="white"
             textColor="black"
             _dark={{ bg: "black", textColor: "white" }}
-            onClick={() => {
-              signOut(auth);
+            onClick={async () => {
+              await signOut();
               toast({
                 title: "Successfully logged out!.",
                 description: "Logged out of your account.",

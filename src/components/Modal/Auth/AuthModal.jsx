@@ -58,7 +58,9 @@ export default function AuthModal() {
             ? "Sign in to BloatCare"
             : authModalState.authModalView === "signup"
             ? "Sign up"
-            : "Reset Password"}
+            : authModalState.authModalView === "passwordReset"
+            ? "Reset Password"
+            : null}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody key="signupModalBody">
@@ -66,9 +68,9 @@ export default function AuthModal() {
             <SigninForm />
           ) : authModalState.authModalView === "signup" ? (
             <SignupForm />
-          ) : (
+          ) : authModalState.authModalView === "passwordReset" ? (
             <ResetPasswordForm />
-          )}
+          ) : null}
           <Divider
             orientation="horizontal"
             width="56"

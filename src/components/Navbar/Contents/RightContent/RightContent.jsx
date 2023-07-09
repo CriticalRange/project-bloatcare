@@ -23,7 +23,7 @@ const RightContent = () => {
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunityDropdown />
-      {userIsLoaded ? (
+      {userIsLoaded && user ? (
         <NavbarProfile />
       ) : (
         <Button

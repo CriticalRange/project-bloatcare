@@ -63,7 +63,23 @@ export default function SignupForm() {
     }
 
     // Create user (firebase)
-    await createUserWithEmailAndPassword(signupForm.email, signupForm.password);
+    try {
+      await createUserWithEmailAndPassword(
+        signupForm.email,
+        signupForm.password
+      );
+      toast({
+        title: "Signup success!",
+        description:
+          "You successfully signed up and logged in to your account.",
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log("There was an error creating account. Please try again");
+    }
   };
 
   const onFormInfoChange = (event) => {

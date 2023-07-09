@@ -34,7 +34,19 @@ export default function SigninForm() {
     event.preventDefault();
 
     // Process sign in
-    signInWithEmailAndPassword(loginForm.email, loginForm.password);
+    try {
+      await signInWithEmailAndPassword(loginForm.email, loginForm.password);
+      toast({
+        title: "Login success!",
+        description: "You successfully logged in to your account.",
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log("There was an error");
+    }
   };
 
   const onFormInfoChange = (event) => {
@@ -90,26 +102,32 @@ export default function SigninForm() {
               <Text fontSize="sm">Remember me?</Text>
             </Flex>
           </Flex>
-          <Text
+          <Button
             onClick={() =>
-              setAuthModalState((prev) => ({ ...prev, view: "resetPassword" }))
+              setAuthModalState((prev) => ({
+                ...prev,
+                view: "passwordReset",
+              }))
             }
-            fontSize="0.875rem"
-            lineHeight="1.25rem"
-            display="block"
-            verticalAlign="top"
-            textDecorationLine="underline"
-            textColor="blue.500"
-            _dark={{
-              textColor: "blue.500",
-            }}
-            _hover={{
-              textDecorationLine: "none",
-            }}
-            cursor="pointer"
           >
-            Forgot Password?
-          </Text>
+            <Text
+              fontSize="0.875rem"
+              lineHeight="1.25rem"
+              display="block"
+              verticalAlign="top"
+              textDecorationLine="underline"
+              textColor="blue.500"
+              _dark={{
+                textColor: "blue.500",
+              }}
+              _hover={{
+                textDecorationLine: "none",
+              }}
+              cursor="pointer"
+            >
+              Forgot Password?
+            </Text>
+          </Button>
         </Flex>
         {error ? (
           <Alert status="error" borderRadius="xl" my="2">
