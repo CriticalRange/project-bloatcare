@@ -1,18 +1,25 @@
 "use client";
 //Main Page
-import { Box, Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
+import MainHeading from "../components/index/MainView/MainHeading";
+import MainCards from "../components/index/MainView/MainCards";
 
 export default function Home() {
   return (
     <div>
-      <Flex
-        w="100%"
-        h="100%"
-        bg="white"
-        _dark={{ bg: "black" }}
-        direction="column"
-        alignItems="center"
-      ></Flex>
+      <Flex bg="white" _dark={{ bg: "black" }}>
+        <Flex maxW={{ base: "100%", sm: "850px" }} mx="auto" h="auto" mt="5%">
+          <Flex flex="1" direction="column">
+            <MainHeading />
+            <Stack spacing="3">
+              <MainCards />
+              <MainCards />
+              <MainCards />
+              <MainCards />
+            </Stack>
+          </Flex>
+        </Flex>
+      </Flex>
     </div>
   );
 }
