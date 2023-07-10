@@ -25,10 +25,8 @@ const MainHeading = () => {
       my="2"
       flex="1"
       alignItems="center"
+      justify="flex-end"
     >
-      <Flex flex="1" ml="5" justify="flex-start">
-        <Heading fontSize="2xl">Today&apos;s Posts</Heading>
-      </Flex>
       <Button mr="2">
         {" "}
         {/* Refresh function */}

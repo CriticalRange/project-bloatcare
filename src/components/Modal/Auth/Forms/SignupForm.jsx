@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useRecoilState } from "recoil";
-import { passwordCheckerAtom } from "../../../../atoms/passwordCheckerAtom";
+import { passwordCheckerAtom } from "../../../../atoms/checkers/passwordCheckerAtom";
 import { showPasswordAtom } from "../../../../atoms/showPasswordAtom";
 import { auth } from "../../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
