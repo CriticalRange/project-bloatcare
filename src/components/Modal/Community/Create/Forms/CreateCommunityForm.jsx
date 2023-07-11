@@ -189,7 +189,7 @@ const CreateCommunityForm = () => {
         </chakra.h4>
         <Flex direction="column" mt="4">
           <chakra.label>
-            <Flex alignContent="center">
+            <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 bg="brand.secondary"
                 color="white"
@@ -222,7 +222,7 @@ const CreateCommunityForm = () => {
           </chakra.label>
 
           <chakra.label>
-            <Flex alignContent="center">
+            <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 bg="brand.secondary"
                 color="white"
@@ -253,7 +253,7 @@ const CreateCommunityForm = () => {
             </Flex>
           </chakra.label>
           <chakra.label>
-            <Flex alignContent="center">
+            <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 bg="brand.secondary"
                 color="white"

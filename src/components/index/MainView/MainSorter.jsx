@@ -17,7 +17,7 @@ import {
 } from "react-icons/fc";
 import { HiOutlineRefresh } from "react-icons/hi";
 
-const MainHeading = () => {
+const MainSorter = () => {
   return (
     <Flex
       borderRadius="5px"
@@ -55,4 +55,4 @@ const MainHeading = () => {
   );
 };
 
-export default MainHeading;
+export default MainSorter;

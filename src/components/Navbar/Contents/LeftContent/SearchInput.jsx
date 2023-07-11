@@ -10,7 +10,11 @@ import {
 
 const SearchInput = () => {
   return (
-    <Flex mr="2" w={{ base: "240px", md: "auto" }}>
+    <Flex
+      mr="2"
+      w={{ base: "240px", md: "auto" }}
+      display={{ base: "none", md: "block" }}
+    >
       <InputGroup size="md">
         <InputLeftElement pointerEvents="none">
           <SearchIcon color="gray.300" />

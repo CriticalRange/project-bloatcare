@@ -3,17 +3,20 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
-import { communityDataStateAtom } from "../../../atoms/communityDataStateAtom";
-import Header from "../../../components/Community/Header";
+import { communitiesAtom } from "../../../atoms/communitiesAtom";
+import CommunityHeader from "../../../components/Community/CommunityHeader/CommunityHeader";
 import { firestore } from "../../../firebase/clientApp";
+import CommunityBody from "../../../components/Community/CommunityBody/CommunityBody";
 
 const CommunityPage = ({ communityData }) => {
-  const [communityDataState, setCommunityDataState] = useRecoilState(
-    communityDataStateAtom
-  );
+  const [communityDataState, setCommunityDataState] =
+    useRecoilState(communitiesAtom);
 
   useEffect(() => {
-    setCommunityDataState((prev) => ({ ...prev, id: communityData.id }));
+    setCommunityDataState((prev) => ({
+      ...prev,
+      communityId: communityData.id,
+    }));
   }, [communityData.id, setCommunityDataState]);
 
   if (!communityData) {
@@ -21,7 +24,8 @@ const CommunityPage = ({ communityData }) => {
   }
   return (
     <div>
-      <Header />
+      <CommunityHeader />
+      <CommunityBody />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-"useclient";
+"use client";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -17,7 +17,7 @@ import {
   Tooltip,
   useEditableControls,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 import { useToast } from "@chakra-ui/react";
@@ -30,16 +30,12 @@ import {
 
 function Account() {
   const toast = useToast();
-
-  const onAccountUpdate = async (event) => {
-    event.preventDefault();
-  };
-
   const [user, authLoading, error] = useAuthState(auth);
-
-  const [accountEditor, setAccountEditor] = useState({
-    editedUsername: "",
-    editedEmail: "",
+  const [userIsLoaded, setUserLoaded] = useState(false);
+  const [showChangesPopup, setChangesPopup] = useState(false);
+  const [editForm, setEditForm] = useState({
+    username: "",
+    email: "",
   });
 
   function EditableControls() {
@@ -66,66 +62,48 @@ function Account() {
     ) : null;
   }
 
+  const onFormInfoChange = (event) => {
+    const { name, value } = event.target;
+    name === "username"
+      ? (value !== editForm.username
+          ? setChangesPopup(true)
+          : setChangesPopup(false),
+        setEditForm((prev) => ({
+          ...prev,
+          username: value,
+        })))
+      : name === "email"
+      ? (value !== editForm.username
+          ? setChangesPopup(true)
+          : setChangesPopup(false),
+        setEditForm((prev) => ({
+          ...prev,
+          email: value,
+        })))
+      : setEditForm((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+    console.log(`Email: ${editForm.email} Username: ${editForm.username}`);
+  };
+
+  const onAccountUpdate = async (event) => {
+    event.preventDefault();
+
+    console.log(`Email: ${editForm.email} Username: ${editForm.username}`);
+  };
+
+  useEffect(() => {
+    setUserLoaded(true);
+    setEditForm({ username: user?.displayName, email: user?.email });
+  }, []);
+
   return (
     <>
-      {authLoading ? (
-        <Flex mt="10" direction="column">
-          <Flex direction="row">
-            <Text fontSize="4xl" ml="3" mt="5">
-              Hello,{" "}
-            </Text>
-            <SkeletonText
-              mt="7"
-              noOfLines={1}
-              skeletonHeight={10}
-              ml="3"
-              w="xs"
-            ></SkeletonText>
-          </Flex>
-          <SkeletonText
-            ml="3"
-            noOfLines={1}
-            mt="8"
-            skeletonHeight="20px"
-            w="sm"
-          >
-            Let&apos;s quickly go over your details
-          </SkeletonText>
-
-          <Stack
-            spacing={{ base: "8", sm: "18" }}
-            direction={{ base: "column", md: "row" }}
-          >
-            <Box>
-              <SkeletonText
-                noOfLines={1}
-                mt="14"
-                ml="3"
-                w="162px"
-                skeletonHeight={10}
-              >
-                Username
-              </SkeletonText>
-              <Input as={Skeleton} mt="4" ml="3" w="162px" noOfLines={1} />
-            </Box>
-            <Box>
-              <SkeletonText
-                noOfLines={1}
-                mt="14"
-                ml="5"
-                w="162px"
-                skeletonHeight={10}
-              >
-                Email
-              </SkeletonText>
-              <Input as={Skeleton} noOfLines={1} mt="4" ml="5" w="162px" />
-            </Box>
-          </Stack>
-        </Flex>
-      ) : (
+      {userIsLoaded && !authLoading ? (
         <Flex mt="10" direction="column">
           <Text fontSize="4xl" ml="3" mt="5">
-            Hello, {user.displayName === null ? user.email : user.displayName}
+            Hello, {user?.displayName === null ? user.email : user?.displayName}
           </Text>
           <Text fontSize="2xl" ml="3" mt="5">
             Let&apos;s quickly go over your details
@@ -138,17 +116,19 @@ function Account() {
             w="full"
           />
           <form onSubmit={onAccountUpdate}>
-            <Box w="auto" h="5">
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle noOfLines={2}>
-                  There are some unsaved changes!
-                </AlertTitle>
-                <Button size="md" type="submit">
-                  Apply changes
-                </Button>
-              </Alert>
-            </Box>
+            {showChangesPopup ? (
+              <Box w="auto" h="5">
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle noOfLines={2}>
+                    There are some unsaved changes!
+                  </AlertTitle>
+                  <Button size="md" type="submit">
+                    Apply changes
+                  </Button>
+                </Alert>
+              </Box>
+            ) : null}
             <Stack spacing="0" align={{ base: "flex-start", md: "inherit" }}>
               <Flex direction="column">
                 <Text fontSize="4xl" mt="10" ml="3">
@@ -158,7 +138,7 @@ function Account() {
                   ml="5"
                   placeholder="Not set. Click here to set it"
                   defaultValue={
-                    user?.displayName === null ? "" : user.displayName
+                    user?.displayName === null ? "" : user?.displayName
                   }
                   fontSize="xl"
                   isPreviewFocusable={true}
@@ -176,7 +156,13 @@ function Account() {
                       }}
                     />
                   </Tooltip>
-                  <Input py={2} px={4} as={EditableInput} />
+                  <Input
+                    name="username"
+                    onChange={onFormInfoChange}
+                    py={2}
+                    px={4}
+                    as={EditableInput}
+                  />
                   <EditableControls />
                 </Editable>
               </Flex>
@@ -186,7 +172,7 @@ function Account() {
                 </Text>
                 <Editable
                   ml="5"
-                  defaultValue={user.email}
+                  defaultValue={user?.email}
                   fontSize="xl"
                   isPreviewFocusable={true}
                   selectAllOnFocus={true}
@@ -202,14 +188,20 @@ function Account() {
                       }}
                     />
                   </Tooltip>
-                  <Input py={2} px={4} as={EditableInput} />
+                  <Input
+                    name="email"
+                    onChange={onFormInfoChange}
+                    py={2}
+                    px={4}
+                    as={EditableInput}
+                  />
                   <EditableControls />
                 </Editable>
               </Flex>
             </Stack>
           </form>
         </Flex>
-      )}
+      ) : null}
     </>
   );
 }

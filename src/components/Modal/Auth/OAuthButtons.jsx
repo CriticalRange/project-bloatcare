@@ -17,7 +17,7 @@ function OAuthButtons() {
       <Button isLoading={loading} onClick={handleGoogleSignin}>
         Continue with{" "}
         <Image
-          src="images/google-logo.png"
+          src="/images/google-logo.png"
           ml="2"
           width="6"
           height="6"
