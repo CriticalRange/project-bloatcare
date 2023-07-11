@@ -6,25 +6,21 @@ import { communitiesAtom } from "../../../atoms/communitiesAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import CommunityImage from "./CommunityImage";
 import { collection, getDocs } from "firebase/firestore";
-import { useEffect } from "react";
-import safeJsonStringify from "safe-json-stringify";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const [user] = useAuthState(auth);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
 
-  const onClickSnippets = async () => {
+  const getSnippets = async () => {
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
-    snippets.map((snippet) => {
-      setCommunityData((prev) => ({
-        ...prev,
-        userSnippets: JSON.parse(JSON.stringify(snippet)),
-      }));
-      console.log(JSON.parse(JSON.stringify(snippet)));
-    });
+    setCommunityData((prev) => ({
+      ...prev,
+      userSnippets: snippets,
+    }));
   };
 
   useEffect(() => {
@@ -32,7 +28,7 @@ const Header = () => {
       setCommunityData((prev) => ({ ...prev, userSnippets: [] }));
       return;
     }
-    onClickSnippets();
+    getSnippets();
   }, [user]);
 
   return (
@@ -70,7 +66,15 @@ const Header = () => {
           </Flex>
           <Flex flex="1" mt="10" mr="10" justify="flex-end">
             <Button bg="brand.primary" color="white" size="lg">
-              Join
+              {communityData.userSnippets.length <= 0 ? (
+                <Heading fontSize="md">Join</Heading>
+              ) : communityData.userSnippets.find(
+                  (item) => item.communityId === communityData.communityId
+                ) ? (
+                <Heading fontSize="md">Joined</Heading>
+              ) : (
+                <Heading fontSize="md">Join</Heading>
+              )}
             </Button>
           </Flex>
         </Flex>

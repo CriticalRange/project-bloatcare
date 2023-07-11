@@ -10,7 +10,7 @@ import {
 
 const CommunityCards = () => {
   return (
-    <Flex mx="8" my="2">
+    <Flex mx="8">
       <Card size="md" bg="white" _dark={{ bg: "black" }}>
         <CardBody>
           <Heading color="black" _dark={{ color: "white" }}>
