@@ -1,71 +1,14 @@
 "use client";
 import { Button, Flex, Heading } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilState } from "recoil";
-import { communitiesAtom } from "../../../atoms/communitiesAtom";
-import { auth, firestore } from "../../../firebase/clientApp";
 import CommunityImage from "./CommunityImage";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  setDoc,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import useCommunityData from "../../../hooks/useCommunityData";
+import { useRecoilState } from "recoil";
+import { authModalAtom } from "../../../atoms/authModalAtom";
 
 const Header = () => {
-  const [user] = useAuthState(auth);
-  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
-
-  const getSnippets = async () => {
-    // Get the required user snippet
-    const snippetDocs = await getDocs(
-      collection(firestore, `users/${user?.uid}/communitySnippets`)
-    );
-    // Print the snippet info to communityData atom
-    const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
-    setCommunityData((prev) => ({
-      ...prev,
-      userSnippets: snippets,
-    }));
-  };
-
-  const onJoinChange = async () => {
-    // REFERENCE
-    const joinedRef = doc(
-      firestore,
-      `users/${user?.uid}/communitySnippets`,
-      communityData.communityId
-    );
-    // Check if user joined
-    if (
-      communityData.userSnippets.find(
-        (item) => item.communityId === communityData.communityId
-      )
-    ) {
-      await deleteDoc(joinedRef);
-      ("Snippet delete complete");
-    } else if (
-      communityData.userSnippets.find(
-        (item) => item.communityId !== communityData.communityId
-      )
-    ) {
-      await setDoc(joinedRef, {
-        communityId: communityData.communityId,
-        isModerator: false,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (!user) {
-      setCommunityData((prev) => ({ ...prev, userSnippets: [] }));
-      return;
-    }
-    getSnippets();
-  }, [user]);
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const { communityData, onJoinOrLeaveCommunity, isJoined, loading } =
+    useCommunityData();
 
   return (
     <Flex direction="column">
@@ -100,18 +43,19 @@ const Header = () => {
               </Heading>
             </Flex>
           </Flex>
-          <Flex flex="1" mt="10" mr="10" justify="flex-end">
+          <Flex flex="1" mt="12" mr="10" justify="flex-end">
             <Button
               bg="brand.primary"
               color="white"
+              _dark={{ bg: "black" }}
+              _hover={{
+                bg: "brand.secondary",
+              }}
               size="lg"
-              onClick={onJoinChange}
+              onClick={() => onJoinOrLeaveCommunity()}
+              isLoading={loading}
             >
-              {communityData.userSnippets.length <= 0 ? (
-                <Heading fontSize="md">Join</Heading>
-              ) : communityData.userSnippets.find(
-                  (item) => item.communityId === communityData.communityId
-                ) ? (
+              {isJoined ? (
                 <Heading fontSize="md">Joined</Heading>
               ) : (
                 <Heading fontSize="md">Join</Heading>

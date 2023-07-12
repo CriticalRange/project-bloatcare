@@ -6,7 +6,6 @@
   "editor.formatOnSaveMode": "file", // required to format on save
   "files.autoSave": "off", // optional but recommended
   "vs-code-prettier-eslint.prettierLast": "false",
-  "javascript.validate.enable": false,
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   } // set as "true" to run 'prettier' last not first
