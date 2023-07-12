@@ -5,7 +5,14 @@ import { useRecoilState } from "recoil";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import CommunityImage from "./CommunityImage";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const Header = () => {
@@ -13,14 +20,43 @@ const Header = () => {
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
 
   const getSnippets = async () => {
+    // Get the required user snippet
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
+    // Print the snippet info to communityData atom
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
     setCommunityData((prev) => ({
       ...prev,
       userSnippets: snippets,
     }));
+  };
+
+  const onJoinChange = async () => {
+    // REFERENCE
+    const joinedRef = doc(
+      firestore,
+      `users/${user?.uid}/communitySnippets`,
+      communityData.communityId
+    );
+    // Check if user joined
+    if (
+      communityData.userSnippets.find(
+        (item) => item.communityId === communityData.communityId
+      )
+    ) {
+      await deleteDoc(joinedRef);
+      ("Snippet delete complete");
+    } else if (
+      communityData.userSnippets.find(
+        (item) => item.communityId !== communityData.communityId
+      )
+    ) {
+      await setDoc(joinedRef, {
+        communityId: communityData.communityId,
+        isModerator: false,
+      });
+    }
   };
 
   useEffect(() => {
@@ -65,7 +101,12 @@ const Header = () => {
             </Flex>
           </Flex>
           <Flex flex="1" mt="10" mr="10" justify="flex-end">
-            <Button bg="brand.primary" color="white" size="lg">
+            <Button
+              bg="brand.primary"
+              color="white"
+              size="lg"
+              onClick={onJoinChange}
+            >
               {communityData.userSnippets.length <= 0 ? (
                 <Heading fontSize="md">Join</Heading>
               ) : communityData.userSnippets.find(
