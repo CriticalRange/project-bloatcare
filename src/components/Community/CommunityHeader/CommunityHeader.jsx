@@ -7,8 +7,7 @@ import { authModalAtom } from "../../../atoms/authModalAtom";
 
 const Header = () => {
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { communityData, onJoinOrLeaveCommunity, isJoined, loading } =
-    useCommunityData();
+  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
 
   return (
     <Flex direction="column">
@@ -55,7 +54,7 @@ const Header = () => {
               onClick={() => onJoinOrLeaveCommunity()}
               isLoading={loading}
             >
-              {isJoined ? (
+              {communityData.isJoined ? (
                 <Heading fontSize="md">Joined</Heading>
               ) : (
                 <Heading fontSize="md">Join</Heading>

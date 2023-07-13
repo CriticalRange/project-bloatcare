@@ -5,10 +5,10 @@ import { auth, firestore } from "../firebase/clientApp";
 import { useEffect, useState } from "react";
 import {
   collection,
-  deleteDoc,
   doc,
   getDocs,
-  setDoc,
+  runTransaction,
+  updateDoc,
 } from "firebase/firestore";
 import { authModalAtom } from "../atoms/authModalAtom";
 
@@ -17,28 +17,7 @@ const useCommunityData = () => {
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const [loading, setLoading] = useState(false);
-  const [isJoined, setJoined] = useState(false);
   const [error, setError] = useState("");
-
-  const onJoinOrLeaveCommunity = () => {
-    if (!user) {
-      setAuthModal((prev) => ({
-        ...prev,
-        openAuthModal: true,
-      }));
-      console.log("returning");
-      return;
-    }
-    getSnippets();
-    console.log("Starts");
-    if (!isJoined) {
-      console.log("Joining");
-      joinCommunity();
-    } else {
-      console.log("Leaving");
-      leaveCommunity();
-    }
-  };
 
   const getSnippets = async () => {
     // Get the required user snippet
@@ -51,61 +30,106 @@ const useCommunityData = () => {
       ...prev,
       userSnippets: snippets,
     }));
+    snippets.find(async (item) => {
+      await setCommunityData((prev) => ({
+        ...prev,
+        isJoined: item.isJoined,
+      }));
+    });
+  };
+
+  const onJoinOrLeaveCommunity = () => {
+    if (!user) {
+      setAuthModal((prev) => ({
+        ...prev,
+        openAuthModal: true,
+      }));
+      return;
+    }
+    getSnippets();
+    if (!communityData.isJoined) {
+      joinCommunity();
+    } else {
+      leaveCommunity();
+    }
   };
 
   const joinCommunity = async () => {
-    console.log("Setting loading to true");
     setLoading(true);
     const joinedRef = doc(
       firestore,
       `users/${user?.uid}/communitySnippets`,
       communityData.communityId
     );
-    await setDoc(joinedRef, {
-      communityId: communityData.communityId,
-      isModerator: false,
+    await runTransaction(firestore, async (transaction) => {
+      const joinedDoc = await transaction.get(joinedRef);
+      if (joinedDoc.exists()) {
+        transaction.update(joinedRef, {
+          isJoined: true,
+        });
+        setLoading(false);
+        setCommunityData((prev) => ({
+          ...prev,
+          isJoined: true,
+        }));
+        return;
+      }
+      transaction.set(joinedRef, {
+        communityId: communityData.communityId,
+        isModerator: false,
+        isJoined: true,
+      });
+      setLoading(false);
+      setCommunityData((prev) => ({
+        ...prev,
+        isJoined: true,
+      }));
     });
-    setLoading(false);
-    setJoined(true);
   };
 
   const leaveCommunity = async () => {
-    console.log("Snippet delete");
     setLoading(true);
     const joinedRef = doc(
       firestore,
       `users/${user?.uid}/communitySnippets`,
       communityData.communityId
     );
-
-    await deleteDoc(joinedRef);
-    console.log("Snippet delete complete");
-    setJoined(false);
+    await updateDoc(joinedRef, {
+      isJoined: false,
+    });
+    setCommunityData((prev) => ({
+      ...prev,
+      isJoined: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
+    getSnippets();
     if (!user) {
-      setJoined(false);
+      setCommunityData((prev) => ({
+        ...prev,
+        isJoined: false,
+      }));
       return;
     }
-    if (
-      communityData.userSnippets.find(
-        (item) => item.communityId !== communityData.communityId
-      )
-    ) {
-      setJoined(false);
+    if (communityData.isJoined === true) {
+      setCommunityData((prev) => ({
+        ...prev,
+        isJoined: true,
+      }));
     } else {
-      setJoined(true);
+      setCommunityData((prev) => ({
+        ...prev,
+        isJoined: false,
+      }));
     }
-    getSnippets();
   }, [user]);
 
   return {
     //data and functions
     communityData,
     onJoinOrLeaveCommunity,
-    isJoined,
     loading,
   };
 };

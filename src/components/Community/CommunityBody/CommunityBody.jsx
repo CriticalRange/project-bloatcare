@@ -1,11 +1,10 @@
 import { Flex, Heading } from "@chakra-ui/react";
 import CommunityCards from "./CommunityCards";
 import CommunitySorter from "./CommunitySorter";
-import { useRecoilState } from "recoil";
-import { communitiesAtom } from "../../../atoms/communitiesAtom";
+import useCommunityData from "../../../hooks/useCommunityData";
 
 const CommunityBody = () => {
-  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
+  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
 
   return (
     <Flex direction="column">

@@ -84,13 +84,10 @@ function Account() {
           ...prev,
           [name]: value,
         }));
-    console.log(`Email: ${editForm.email} Username: ${editForm.username}`);
   };
 
   const onAccountUpdate = async (event) => {
     event.preventDefault();
-
-    console.log(`Email: ${editForm.email} Username: ${editForm.username}`);
   };
 
   useEffect(() => {

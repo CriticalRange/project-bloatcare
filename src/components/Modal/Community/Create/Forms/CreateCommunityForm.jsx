@@ -128,6 +128,7 @@ const CreateCommunityForm = () => {
         {
           communityId: communityName,
           isModerator: true,
+          isJoined: true,
         }
       );
       setTimeout(() => {

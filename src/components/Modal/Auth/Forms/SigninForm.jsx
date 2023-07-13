@@ -44,9 +44,7 @@ export default function SigninForm() {
         position: "bottom-left",
         isClosable: true,
       });
-    } catch (error) {
-      console.log("There was an error");
-    }
+    } catch (error) {}
   };
 
   const onFormInfoChange = (event) => {
@@ -97,7 +95,7 @@ export default function SigninForm() {
         </label>
         <Flex justifyContent="flex-end">
           <Flex flexGrow="1" justifyContent="flex-start">
-            <Flex justifyItems="center" gap="0.5rem">
+            <Flex align="center" gap="0.5rem">
               <Checkbox borderColor="blue.500" id="remember" />
               <Text fontSize="sm">Remember me?</Text>
             </Flex>
@@ -106,7 +104,7 @@ export default function SigninForm() {
             onClick={() =>
               setAuthModalState((prev) => ({
                 ...prev,
-                view: "passwordReset",
+                authModalView: "passwordReset",
               }))
             }
           >

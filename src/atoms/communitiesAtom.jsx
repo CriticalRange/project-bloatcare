@@ -5,6 +5,7 @@ export const communitiesAtom = atom({
   default: {
     communityId: "",
     isModerator: false,
+    isJoined: false,
     imageURL: "",
     userSnippets: [],
   },

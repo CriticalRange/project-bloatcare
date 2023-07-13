@@ -77,9 +77,7 @@ export default function SignupForm() {
         position: "bottom-left",
         isClosable: true,
       });
-    } catch (error) {
-      console.log("There was an error creating account. Please try again");
-    }
+    } catch (error) {}
   };
 
   const onFormInfoChange = (event) => {
@@ -241,9 +239,16 @@ export default function SignupForm() {
               h="12"
               borderRadius="0.375rem"
             />
-            <InputRightElement alignContent="center">
+            <InputRightElement
+              onClick={() => {
+                setShowPassword((prev) => ({
+                  ...prev,
+                  showPassword: !showPassword.showPassword,
+                }));
+              }}
+              alignContent="center"
+            >
               <IconButton
-                zIndex="999"
                 mt="6"
                 mr="2"
                 aria-label="show Password"
