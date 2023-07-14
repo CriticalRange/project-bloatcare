@@ -97,7 +97,11 @@ const CreateCommunityForm = () => {
     }
 
     // Validate the community name not taken
-    const communityDocRef = doc(firestore, "communities", communityName);
+    const communityDocRef = doc(
+      firestore,
+      "communities",
+      communityName.toLocaleLowerCase().split(" ").join("")
+    );
 
     await runTransaction(firestore, async (transaction) => {
       const communityDoc = await transaction.get(communityDocRef);
@@ -118,6 +122,7 @@ const CreateCommunityForm = () => {
       transaction.set(communityDocRef, {
         creatorId: user?.uid,
         createdAt: serverTimestamp(),
+        displayName: communityName,
         numberOfMembers: 1,
         privacyType: checkboxSelectedOption,
       });
@@ -126,7 +131,7 @@ const CreateCommunityForm = () => {
       transaction.set(
         doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
         {
-          communityId: communityName,
+          communityId: communityName.toLocaleLowerCase().split(" ").join(""),
           isModerator: true,
           isJoined: true,
         }

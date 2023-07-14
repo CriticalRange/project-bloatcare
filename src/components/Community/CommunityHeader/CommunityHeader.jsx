@@ -1,11 +1,14 @@
 "use client";
-import { Button, Flex, Heading } from "@chakra-ui/react";
+import { Button, Flex, Heading, SkeletonText } from "@chakra-ui/react";
 import CommunityImage from "./CommunityImage";
 import useCommunityData from "../../../hooks/useCommunityData";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../../atoms/authModalAtom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../../firebase/clientApp";
 
 const Header = () => {
+  const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
 
@@ -55,9 +58,13 @@ const Header = () => {
               isLoading={loading}
             >
               {communityData.isJoined ? (
-                <Heading fontSize="md">Joined</Heading>
+                <SkeletonText noOfLines={1}>
+                  <Heading fontSize="md">Joined</Heading>
+                </SkeletonText>
               ) : (
-                <Heading fontSize="md">Join</Heading>
+                <SkeletonText noOfLines={1}>
+                  <Heading fontSize="md">Join</Heading>
+                </SkeletonText>
               )}
             </Button>
           </Flex>

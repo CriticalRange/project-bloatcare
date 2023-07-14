@@ -10,13 +10,15 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { signOut } from "firebase/auth";
 import Link from "next/link";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { auth } from "../../../../../firebase/clientApp";
 import ProfileIcon from "./ProfileIcon";
+import { useResetRecoilState } from "recoil";
+import { communitiesAtom } from "../../../../../atoms/communitiesAtom";
 
 export default function NavbarProfile() {
+  const resetCommunityState = useResetRecoilState(communitiesAtom);
   const toast = useToast();
   const [user, userLoading, userError] = useAuthState(auth);
   const [signOut, signOutLoading, signOutError] = useSignOut(auth);
@@ -67,6 +69,7 @@ export default function NavbarProfile() {
             _dark={{ bg: "black", textColor: "white" }}
             onClick={async () => {
               await signOut();
+              resetCommunityState;
               toast({
                 title: "Successfully logged out!.",
                 description: "Logged out of your account.",

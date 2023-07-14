@@ -46,7 +46,7 @@ const Communities = () => {
                 if (snippet.isJoined === true) {
                   return (
                     <Flex key={snippet.communityId} direction="row">
-                      <Link href={`/communities/${snippet.communityId}`}>
+                      <Link href={`communities/${snippet.communityId}`}>
                         <Flex
                           w={{ base: "400px", md: "600px" }}
                           direction="row"

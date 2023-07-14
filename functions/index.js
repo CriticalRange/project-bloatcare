@@ -12,5 +12,5 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
     .doc(user.uid)
     .collection("communitySnippets")
     .doc("template")
-    .set({ template: true });
+    .set({ communityId: "template", isJoined: true, isModerator: false });
 });

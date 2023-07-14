@@ -8,33 +8,51 @@ import {
   doc,
   getDocs,
   runTransaction,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { authModalAtom } from "../atoms/authModalAtom";
 
 const useCommunityData = () => {
-  const [user] = useAuthState(auth);
+  const [user, userLoading, userError] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const getSnippets = async () => {
     // Get the required user snippet
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
+    // check if snippet exists
+    const existingSnippet = snippetDocs.docs.find(
+      (doc) => doc.id === communityData.communityId
+    );
+    if (!existingSnippet) {
+      const newSnippetRef = doc(
+        firestore,
+        `users/${user?.uid}/communitySnippets`,
+        communityData.communityId
+      );
+      await setDoc(newSnippetRef, {
+        communityId: communityData.communityId,
+        isJoined: false,
+        isModerator: false,
+      });
+    }
     // Print the snippet info to communityData atom
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
     setCommunityData((prev) => ({
       ...prev,
       userSnippets: snippets,
     }));
-    snippets.find(async (item) => {
-      await setCommunityData((prev) => ({
-        ...prev,
-        isJoined: item.isJoined,
-      }));
+    snippets.forEach(async (item) => {
+      if (item.communityId === communityData.communityId) {
+        await setCommunityData((prev) => ({
+          ...prev,
+          isJoined: item.isJoined,
+        }));
+      }
     });
   };
 
@@ -46,7 +64,6 @@ const useCommunityData = () => {
       }));
       return;
     }
-    getSnippets();
     if (!communityData.isJoined) {
       joinCommunity();
     } else {
@@ -63,27 +80,16 @@ const useCommunityData = () => {
     );
     await runTransaction(firestore, async (transaction) => {
       const joinedDoc = await transaction.get(joinedRef);
-      if (joinedDoc.exists()) {
-        transaction.update(joinedRef, {
-          isJoined: true,
-        });
-        setLoading(false);
-        setCommunityData((prev) => ({
-          ...prev,
-          isJoined: true,
-        }));
-        return;
-      }
       transaction.set(joinedRef, {
         communityId: communityData.communityId,
         isModerator: false,
         isJoined: true,
       });
-      setLoading(false);
       setCommunityData((prev) => ({
         ...prev,
         isJoined: true,
       }));
+      setLoading(false);
     });
   };
 
@@ -97,7 +103,7 @@ const useCommunityData = () => {
     await updateDoc(joinedRef, {
       isJoined: false,
     });
-    setCommunityData((prev) => ({
+    await setCommunityData((prev) => ({
       ...prev,
       isJoined: false,
     }));
@@ -105,7 +111,6 @@ const useCommunityData = () => {
   };
 
   useEffect(() => {
-    getSnippets();
     if (!user) {
       setCommunityData((prev) => ({
         ...prev,
@@ -113,6 +118,12 @@ const useCommunityData = () => {
       }));
       return;
     }
+    getSnippets();
+    setCommunityData((prev) => ({
+      ...prev,
+      isJoined: false,
+    }));
+    console.log(communityData.isJoined);
     if (communityData.isJoined === true) {
       setCommunityData((prev) => ({
         ...prev,
