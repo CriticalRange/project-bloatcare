@@ -2,6 +2,13 @@
 import { extendTheme } from "@chakra-ui/react";
 
 const themeConfig = {
+  styles: {
+    global: ({ colorMode }) => ({
+      body: {
+        bg: colorMode === "light" ? "#60a5fa" : "#1959a8",
+      },
+    }),
+  },
   config: {
     initialColorMode: "system",
     useSystemColorMode: false,
@@ -10,7 +17,9 @@ const themeConfig = {
     transparent: "transparent",
     black: "#000",
     white: "#fff",
+    softCyan: "#32daf0",
     brand: {
+      bg: "#6576c7",
       primary: "#1e40af",
       secondary: "#60a5fa",
     },

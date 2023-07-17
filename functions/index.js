@@ -8,4 +8,9 @@ exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
   db.collection("users")
     .doc(user.uid)
     .set(JSON.parse(JSON.stringify(user)));
+  db.collection("users")
+    .doc(user.uid)
+    .collection("communitySnippets")
+    .doc("template")
+    .set({ communityId: "template", isJoined: true, isModerator: false });
 });

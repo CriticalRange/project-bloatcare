@@ -1,20 +1,29 @@
+"use client";
 import { Button, Flex } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/atoms";
-import { auth } from "../../../firebase/clientApp";
-import NavbarProfile from "../Profile/NavbarProfile";
+import { authModalAtom } from "../../../../atoms/authModalAtom";
+import { auth } from "../../../../firebase/clientApp";
+import NavbarProfile from "./Profile/NavbarProfile";
 import LightSwitch from "./LightSwitch";
 import CommunityDropdown from "./CommunityDropdown";
+import { Suspense, useEffect, useState } from "react";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
+
+  const [userIsLoaded, setUserLoaded] = useState(false);
+
+  useEffect(() => {
+    setUserLoaded(true);
+  }, []);
+
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunityDropdown />
-      {user ? (
+      {userIsLoaded && user ? (
         <NavbarProfile />
       ) : (
         <Button
@@ -29,7 +38,10 @@ const RightContent = () => {
             textColor: "white",
           }}
           onClick={() =>
-            setAuthModalState({ openAuthModal: true, authModalView: "signin" })
+            setAuthModalState({
+              openAuthModal: true,
+              authModalView: "signin",
+            })
           }
         >
           Login

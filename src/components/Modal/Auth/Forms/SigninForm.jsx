@@ -12,7 +12,7 @@ import {
 import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../../atoms/atoms";
+import { authModalAtom } from "../../../../atoms/authModalAtom";
 import { auth, firestore } from "../../../../firebase/clientApp";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { FIREBASE_ERRORS } from "../../../../firebase/errors";
@@ -28,24 +28,23 @@ export default function SigninForm() {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
 
-  user
-    ? toast({
-        title: "Successfully logged in.",
-        description: "Logged in to your account.",
-        status: "success",
-        duration: 1600,
-        isClosable: true,
-        position: "bottom-left",
-      })
-    : null;
-
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
     // Process sign in
-    signInWithEmailAndPassword(loginForm.email, loginForm.password);
+    try {
+      await signInWithEmailAndPassword(loginForm.email, loginForm.password);
+      toast({
+        title: "Login success!",
+        description: "You successfully logged in to your account.",
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {}
   };
 
   const onFormInfoChange = (event) => {
@@ -96,31 +95,37 @@ export default function SigninForm() {
         </label>
         <Flex justifyContent="flex-end">
           <Flex flexGrow="1" justifyContent="flex-start">
-            <Flex justifyItems="center" gap="0.5rem">
+            <Flex align="center" gap="0.5rem">
               <Checkbox borderColor="blue.500" id="remember" />
               <Text fontSize="sm">Remember me?</Text>
             </Flex>
           </Flex>
-          <Text
+          <Button
             onClick={() =>
-              setAuthModalState((prev) => ({ ...prev, view: "resetPassword" }))
+              setAuthModalState((prev) => ({
+                ...prev,
+                authModalView: "passwordReset",
+              }))
             }
-            fontSize="0.875rem"
-            lineHeight="1.25rem"
-            display="block"
-            verticalAlign="top"
-            textDecorationLine="underline"
-            textColor="blue.500"
-            _dark={{
-              textColor: "blue.500",
-            }}
-            _hover={{
-              textDecorationLine: "none",
-            }}
-            cursor="pointer"
           >
-            Forgot Password?
-          </Text>
+            <Text
+              fontSize="0.875rem"
+              lineHeight="1.25rem"
+              display="block"
+              verticalAlign="top"
+              textDecorationLine="underline"
+              textColor="blue.500"
+              _dark={{
+                textColor: "blue.500",
+              }}
+              _hover={{
+                textDecorationLine: "none",
+              }}
+              cursor="pointer"
+            >
+              Forgot Password?
+            </Text>
+          </Button>
         </Flex>
         {error ? (
           <Alert status="error" borderRadius="xl" my="2">

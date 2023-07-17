@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/atoms";
+import { authModalAtom } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
@@ -58,7 +58,9 @@ export default function AuthModal() {
             ? "Sign in to BloatCare"
             : authModalState.authModalView === "signup"
             ? "Sign up"
-            : "Reset Password"}
+            : authModalState.authModalView === "passwordReset"
+            ? "Reset Password"
+            : null}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody key="signupModalBody">
@@ -66,9 +68,9 @@ export default function AuthModal() {
             <SigninForm />
           ) : authModalState.authModalView === "signup" ? (
             <SignupForm />
-          ) : (
+          ) : authModalState.authModalView === "passwordReset" ? (
             <ResetPasswordForm />
-          )}
+          ) : null}
           <Divider
             orientation="horizontal"
             width="56"

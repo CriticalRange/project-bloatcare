@@ -1,6 +1,6 @@
-"use client";
 // Modal pops up allows you to create community
 import {
+  Box,
   Button,
   Modal,
   ModalBody,
@@ -11,7 +11,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../../atoms/atoms";
+import { createCommunityModalAtom } from "../../../../atoms/createCommunityModalAtom";
 import CreateCommunityForm from "./Forms/CreateCommunityForm";
 
 const CreateCommunityModal = () => {
@@ -20,7 +20,7 @@ const CreateCommunityModal = () => {
   );
 
   return (
-    <>
+    <Box>
       <Modal
         size="3xl"
         isOpen={createCommunityModal.openCreateCommunityModal}
@@ -37,7 +37,7 @@ const CreateCommunityModal = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 

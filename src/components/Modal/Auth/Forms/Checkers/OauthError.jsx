@@ -1,6 +1,6 @@
 import { Collapse, Flex, Stack } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { oauthErrorAtom } from "../../../../../atoms/atoms";
+import { oauthErrorAtom } from "../../../../../atoms/oauthErrorAtom";
 
 const OauthError = () => {
   const [oauthError, setOauthError] = useRecoilState(oauthErrorAtom);

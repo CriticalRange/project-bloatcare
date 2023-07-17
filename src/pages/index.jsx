@@ -1,32 +1,25 @@
 "use client";
 //Main Page
-import { Box, Flex, Text } from "@chakra-ui/react";
-import Head from "next/head";
+import { Flex, Stack } from "@chakra-ui/react";
+import MainSorter from "../components/index/MainView/MainSorter";
+import MainCards from "../components/index/MainView/MainCards";
 
 export default function Home() {
   return (
-    <Flex bg="white" w="100%" _dark={{ bg: "black" }} direction="row">
-      <Head>
-        <title>BloatCare</title>
-      </Head>
-      <Box>
-        <Text
-          fontSize="6xl"
-          textColor="blue"
-          _dark={{ textColor: "brand.secondary" }}
-          fontWeight="bold"
-          p="0"
-          ml="10"
-        >
-          A website that has blogs in it
-        </Text>
-        <Text fontSize="4xl" textColor="brand.primary">
-          Some text
-        </Text>
-      </Box>
-    </Flex>
+    <div>
+      <Flex>
+        <Flex maxW={{ base: "100%", sm: "850px" }} mx="auto" h="auto" mt="3">
+          <Flex flex="1" direction="column">
+            <MainSorter />
+            <Stack spacing="3">
+              <MainCards />
+              <MainCards />
+              <MainCards />
+              <MainCards />
+            </Stack>
+          </Flex>
+        </Flex>
+      </Flex>
+    </div>
   );
 }
-
-// re-export the reusable `getServerSideProps` function
-export { getServerSideProps } from "../Chakra";
