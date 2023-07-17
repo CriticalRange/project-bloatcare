@@ -12,19 +12,20 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { authModalAtom } from "../atoms/authModalAtom";
+import { communityLoading } from "../atoms/communityLoading";
 
 const useCommunityData = () => {
   const [user, userLoading, userError] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useRecoilState(communityLoading);
 
   const getSnippets = async () => {
     // Get the required user snippet
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
-    // check if snippet exists
+    /* // check if snippet exists
     const existingSnippet = snippetDocs.docs.find(
       (doc) => doc.id === communityData.communityId
     );
@@ -39,8 +40,8 @@ const useCommunityData = () => {
         isJoined: false,
         isModerator: false,
       });
-    }
-    // Print the snippet info to communityData atom
+    } */
+    // Save the snippet info to communityData atom
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
     setCommunityData((prev) => ({
       ...prev,
@@ -111,6 +112,9 @@ const useCommunityData = () => {
   };
 
   useEffect(() => {
+    console.log(`useEffect working`);
+
+    setLoading(true);
     if (!user) {
       setCommunityData((prev) => ({
         ...prev,
@@ -123,7 +127,6 @@ const useCommunityData = () => {
       ...prev,
       isJoined: false,
     }));
-    console.log(communityData.isJoined);
     if (communityData.isJoined === true) {
       setCommunityData((prev) => ({
         ...prev,
@@ -135,6 +138,9 @@ const useCommunityData = () => {
         isJoined: false,
       }));
     }
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
   }, [user]);
 
   return {

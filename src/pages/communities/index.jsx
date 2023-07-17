@@ -15,9 +15,8 @@ import useCommunityData from "../../hooks/useCommunityData";
 import { LiaUsersCogSolid } from "react-icons/lia";
 
 const Communities = () => {
-  const [user, userLoading, userError] = useAuthState(auth);
-  const { communityData, onJoinOrLeaveCommunity, isJoined, loading } =
-    useCommunityData();
+  const [user] = useAuthState(auth);
+  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
 
   return (
     <Flex
@@ -42,44 +41,46 @@ const Communities = () => {
             }
           >
             {user ? (
-              communityData.userSnippets.map((snippet) => {
-                if (snippet.isJoined === true) {
-                  return (
-                    <Flex key={snippet.communityId} direction="row">
-                      <Link href={`communities/${snippet.communityId}`}>
-                        <Flex
-                          w={{ base: "400px", md: "600px" }}
-                          direction="row"
-                          align="center"
-                        >
-                          <Box mr="6">
-                            <CommunityImage />
-                          </Box>
-                          <Text
-                            maxW="340px"
-                            textOverflow="ellipsis"
-                            noOfLines={1}
-                            fontSize="3xl"
+              communityData.userSnippets.some(
+                (snippet) => snippet.isJoined === true
+              ) ? (
+                communityData.userSnippets.map((snippet) => {
+                  if (snippet.isJoined === true) {
+                    return (
+                      <Flex key={snippet.communityId} direction="row">
+                        <a href={`communities/${snippet.communityId}`}>
+                          <Flex
+                            w={{ base: "400px", md: "600px" }}
+                            direction="row"
+                            align="center"
                           >
-                            {snippet.communityId}
-                          </Text>
-                          <Flex flex="1" justify="flex-end">
-                            {snippet.isModerator === true ? (
-                              <Icon as={LiaUsersCogSolid} />
-                            ) : null}
+                            <Box mr="6">
+                              <CommunityImage />
+                            </Box>
+                            <Text
+                              maxW="340px"
+                              textOverflow="ellipsis"
+                              noOfLines={1}
+                              fontSize="3xl"
+                            >
+                              {snippet.communityId}
+                            </Text>
+                            <Flex flex="1" justify="flex-end">
+                              {snippet.isModerator === true ? (
+                                <Icon as={LiaUsersCogSolid} />
+                              ) : null}
+                            </Flex>
                           </Flex>
-                        </Flex>
-                      </Link>
-                    </Flex>
-                  );
-                } else {
-                  return (
-                    <Flex key="isJoinedFalse">
-                      You haven&apos;t joined any communities
-                    </Flex>
-                  );
-                }
-              })
+                        </a>
+                      </Flex>
+                    );
+                  } else {
+                    return null;
+                  }
+                })
+              ) : (
+                <Flex>You haven&apos;t joined any communities</Flex>
+              )
             ) : (
               <Flex>You are not logged in</Flex>
             )}

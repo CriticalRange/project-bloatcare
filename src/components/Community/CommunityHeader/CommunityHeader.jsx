@@ -58,13 +58,9 @@ const Header = () => {
               isLoading={loading}
             >
               {communityData.isJoined ? (
-                <SkeletonText noOfLines={1}>
-                  <Heading fontSize="md">Joined</Heading>
-                </SkeletonText>
+                <Heading fontSize="md">Joined</Heading>
               ) : (
-                <SkeletonText noOfLines={1}>
-                  <Heading fontSize="md">Join</Heading>
-                </SkeletonText>
+                <Heading fontSize="md">Join</Heading>
               )}
             </Button>
           </Flex>
