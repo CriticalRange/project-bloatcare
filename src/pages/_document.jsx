@@ -11,6 +11,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link rel="shortcut icon" href="/favicon.ico" />
+        <meta charSet="utf-8" />
         <meta
           name="description"
           content="Learn how to build a personal website using Next.js"

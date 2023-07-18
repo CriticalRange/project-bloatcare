@@ -10,6 +10,16 @@ function OAuthButtons() {
 
   const handleGoogleSignin = async () => {
     await signInWithGoogle();
+    !googleError
+      ? toast({
+          title: "Signed in with Google!",
+          description: "Successfully signed in with Google.",
+          status: "success",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        })
+      : null;
   };
 
   return (

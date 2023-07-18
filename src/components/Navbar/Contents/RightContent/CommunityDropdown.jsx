@@ -59,6 +59,7 @@ const CommunityDropdown = () => {
                       "You are not allowed to create communities unless you log in",
                     status: "error",
                     duration: 2500,
+                    position: "bottom-left",
                     isClosable: true,
                   });
                 }

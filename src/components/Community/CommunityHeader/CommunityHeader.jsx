@@ -23,13 +23,19 @@ const Header = () => {
         h="160px"
       >
         <Flex flex="1" alignContent="center">
-          <Flex mt="10" direction="row" justify="flex-start" ml="10">
+          <Flex mt="10" direction="row" justify="flex-start" ml="8">
             <CommunityImage />
-            <Flex direction="column">
+            <Flex
+              display={{ base: "none", sm: "block" }}
+              direction="column"
+              mt="2"
+            >
               <Heading
-                ml="4"
+                fontSize="xl"
+                ml="2"
                 maxW={{ base: "200px", md: "400px", lg: "none" }}
-                noOfLines={1}
+                noOfLines={2}
+                textOverflow="ellipsis"
               >
                 {communityData.communityId}
               </Heading>
@@ -38,7 +44,7 @@ const Header = () => {
                 noOfLines={1}
                 fontSize="xs"
                 fontWeight="thin"
-                ml="6"
+                ml="3"
                 mt="1"
               >
                 {communityData.communityId}

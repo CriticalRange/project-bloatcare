@@ -24,7 +24,7 @@ export default function NavbarProfile() {
   const [signOut, signOutLoading, signOutError] = useSignOut(auth);
 
   return (
-    <Flex>
+    <Flex mr="2">
       <Menu>
         <MenuButton
           as={Button}

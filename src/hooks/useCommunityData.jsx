@@ -26,21 +26,12 @@ const useCommunityData = () => {
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
     /* // check if snippet exists
-    const existingSnippet = snippetDocs.docs.find(
-      (doc) => doc.id === communityData.communityId
-    );
-    if (!existingSnippet) {
-      const newSnippetRef = doc(
-        firestore,
-        `users/${user?.uid}/communitySnippets`,
-        communityData.communityId
-      );
-      await setDoc(newSnippetRef, {
-        communityId: communityData.communityId,
-        isJoined: false,
-        isModerator: false,
-      });
-    } */
+    await snippetDocs.docs.find(async (doc) => {
+      if (doc.id !== communityData.communityId) {
+        console.log("Found: ", doc.id, doc.exists());
+        await setDoc(doc.id, `${doc.data()}`);
+      }
+    }); */
     // Save the snippet info to communityData atom
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
     setCommunityData((prev) => ({
