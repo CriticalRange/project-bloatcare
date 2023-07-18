@@ -6,19 +6,29 @@ Second, this is my first proper next.js project.
 
 ## Want to help develop this?
 
-First, run the development server:
+First, download the dependencies:
 
 ```bash
-npm run dev
+# node:
+npm install
 # or if you like microsoft:
+yarn install
+```
+
+Then run the development server:
+
+```bash
+# with node:
+npm run dev
+# or yarn:
 yarn dev
 # or if you use pnpm:
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) (if you didn't change the port) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) (if you didn't change the port) within your browser to see the result.
 
-You can start editing the pages. The page auto-updates as you edit the file.
+You can start editing the pages. The page auto-updates as you edit the file thanks to hot-reload feature.
 
 ## Learn More
 
