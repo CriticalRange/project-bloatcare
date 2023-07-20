@@ -53,6 +53,7 @@ const NewPostsForm = () => {
         title: newPostFormInfo.title,
         description: newPostFormInfo.description,
         numberOfComments: 0,
+        numberOfLikes: 0,
         createdAt: serverTimestamp(),
       });
       // Check if a file is selected

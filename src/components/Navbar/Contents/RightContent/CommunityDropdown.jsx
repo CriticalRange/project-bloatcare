@@ -13,9 +13,26 @@ import { createCommunityModalAtom } from "../../../../atoms/createCommunityModal
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../../firebase/clientApp";
 import { authModalAtom } from "../../../../atoms/authModalAtom";
+import { useRouter } from "next/router";
+import useCommunityData from "../../../../hooks/useCommunityData";
 
 const CommunityDropdown = () => {
+  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
   const toast = useToast();
+  const router = useRouter();
+
+  const redirectToNewPostPage = () => {
+    const currentUrl = router.pathname;
+    if (currentUrl !== "/communities/[communityId]") {
+      console.log("Please make a decent posts selection page");
+      // Make a decent posts selection page later
+      return;
+    }
+    const { communityId } = router.query;
+
+    const postsUrl = `/communities/${communityData.communityId}/new`;
+    router.push(postsUrl);
+  };
 
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [createCommunityModal, setCreateCommunityModal] = useRecoilState(
@@ -37,6 +54,7 @@ const CommunityDropdown = () => {
             bg="white"
             textColor="black"
             _dark={{ bg: "black", textColor: "white" }}
+            onClick={redirectToNewPostPage}
           >
             Create Post
           </MenuItem>

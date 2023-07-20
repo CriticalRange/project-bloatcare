@@ -6,27 +6,121 @@ import {
   Heading,
   CardBody,
   Image,
+  CardHeader,
+  CardFooter,
+  Avatar,
+  IconButton,
+  Box,
+  Button,
 } from "@chakra-ui/react";
+import moment from "moment/moment";
+import { BiCommentDots } from "react-icons/bi";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { MdOutlineThumbsUpDown } from "react-icons/md";
 
-const CommunityCards = () => {
+const CommunityCards = ({
+  id,
+  communityId,
+  communityImageUrl,
+  creatorId,
+  creatorDisplayName,
+  title,
+  description,
+  numberOfComments,
+  numberOfLikes,
+  imageURL,
+  createdAt,
+}) => {
   return (
-    <Flex mx="8">
-      <Card size="md" bg="white" _dark={{ bg: "black" }}>
+    <Flex mx="8" mt="2" mb="3">
+      <Card
+        w="full"
+        cursor="pointer"
+        bg="white"
+        _dark={{ bg: "black" }}
+        border="4px solid gray"
+      >
+        <CardHeader>
+          <Flex
+            direction="row"
+            flex="1"
+            gap={2}
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Avatar name={creatorDisplayName} src="" />
+            <Flex direction="column">
+              <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
+                {title}
+              </Text>
+              <Text size="sm">
+                By {creatorDisplayName}
+                {" • "}
+                {moment(new Date(createdAt.seconds * 1000)).fromNow()}
+              </Text>
+            </Flex>
+            <Flex flex="1" direction="row" justify="flex-end">
+              <IconButton
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="See menu"
+                icon={<BsThreeDotsVertical />}
+              />
+            </Flex>
+          </Flex>
+        </CardHeader>
         <CardBody>
-          <Heading color="black" _dark={{ color: "white" }}>
-            Post title
-          </Heading>
+          <Text>{description}</Text>
           <Image
+            maxH="100%"
+            maxW="100%"
+            display={imageURL ? "block" : "none"}
             mt="2"
             mb="4"
             borderRadius="13"
-            src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-            alt="Green double couch with wooden legs"
+            src={imageURL ? imageURL : ""}
+            alt={title}
           />
-          <Stack spacing="3">
-            <Text>Post description that will not overflow, or will it?</Text>
-          </Stack>
         </CardBody>
+        <CardFooter>
+          <Flex w="full" justify="space-around" direction="row" align="center">
+            <Flex align="inherit" cursor="pointer">
+              <Button
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="Likes & Dislikes"
+                leftIcon={<MdOutlineThumbsUpDown />}
+              >
+                {" "}
+                • <Text ml="3">{numberOfLikes}</Text>
+              </Button>
+            </Flex>
+            <Flex align="inherit" direction="row" cursor="pointer">
+              <Button
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="Comments"
+                leftIcon={<BiCommentDots />}
+              >
+                {" "}
+                • <Text ml="3">{numberOfComments}</Text>
+              </Button>
+            </Flex>
+            <Flex
+              align="inherit"
+              direction="row"
+              justify="center"
+              cursor="pointer"
+            >
+              <IconButton
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="See menu"
+                icon={<BsThreeDotsVertical />}
+              ></IconButton>
+            </Flex>
+          </Flex>
+        </CardFooter>
       </Card>
     </Flex>
   );

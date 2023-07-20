@@ -103,9 +103,6 @@ const useCommunityData = () => {
   };
 
   useEffect(() => {
-    console.log(`useEffect working`);
-
-    setLoading(true);
     if (!user) {
       setCommunityData((prev) => ({
         ...prev,
@@ -113,6 +110,7 @@ const useCommunityData = () => {
       }));
       return;
     }
+    setLoading(true);
     getSnippets();
     setCommunityData((prev) => ({
       ...prev,
