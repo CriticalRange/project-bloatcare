@@ -12,25 +12,32 @@ import {
   IconButton,
   Box,
   Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
 import moment from "moment/moment";
 import { BiCommentDots } from "react-icons/bi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdOutlineThumbsUpDown } from "react-icons/md";
+import usePosts from "../../../hooks/usePosts";
+import { useState } from "react";
 
-const CommunityCards = ({
-  id,
-  communityId,
-  communityImageUrl,
-  creatorId,
-  creatorDisplayName,
-  title,
-  description,
-  numberOfComments,
-  numberOfLikes,
-  imageURL,
-  createdAt,
-}) => {
+const CommunityCards = ({ post }) => {
+  const { postState, setPostState, onSelectPost, onDeletePost } = usePosts();
+  const [error, setError] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      const success = await onDeletePost(post);
+      if (!success) {
+        throw new Error("There was an error while deleting the post");
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   return (
     <Flex mx="8" mt="2" mb="3">
       <Card
@@ -48,15 +55,15 @@ const CommunityCards = ({
             alignItems="center"
             flexWrap="wrap"
           >
-            <Avatar name={creatorDisplayName} src="" />
+            <Avatar name={post.creatorDisplayName} src="" />
             <Flex direction="column">
               <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
-                {title}
+                {post.title}
               </Text>
               <Text size="sm">
-                By {creatorDisplayName}
+                By {post.creatorDisplayName}
                 {" • "}
-                {moment(new Date(createdAt.seconds * 1000)).fromNow()}
+                {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
               </Text>
             </Flex>
             <Flex flex="1" direction="row" justify="flex-end">
@@ -70,16 +77,16 @@ const CommunityCards = ({
           </Flex>
         </CardHeader>
         <CardBody>
-          <Text>{description}</Text>
+          <Text>{post.description}</Text>
           <Image
             maxH="100%"
             maxW="100%"
-            display={imageURL ? "block" : "none"}
+            display={post.imageURL ? "block" : "none"}
             mt="2"
             mb="4"
             borderRadius="13"
-            src={imageURL ? imageURL : ""}
-            alt={title}
+            src={post.imageURL ? post.imageURL : ""}
+            alt={post.title}
           />
         </CardBody>
         <CardFooter>
@@ -92,7 +99,7 @@ const CommunityCards = ({
                 leftIcon={<MdOutlineThumbsUpDown />}
               >
                 {" "}
-                • <Text ml="3">{numberOfLikes}</Text>
+                • <Text ml="3">{post.numberOfLikes}</Text>
               </Button>
             </Flex>
             <Flex align="inherit" direction="row" cursor="pointer">
@@ -103,7 +110,7 @@ const CommunityCards = ({
                 leftIcon={<BiCommentDots />}
               >
                 {" "}
-                • <Text ml="3">{numberOfComments}</Text>
+                • <Text ml="3">{post.numberOfComments}</Text>
               </Button>
             </Flex>
             <Flex
@@ -112,12 +119,22 @@ const CommunityCards = ({
               justify="center"
               cursor="pointer"
             >
-              <IconButton
-                variant="ghost"
-                colorScheme="gray"
-                aria-label="See menu"
-                icon={<BsThreeDotsVertical />}
-              ></IconButton>
+              <Menu flip>
+                <MenuButton
+                  as={IconButton}
+                  variant="ghost"
+                  colorScheme="gray"
+                  aria-label="See menu"
+                  icon={<BsThreeDotsVertical />}
+                ></MenuButton>
+                <MenuList
+                  onClick={() => handleDelete()}
+                  border="1px solid gray"
+                  bg="#a60a0a"
+                >
+                  <MenuItem bg="#a60a0a">Delete</MenuItem>
+                </MenuList>
+              </Menu>
             </Flex>
           </Flex>
         </CardFooter>
