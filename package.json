@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.2.0",
+    "@auth0/nextjs-auth0": "^3.0.0",
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.1",
@@ -17,14 +19,17 @@
     "@rpldy/upload-button": "^1.4.1",
     "@rpldy/upload-preview": "^1.4.1",
     "@rpldy/uploady": "^1.4.1",
+    "axios": "^1.4.0",
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
     "firebase": "^9.23.0",
     "firebase-admin": "^11.9.0",
-    "framer-motion": "^10.12.17",
+    "framer-motion": "^10.13.0",
     "moment": "^2.29.4",
     "next": "^13.4.9",
+    "next-auth": "^4.22.3",
     "next-themes": "^0.2.1",
+    "qs": "^6.11.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-firebase-hooks": "^5.1.1",
@@ -35,6 +40,7 @@
     "styled-components": "^6.0.4"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.0.1",
     "@types/react": "^18.2.14"
   }
 }

@@ -9,31 +9,32 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { postsState } from "../../../atoms/postsAtom";
+import { postsLoadingAtom, postsState } from "../../../atoms/postsAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import useCommunityData from "../../../hooks/useCommunityData";
 import CommunityCards from "../CommunityBody/CommunityCards";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useRouter } from "next/router";
+import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
+import { motion } from "framer-motion";
 
 const Posts = () => {
   const router = useRouter();
   const { communityId } = router.query;
-  const [loading, setLoading] = useState(false);
+  const [postsLoading, setPostsLoading] = useRecoilState(postsLoadingAtom);
   const [user] = useAuthState(auth);
   const { communityData, onJoinOrLeaveCommunity, communityLoading } =
     useCommunityData();
   const [postState, setPostState] = useRecoilState(postsState); // All the post info will be here
   const [startAfterDoc, setStartAfterDoc] = useState(null); // State to keep track of the last fetched document
 
-  const batchSize = 10; // Number of posts to fetch in each batch
-
   const getPosts = async () => {
-    setLoading(true);
-
+    const batchSize = 10; // Number of posts to fetch in each batch
+    console.log("Setting posts loading state");
+    setPostsLoading({ postsLoading: true, postsLoadingMore: true });
     const postQuery = startAfterDoc
       ? query(
           collection(firestore, "posts"),
@@ -48,11 +49,11 @@ const Posts = () => {
           orderBy("createdAt", "desc"),
           limit(batchSize) // Limit the number of posts fetched per batch
         );
-
+    console.log("Getting docs");
     const postDocs = await getDocs(postQuery);
-
+    console.log("If empty, setting posts loading states");
     if (postDocs.empty) {
-      setLoading(false);
+      setPostsLoading({ postsLoading: false, postsLoadingMore: false });
       return;
     }
 
@@ -60,42 +61,57 @@ const Posts = () => {
       id: doc.id,
       ...doc.data(),
     }));
-    console.log("New posts: ", newPosts);
+    const filteredPosts = newPosts.filter(
+      (post) =>
+        !postState.posts?.some((existingPost) => existingPost.id === post.id)
+    );
+    console.log("Setting posts loading state 2nd");
     await setPostState((prev) => ({
       ...prev,
-      posts: startAfterDoc ? [...prev.posts, ...newPosts] : newPosts,
+      posts: startAfterDoc ? [...prev.posts, ...filteredPosts] : filteredPosts,
     }));
     setStartAfterDoc(postDocs.docs[postDocs.docs.length - 1]);
-    setLoading(false);
-    console.log("PostState's posts: ", postState.posts);
+    console.log("Finishing up");
+    setPostsLoading({ postsLoading: false, postsLoadingMore: true });
   };
 
   useEffect(() => {
+    getPosts();
+    setStartAfterDoc(null);
     if (!user) {
       return;
     }
-    setStartAfterDoc(null);
-    console.log("Get posts executes");
-    getPosts();
-  }, [user, communityData.communityId]);
+  }, [communityData.communityId]);
   return (
-    <Box my="3" h={loading ? "1000px" : "inherit"} w="inherit">
+    <Box my="3" h={postsLoading ? "1000px" : "inherit"} w="inherit">
       <InfiniteScroll
         dataLength={postState.posts ? postState.posts.length : 0} //This is important field to render the next data
         next={getPosts}
-        hasMore={postState.posts?.length % batchSize === 0 && !loading}
+        hasMore={postsLoading.postsLoadingMore}
         loader={
           postState.posts ? (
             postState.posts.length !== 0 ? (
-              <Center p="5">
-                <Spinner />
-              </Center>
+              <Flex
+                direction="column"
+                mx="8"
+                mt="2"
+                mb="3"
+                as={motion.div}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+              >
+                <CommunityLoadingCard />
+                <Center p="5">
+                  <Spinner />
+                </Center>
+              </Flex>
             ) : null
           ) : null
         }
         endMessage={
           postState.posts ? (
-            postState.posts.length !== 0 && !loading ? (
+            postState.posts.length !== 0 && !postsLoading.postsLoading ? (
               <Center my="10">
                 <Text>Yay! You have seen it all</Text>
               </Center>
@@ -119,8 +135,9 @@ const Posts = () => {
           ) : (
             postState.posts.map((post) => {
               if (post.communityId === communityData.communityId) {
-                console.log(post.id);
-                return <CommunityCards key={post.id} post={post} />;
+                // Generate a unique key for each post using post.id and communityData.communityId
+                const uniqueKey = `${post.id}-${communityData.communityId}`;
+                return <CommunityCards key={uniqueKey} post={post} />;
               }
             })
           )

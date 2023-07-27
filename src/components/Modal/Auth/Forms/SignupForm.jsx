@@ -4,10 +4,12 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
+  Center,
   Flex,
   IconButton,
   Input,
   InputGroup,
+  InputRightAddon,
   InputRightElement,
   Text,
   useToast,
@@ -29,6 +31,7 @@ export default function SignupForm() {
   const toast = useToast();
 
   // UseState hooks (will only use here so didn't make an atom for it)
+  const [remainingChars, setRemainingChars] = useState(21);
   const [signupForm, setSignupForm] = useState({
     username: "",
     email: "",
@@ -82,6 +85,18 @@ export default function SignupForm() {
 
   const onFormInfoChange = (event) => {
     const { name, value } = event.target;
+    if (name === "username") {
+      const truncatedValue = value.slice(0, 21);
+      console.log("Truncated: ", truncatedValue);
+      console.log("Value length: ", value.length);
+      if (remainingChars <= 0) {
+        setSignupForm((prev) => ({
+          ...prev,
+          username: truncatedValue,
+        }));
+      }
+      setRemainingChars(21 - truncatedValue.length);
+    }
     if (name === "password") {
       passwordValidateRegex.forEach((regex, i) => {
         const regexTestResult = new RegExp(regex).test(value);
@@ -171,23 +186,28 @@ export default function SignupForm() {
       <form onSubmit={handleSignup} className="form" key="loginForm">
         <label key="usernameLabel">
           <h4>Username</h4>
-          <Input
-            my="2"
-            name="username"
-            onKeyDown={(event) => {
-              if (event.code === "Space") event.preventDefault();
-            }}
-            key="username"
-            onChange={onFormInfoChange}
-            required
-            type="username"
-            placeholder="Username"
-            overflowY="hidden"
-            display="block"
-            w="full"
-            h="12"
-            borderRadius="0.375rem"
-          ></Input>
+          <InputGroup>
+            <Input
+              my="2"
+              name="username"
+              onKeyDown={(event) => {
+                if (event.code === "Space") event.preventDefault();
+              }}
+              key="username"
+              onChange={onFormInfoChange}
+              required
+              type="username"
+              placeholder="Username"
+              overflowY="hidden"
+              display="block"
+              w="full"
+              h="12"
+              borderRadius="0.375rem"
+            />
+            <InputRightElement my="3" mr="1">
+              <Text>{remainingChars}</Text>
+            </InputRightElement>
+          </InputGroup>
           <Text>Pick something eligible :D</Text>{" "}
           {/* Make a username checker when firestore initializes */}
         </label>

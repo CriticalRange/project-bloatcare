@@ -20,7 +20,7 @@ import { auth } from "../../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
 import SignupForm from "./Forms/SignupForm";
-import OAuthButtons from "./OAuthButtons";
+import OAuthButtons from "./Oauth/OAuthButtons";
 
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);

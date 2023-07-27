@@ -25,15 +25,9 @@ const useCommunityData = () => {
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
-    /* // check if snippet exists
-    await snippetDocs.docs.find(async (doc) => {
-      if (doc.id !== communityData.communityId) {
-        console.log("Found: ", doc.id, doc.exists());
-        await setDoc(doc.id, `${doc.data()}`);
-      }
-    }); */
-    // Save the snippet info to communityData atom
+    // check if snippet exists
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
+    // Save the snippet info to communityData atom
     setCommunityData((prev) => ({
       ...prev,
       userSnippets: snippets,

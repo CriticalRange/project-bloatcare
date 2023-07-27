@@ -29,3 +29,11 @@ export const postsState = atom({
     posts: null,
   },
 });
+
+export const postsLoadingAtom = atom({
+  key: "postsLoadingAtom",
+  default: {
+    postsLoading: false,
+    postsLoadingMore: false,
+  },
+});

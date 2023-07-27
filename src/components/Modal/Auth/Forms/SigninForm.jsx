@@ -10,6 +10,7 @@ import {
   Flex,
   chakra,
 } from "@chakra-ui/react";
+import { motion, isValidMotionProp } from "framer-motion";
 import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";

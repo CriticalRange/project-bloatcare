@@ -28,7 +28,6 @@ const CommunityDropdown = () => {
       // Make a decent posts selection page later
       return;
     }
-    const { communityId } = router.query;
 
     const postsUrl = `/communities/${communityData.communityId}/new`;
     router.push(postsUrl);

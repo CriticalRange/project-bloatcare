@@ -1,12 +1,12 @@
-import { auth } from "firebase-functions";
-import * as functions from "firebase-functions";
-import admin from "firebase-admin";
-import axios from "axios";
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const axios = require("axios").default;
 
 admin.initializeApp();
+
 const db = admin.firestore();
 
-export const applyDummyImage = functions.firestore
+exports.applyDummyImage = functions.firestore
   .document("posts/{postId}")
   .onCreate(async (snapshot, context) => {
     const postData = snapshot.data();
@@ -38,7 +38,7 @@ export const applyDummyImage = functions.firestore
     return null;
   });
 
-export const createUserDocument = auth.user().onCreate(async (user) => {
+exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
   db.collection("users")
     .doc(user.uid)
     .set(JSON.parse(JSON.stringify(user)));

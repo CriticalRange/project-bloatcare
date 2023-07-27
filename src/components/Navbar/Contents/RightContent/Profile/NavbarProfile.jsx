@@ -69,6 +69,7 @@ export default function NavbarProfile() {
             _dark={{ bg: "black", textColor: "white" }}
             onClick={async () => {
               await signOut();
+              document.cookie = "";
               resetCommunityState;
               toast({
                 title: "Successfully logged out!.",
