@@ -8,7 +8,10 @@ const Layout = ({ children }) => {
   const router = useRouter();
   return (
     <>
-      {router.pathname !== "/auth/discord" ? <Navbar /> : null}
+      {router.pathname === "/auth/discord" ? null : router.pathname ===
+        "/auth/twitch" ? null : (
+        <Navbar />
+      )}
       <CreateCommunityModal />
       <AuthModal />
       <main>{children}</main>

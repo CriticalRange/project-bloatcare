@@ -45,12 +45,15 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { discordButtonLoading } from "../../../../atoms/discordButtonLoading";
 import YahooSvg from "./Icons/YahooSvg";
+import TwitchSvg from "./Icons/TwitchSvg";
+import { twitchButtonLoading } from "../../../../atoms/twitchButtonLoading";
 
 function OAuthButtons() {
   const toast = useToast();
   const router = useRouter();
   const [discordLoading, setDiscordLoading] =
     useRecoilState(discordButtonLoading);
+  const [twitchLoading, setTwitchLoading] = useRecoilState(twitchButtonLoading);
 
   const [signInWithGoogle, googleUser, googleLoading, googleError] =
     useSignInWithGoogle(auth);
@@ -97,6 +100,12 @@ function OAuthButtons() {
     path: <YahooSvg />,
   });
 
+  const TwitchIcon = createIcon({
+    displayName: "TwitchIcon",
+    viewBox: "0 0 24 24",
+    path: <TwitchSvg />,
+  });
+
   // Handle mechanisms
   const handleGoogleSignin = async () => {
     await signInWithGoogle();
@@ -134,6 +143,32 @@ function OAuthButtons() {
         if (popupWindow.closed) {
           console.log("Discord popup closed.");
           setDiscordLoading(false);
+          // Clear the interval once the popup is closed
+          window.clearInterval(interval);
+        }
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleTwitchSignin = async () => {
+    try {
+      console.log("Handle twitch sign in started.");
+      setTwitchLoading(true);
+      const twitchAuthUrl =
+        "https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=g76y1y24qtcenhbrkb0m6b5usr79zb&redirect_uri=http://localhost:3000/auth/twitch&scope=user%3Aread%3Aemail&force_verify=true";
+      const width = 600; // Popup pencerenin genişliği
+      const height = 600; // Popup pencerenin yüksekliği
+      const left = window.innerWidth / 2 - width / 2;
+      const top = window.innerHeight / 2 - height / 2;
+      const options = `width=${width}, height=${height}, top=${top}, left=${left}`;
+      const popupWindow = window.open(twitchAuthUrl, "_blank", options);
+
+      // Check if the popup is closed every 500ms
+      const interval = window.setInterval(() => {
+        if (popupWindow.closed) {
+          console.log("Twitch popup closed.");
+          setTwitchLoading(false);
           // Clear the interval once the popup is closed
           window.clearInterval(interval);
         }
@@ -299,6 +334,15 @@ function OAuthButtons() {
             onClick={handleFacebookSignin}
             aria-label="Sign in with Facebook"
             icon={<BsFacebook size={36} color="#1877f2" />}
+          ></IconButton>
+        </Box>
+        {" • "}
+        <Box>
+          <IconButton
+            isLoading={twitchLoading}
+            onClick={handleTwitchSignin}
+            aria-label="Sign in with Twitch"
+            icon={<TwitchIcon w="10" h="10" fill="#a970ff" />}
           ></IconButton>
         </Box>
       </Flex>

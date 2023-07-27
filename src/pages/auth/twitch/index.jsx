@@ -1,30 +1,22 @@
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { twitchButtonLoading } from "../../../atoms/twitchButtonLoading";
+import axios from "axios";
+import { auth } from "../../../firebase/clientApp";
 import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../../../firebase/clientApp";
-import { useRecoilState } from "recoil";
-import { discordButtonLoading } from "../../../atoms/discordButtonLoading";
 
-const DiscordAuth = () => {
+const TwitchAuth = () => {
   const router = useRouter();
-  const [discordOauthPassword, setDiscordOauthPassword] = useState({
-    discordOauthPassword: "",
-    discordOauthPasswordAgain: "",
+  const [twitchOauthPassword, setTwitchOauthPassword] = useState({
+    twitchOauthPassword: "",
+    twitchOauthPasswordAgain: "",
   });
   const [accountCreatedBefore, setAccountCreatedBefore] = useState(false);
   const [userDataState, setUserDataState] = useState({
@@ -35,25 +27,28 @@ const DiscordAuth = () => {
   const [authHandlerLoading, setAuthHandlerLoading] = useState(false);
 
   const code = router.query.code;
-  const discordTokenURL = "https://discord.com/api/oauth2/token"; // Endpoint to get the access token
-  const discordUserURL = "https://discord.com/api/users/@me"; // Endpoint to get the user data
-  const redirectUri = "http://localhost:3000/auth/discord";
+  const twitchTokenURL = "https://id.twitch.tv/oauth2/token";
+  const twitchUserURL = "https://api.twitch.tv/helix/users";
+  const redirectUri = "http://localhost:3000/auth/twitch";
 
   useEffect(() => {
-    DiscordOauthHandler();
+    TwitchOauthHandler();
   }, [code]);
 
-  const DiscordOauthHandler = async () => {
+  useEffect(() => {
+    console.log(accountCreatedBefore);
+  }, [accountCreatedBefore]);
+
+  const TwitchOauthHandler = async () => {
     try {
       const tokenResponse = await axios.post(
-        discordTokenURL,
+        twitchTokenURL,
         {
-          client_id: "1133179039176208496",
-          client_secret: "sSOGG8jhve0q2dxpUjgReJor_BvpCs3f",
+          client_id: "g76y1y24qtcenhbrkb0m6b5usr79zb",
+          client_secret: "pzvlyyei0y2ymhwn70l2amsf4lkap3",
+          code: code,
           grant_type: "authorization_code",
           redirect_uri: redirectUri,
-          scope: "identify%20email",
-          code: code,
         },
         {
           headers: {
@@ -64,21 +59,23 @@ const DiscordAuth = () => {
       const accessToken = tokenResponse.data.access_token;
       console.log(accessToken);
 
-      const userResponse = await axios.get(discordUserURL, {
+      const userInfoResponse = await axios.get(twitchUserURL, {
         headers: {
+          "Client-Id": "g76y1y24qtcenhbrkb0m6b5usr79zb",
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      const userData = userResponse.data;
-      console.log("User Data: ", userData);
-      await fetchSignInMethodsForEmail(
-        auth,
-        `discord.${userResponse.data.email}`
-      )
+      const userData = userInfoResponse.data.data[0];
+      console.log("User data: ", userData.email);
+      await fetchSignInMethodsForEmail(auth, `twitch.${userData.email}`)
         .then(async (signInMethods) => {
           if (signInMethods.length === 0) {
             setAccountCreatedBefore(false);
-            console.log("Not signed in yet, ", signInMethods);
+            console.log(
+              "Not signed in yet, ",
+              accountCreatedBefore,
+              signInMethods
+            );
           } else {
             setAccountCreatedBefore(true);
           }
@@ -88,31 +85,31 @@ const DiscordAuth = () => {
         });
       setUserDataState({
         email: userData.email,
-        avatarUrl: `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`,
-        displayName: userData.global_name,
+        avatarUrl: `${userData.profile_image_url}`,
+        displayName: userData.display_name,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onDiscordOauthPasswordChange = (event) => {
+  const onTwitchOauthPasswordChange = (event) => {
     const { name, value } = event.target;
-    setDiscordOauthPassword((prev) => ({
+    setTwitchOauthPassword((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleDiscordFirebaseAuth = async (event) => {
+  const handleTwitchFirebaseAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
     console.log(userDataState);
     if (
-      discordOauthPassword.discordOauthPassword !==
-        discordOauthPassword.discordOauthPasswordAgain ||
-      discordOauthPassword.discordOauthPassword === "" ||
-      discordOauthPassword.discordOauthPasswordAgain === ""
+      twitchOauthPassword.twitchOauthPassword !==
+        twitchOauthPassword.twitchOauthPasswordAgain ||
+      twitchOauthPassword.twitchOauthPassword === "" ||
+      twitchOauthPassword.twitchOauthPasswordAgain === ""
     ) {
       console.log("Passwords did not match!");
       setAuthHandlerLoading(false);
@@ -121,8 +118,8 @@ const DiscordAuth = () => {
     if (accountCreatedBefore) {
       await signInWithEmailAndPassword(
         auth,
-        `discord.${userDataState.email}`,
-        discordOauthPassword.discordOauthPassword
+        `twitch.${userDataState.email}`,
+        twitchOauthPassword.twitchOauthPassword
       );
       await updateProfile(auth.currentUser, {
         displayName: userDataState.displayName,
@@ -132,8 +129,8 @@ const DiscordAuth = () => {
     } else {
       await createUserWithEmailAndPassword(
         auth,
-        `discord.${userDataState.email}`,
-        discordOauthPassword.discordOauthPassword
+        `twitch.${userDataState.email}`,
+        twitchOauthPassword.twitchOauthPassword
       );
       await updateProfile(auth.currentUser, {
         displayName: userDataState.displayName,
@@ -143,31 +140,32 @@ const DiscordAuth = () => {
     setAuthHandlerLoading(false);
     window.close();
   };
+
   return (
     <Flex w="90%" h="300" mt="10" mx="5" direction="column">
-      <form onSubmit={handleDiscordFirebaseAuth}>
+      <form onSubmit={handleTwitchFirebaseAuth}>
         <Text fontSize="2xl">
           For your security, please also{" "}
           {accountCreatedBefore ? "login with your" : "create a"} password.{" "}
         </Text>
         <Input
           mt="3"
-          name="discordOauthPassword"
+          name="twitchOauthPassword"
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onDiscordOauthPasswordChange}
-          key="discordOauthPassword"
+          onChange={onTwitchOauthPasswordChange}
+          key="twitchOauthPassword"
           placeholder="Password"
         />
         <Input
           mt="3"
-          name="discordOauthPasswordAgain"
+          name="twitchOauthPasswordAgain"
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onDiscordOauthPasswordChange}
-          key="discordOauthPasswordAgain"
+          onChange={onTwitchOauthPasswordChange}
+          key="twitchOauthPasswordAgain"
           placeholder="Password Again"
         />
         <Button isLoading={authHandlerLoading} type="submit" mt="4">
@@ -178,4 +176,4 @@ const DiscordAuth = () => {
   );
 };
 
-export default DiscordAuth;
+export default TwitchAuth;
