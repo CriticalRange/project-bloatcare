@@ -29,7 +29,9 @@ const TwitchAuth = () => {
   const code = router.query.code;
   const twitchTokenURL = "https://id.twitch.tv/oauth2/token";
   const twitchUserURL = "https://api.twitch.tv/helix/users";
-  const redirectUri = "http://localhost:3000/auth/twitch";
+  const redirectUri = process.env.NEXT_PUBLIC_TWITCH_REDIRECT_URI;
+  const twitchClientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
+  const twitchClientSecret = process.env.NEXT_PUBLIC_TWITCH_CLIENT_SECRET;
 
   useEffect(() => {
     TwitchOauthHandler();
@@ -44,8 +46,8 @@ const TwitchAuth = () => {
       const tokenResponse = await axios.post(
         twitchTokenURL,
         {
-          client_id: "g76y1y24qtcenhbrkb0m6b5usr79zb",
-          client_secret: "pzvlyyei0y2ymhwn70l2amsf4lkap3",
+          client_id: twitchClientId,
+          client_secret: twitchClientSecret,
           code: code,
           grant_type: "authorization_code",
           redirect_uri: redirectUri,
@@ -61,7 +63,7 @@ const TwitchAuth = () => {
 
       const userInfoResponse = await axios.get(twitchUserURL, {
         headers: {
-          "Client-Id": "g76y1y24qtcenhbrkb0m6b5usr79zb",
+          "Client-Id": twitchClientId,
           Authorization: `Bearer ${accessToken}`,
         },
       });
