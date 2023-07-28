@@ -130,7 +130,7 @@ function OAuthButtons() {
       console.log("Handle discord sign in started.");
       setDiscordLoading(true);
       const discordClientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-      const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordClientId}&redirect_uri=https://project-bloatcare.vercel.app/auth/discord&response_type=code&scope=identify%20email`;
+      const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordClientId}&redirect_uri=${window.location.origin}/auth/discord&response_type=code&scope=identify%20email`;
       const width = 600; // Popup pencerenin genişliği
       const height = 600; // Popup pencerenin yüksekliği
       const left = window.innerWidth / 2 - width / 2;
@@ -156,7 +156,7 @@ function OAuthButtons() {
       console.log("Handle twitch sign in started.");
       setTwitchLoading(true);
       const twitchClientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
-      const twitchAuthUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${twitchClientId}&redirect_uri=https://https://project-bloatcare.vercel.app/auth/twitch&scope=user%3Aread%3Aemail&force_verify=true`;
+      const twitchAuthUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${twitchClientId}&redirect_uri=${window.location.origin}/auth/twitch&scope=user%3Aread%3Aemail&force_verify=true`;
       const width = 600; // Popup pencerenin genişliği
       const height = 600; // Popup pencerenin yüksekliği
       const left = window.innerWidth / 2 - width / 2;
