@@ -37,7 +37,7 @@ const DiscordAuth = () => {
   const code = router.query.code;
   const discordTokenURL = "https://discord.com/api/oauth2/token"; // Endpoint to get the access token
   const discordUserURL = "https://discord.com/api/users/@me"; // Endpoint to get the user data
-  const redirectUri = router.basePath;
+  const redirectUri = `${window.location.origin}/auth/discord`;
   const discordClientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
   const discordClientSecret = process.env.NEXT_PUBLIC_DISCORD_CLIENT_SECRET;
 

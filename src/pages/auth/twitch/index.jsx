@@ -29,7 +29,7 @@ const TwitchAuth = () => {
   const code = router.query.code;
   const twitchTokenURL = "https://id.twitch.tv/oauth2/token";
   const twitchUserURL = "https://api.twitch.tv/helix/users";
-  const redirectUri = process.env.NEXT_PUBLIC_TWITCH_REDIRECT_URI;
+  const redirectUri = `${window.location.origin}/auth/twitch`;
   const twitchClientId = process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID;
   const twitchClientSecret = process.env.NEXT_PUBLIC_TWITCH_CLIENT_SECRET;
 
