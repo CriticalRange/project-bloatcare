@@ -25,24 +25,9 @@ const useCommunityData = () => {
     const snippetDocs = await getDocs(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
-    /* // check if snippet exists
-    const existingSnippet = snippetDocs.docs.find(
-      (doc) => doc.id === communityData.communityId
-    );
-    if (!existingSnippet) {
-      const newSnippetRef = doc(
-        firestore,
-        `users/${user?.uid}/communitySnippets`,
-        communityData.communityId
-      );
-      await setDoc(newSnippetRef, {
-        communityId: communityData.communityId,
-        isJoined: false,
-        isModerator: false,
-      });
-    } */
-    // Save the snippet info to communityData atom
+    // check if snippet exists
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
+    // Save the snippet info to communityData atom
     setCommunityData((prev) => ({
       ...prev,
       userSnippets: snippets,
@@ -112,9 +97,6 @@ const useCommunityData = () => {
   };
 
   useEffect(() => {
-    console.log(`useEffect working`);
-
-    setLoading(true);
     if (!user) {
       setCommunityData((prev) => ({
         ...prev,
@@ -122,6 +104,7 @@ const useCommunityData = () => {
       }));
       return;
     }
+    setLoading(true);
     getSnippets();
     setCommunityData((prev) => ({
       ...prev,

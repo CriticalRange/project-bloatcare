@@ -24,7 +24,7 @@ export default function NavbarProfile() {
   const [signOut, signOutLoading, signOutError] = useSignOut(auth);
 
   return (
-    <Flex>
+    <Flex mr="2">
       <Menu>
         <MenuButton
           as={Button}
@@ -69,6 +69,7 @@ export default function NavbarProfile() {
             _dark={{ bg: "black", textColor: "white" }}
             onClick={async () => {
               await signOut();
+              document.cookie = "";
               resetCommunityState;
               toast({
                 title: "Successfully logged out!.",

@@ -5,7 +5,7 @@ const themeConfig = {
   styles: {
     global: ({ colorMode }) => ({
       body: {
-        bg: colorMode === "light" ? "#60a5fa" : "#1959a8",
+        bg: colorMode === "light" ? "#60a5fa" : "#1c212e",
       },
     }),
   },
@@ -15,6 +15,8 @@ const themeConfig = {
   },
   colors: {
     transparent: "transparent",
+    customGray: "#1c212e",
+    customWhite: "#e3ded1",
     black: "#000",
     white: "#fff",
     softCyan: "#32daf0",

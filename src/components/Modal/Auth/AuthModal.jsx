@@ -20,7 +20,7 @@ import { auth } from "../../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
 import SignupForm from "./Forms/SignupForm";
-import OAuthButtons from "./OAuthButtons";
+import OAuthButtons from "./Oauth/OAuthButtons";
 
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
@@ -73,7 +73,7 @@ export default function AuthModal() {
           ) : null}
           <Divider
             orientation="horizontal"
-            width="56"
+            width="100%"
             h="1"
             mx="auto"
             bg="gray.400"
@@ -81,13 +81,10 @@ export default function AuthModal() {
             my={{ base: "3", md: "3" }}
             _dark={{ bg: "gray.700" }}
           />
-          <Flex
-            justify="space-around"
-            direction="column"
-            mt={{ base: "3", md: "1rem" }}
-          >
+          <Flex justify="space-around" direction="column" my="2">
             <Button
               textColor="white"
+              mb="3"
               bg="brand.primary"
               _hover={{
                 bg: "brand.secondary",

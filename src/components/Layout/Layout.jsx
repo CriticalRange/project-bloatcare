@@ -1,12 +1,17 @@
-// Same as _app, but need to wrap it to _app (meaning it's 1 tier down)
+// Wrapped to _app (meaning it's 1 tier down)
+import { useRouter } from "next/router";
 import AuthModal from "../Modal/Auth/AuthModal";
 import CreateCommunityModal from "../Modal/Community/Create/CommunityCreateModal";
 import Navbar from "../Navbar/Navbar";
 
 const Layout = ({ children }) => {
+  const router = useRouter();
   return (
     <>
-      <Navbar />
+      {router.pathname === "/auth/discord" ? null : router.pathname ===
+        "/auth/twitch" ? null : (
+        <Navbar />
+      )}
       <CreateCommunityModal />
       <AuthModal />
       <main>{children}</main>

@@ -2,39 +2,28 @@
 // Form of Community creation form
 // TODO: Add fade effect
 import {
-  Box,
   Button,
   Checkbox,
-  CheckboxGroup,
   Flex,
   Icon,
   Input,
-  Stack,
   Switch,
   Text,
-  Textarea,
+  Tooltip,
   chakra,
   useToast,
 } from "@chakra-ui/react";
+import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { AiOutlineUser, AiOutlineEye } from "react-icons/ai";
-import { BiLockAlt } from "react-icons/bi";
-import { Fade } from "@chakra-ui/react";
-import {
-  doc,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-  setDoc,
-} from "firebase/firestore";
-import { auth, firestore } from "../../../../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { AiOutlineEye, AiOutlineUser } from "react-icons/ai";
+import { BiLockAlt } from "react-icons/bi";
 import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../../../atoms/createCommunityModalAtom";
-import CommunityNameChecker from "./communityNameChecker";
 import { communityNameCheckerAtom } from "../../../../../atoms/checkers/communityNameCheckerAtom";
-import { Tooltip } from "@chakra-ui/react";
+import { createCommunityModalAtom } from "../../../../../atoms/createCommunityModalAtom";
+import { auth, firestore } from "../../../../../firebase/clientApp";
+import CommunityNameChecker from "./communityNameChecker";
 
 const CreateCommunityForm = () => {
   const toast = useToast();
@@ -78,9 +67,7 @@ const CreateCommunityForm = () => {
 
   const handleCreateCommunity = async (event) => {
     event.preventDefault();
-
     setButtonLoading(true);
-
     // Format the community name to have no special chars other than underscore, and check if it has at least 3 chars
     const format = /[-.!"`'#%&,:;<>=@{}~\$\(\)\*\+\/\\\?\[\]\^\|]+/;
     if (format.test(communityName) || communityName.length < 3) {
@@ -97,11 +84,7 @@ const CreateCommunityForm = () => {
     }
 
     // Validate the community name not taken
-    const communityDocRef = doc(
-      firestore,
-      "communities",
-      communityName.toLocaleLowerCase().split(" ").join("")
-    );
+    const communityDocRef = doc(firestore, "communities", communityName);
 
     await runTransaction(firestore, async (transaction) => {
       const communityDoc = await transaction.get(communityDocRef);
@@ -131,7 +114,7 @@ const CreateCommunityForm = () => {
       transaction.set(
         doc(firestore, `users/${user?.uid}/communitySnippets`, communityName),
         {
-          communityId: communityName.toLocaleLowerCase().split(" ").join(""),
+          communityId: communityName,
           isModerator: true,
           isJoined: true,
         }
@@ -140,7 +123,7 @@ const CreateCommunityForm = () => {
         setButtonLoading(false);
         toast({
           title: "Creation success!",
-          description: `You successfully created your community. ${
+          description: `You successfully created your community named ${communityName}. ${
             redirectSwitch ? "Redirecting..." : ""
           }`,
           status: "success",
@@ -197,6 +180,7 @@ const CreateCommunityForm = () => {
           <chakra.label>
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
+                width={{ base: "200px", md: "350px" }}
                 bg="brand.secondary"
                 color="white"
                 _dark={{ color: "black" }}
@@ -230,6 +214,7 @@ const CreateCommunityForm = () => {
           <chakra.label>
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
+                width={{ base: "200px", md: "350px" }}
                 bg="brand.secondary"
                 color="white"
                 _dark={{ color: "black" }}
@@ -261,6 +246,7 @@ const CreateCommunityForm = () => {
           <chakra.label>
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
+                width={{ base: "200px", md: "350px" }}
                 bg="brand.secondary"
                 color="white"
                 _dark={{

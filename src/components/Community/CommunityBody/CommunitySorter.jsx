@@ -18,7 +18,7 @@ import { HiOutlineRefresh } from "react-icons/hi";
 
 const CommunitySorter = () => {
   return (
-    <Flex flex="1" justify="flex-end" mt="3" mr="14">
+    <Flex flex="1" justify="flex-end" mt="3" mr="14" align="center">
       <Button mr="2">
         {" "}
         {/* Refresh function */}

@@ -8,7 +8,9 @@ import {
   useToast,
   Input,
   Flex,
+  chakra,
 } from "@chakra-ui/react";
+import { motion, isValidMotionProp } from "framer-motion";
 import { Checkbox } from "@chakra-ui/react";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
@@ -21,6 +23,7 @@ import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 export default function SigninForm() {
   const toast = useToast();
 
+  const [rememberDisplay, setRememberDisplay] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -36,14 +39,16 @@ export default function SigninForm() {
     // Process sign in
     try {
       await signInWithEmailAndPassword(loginForm.email, loginForm.password);
-      toast({
-        title: "Login success!",
-        description: "You successfully logged in to your account.",
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
+      !error && user
+        ? toast({
+            title: "Login success!",
+            description: "You successfully logged in to your account.",
+            status: "success",
+            duration: 2500,
+            position: "bottom-left",
+            isClosable: true,
+          })
+        : null;
     } catch (error) {}
   };
 
@@ -58,7 +63,7 @@ export default function SigninForm() {
   return (
     <Flex direction="column">
       <form onSubmit={handleLogin} key="loginForm">
-        <label key="emailLabel">
+        <chakra.label key="emailLabel">
           <h4>Email</h4>
           <Input
             my="2"
@@ -74,8 +79,8 @@ export default function SigninForm() {
             h="12"
             borderRadius="0.375rem"
           ></Input>
-        </label>
-        <label key="passwordLabel">
+        </chakra.label>
+        <chakra.label key="passwordLabel">
           <h4>Password</h4>
           <Input
             my="2"
@@ -92,12 +97,21 @@ export default function SigninForm() {
             h="12"
             borderRadius="0.375rem"
           ></Input>
-        </label>
-        <Flex justifyContent="flex-end">
+        </chakra.label>
+        <Flex justifyContent="flex-end" my="1">
           <Flex flexGrow="1" justifyContent="flex-start">
             <Flex align="center" gap="0.5rem">
-              <Checkbox borderColor="blue.500" id="remember" />
-              <Text fontSize="sm">Remember me?</Text>
+              <Checkbox
+                size="md"
+                borderColor="blue.500"
+                id="remember"
+                display={rememberDisplay ? "block" : "none"}
+                isChecked={rememberDisplay}
+                onChange={() => setRememberDisplay(!rememberDisplay)}
+              />
+              <Button onClick={() => setRememberDisplay(!rememberDisplay)}>
+                <Text fontSize="sm">Remember me?</Text>
+              </Button>
             </Flex>
           </Flex>
           <Button

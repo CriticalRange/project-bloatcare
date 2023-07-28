@@ -1,8 +1,11 @@
-import { Image } from "@chakra-ui/react";
+import { Box, Image, SkeletonText, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import SearchInput from "./SearchInput";
+import useCommunityData from "../../../../hooks/useCommunityData";
 
 const LeftContent = () => {
+  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
+
   return (
     <>
       <Link href="/">
@@ -17,16 +20,19 @@ const LeftContent = () => {
           alt="Profile picture"
         />
       </Link>
+
       <Link href="/">
-        <Image
-          src="/BloatCareText.png"
-          cursor="pointer"
-          marginRight="3"
-          height="20"
-          width="28"
-          alt="Profile picture"
-          display={{ base: "none", md: "unset" }}
-        />
+        <Box
+          display={{ base: "block", sm: "none" }}
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+        >
+          <SkeletonText noOfLines={1} isLoaded={!loading}>
+            <Text fontSize="md" color="blue.500" fontWeight="bold">
+              {communityData.communityId}
+            </Text>
+          </SkeletonText>
+        </Box>
       </Link>
       <SearchInput />
     </>
