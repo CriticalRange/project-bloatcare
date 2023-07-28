@@ -1,0 +1,10 @@
+// Using commonjs options
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "checkJs": true,
+    "target": "es2016",
+    "jsx": "preserve"
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
+}
