@@ -27,9 +27,6 @@ const nextConfig = {
 
     return config;
   },
-  compiler: {
-    styledComponents: true,
-  },
   images: {
     loader: "default",
     domains: ["localhost"],

@@ -1,0 +1,37 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import AuthModal from "./components/Modal/Auth/AuthModal";
+import CreateCommunityModal from "./components/Modal/Community/Create/CommunityCreateModal";
+import Navbar from "./components/Navbar/Navbar";
+import { ColorModeScript } from "@chakra-ui/react";
+import theme from "./components/theme/index";
+const Providers = dynamic(() => import("./providers"), { ssr: false });
+import dynamic from "next/dynamic";
+
+export const metadata = {
+  title: "BloatCare",
+  description: "Learning how to build a Blog post website using Next.js",
+};
+
+const RootLayout = ({ children }) => {
+  const pathname = usePathname();
+  return (
+    <html lang="en">
+      <body>
+        <Providers>
+          {pathname === "/auth/discord" ? null : pathname ===
+            "/auth/twitch" ? null : (
+            <Navbar />
+          )}
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+          <CreateCommunityModal />
+          <AuthModal />
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+};
+
+export default RootLayout;
