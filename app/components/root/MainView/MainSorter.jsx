@@ -11,13 +11,9 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import {
-  FcAlphabeticalSortingAz,
-  FcAlphabeticalSortingZa,
-  FcGenericSortingAsc,
-  FcGenericSortingDesc,
-} from "react-icons/fc";
-import { HiOutlineRefresh } from "react-icons/hi";
+import { CustomRefreshIcon } from "../../Icons/IconComponents/IconComponents";
+import CustomSortAzSvg from "../../Icons/CustomSortAzSvg";
+import CustomSortZaSvg from "../../Icons/CustomSortZaSvg";
 
 const MainSorter = () => {
   return (
@@ -32,7 +28,7 @@ const MainSorter = () => {
       <Button mr="2">
         {" "}
         {/* Refresh function */}
-        <Icon as={HiOutlineRefresh} w="8" h="10" />
+        <Icon as={CustomRefreshIcon} w="8" h="10" />
       </Button>
       <Menu>
         <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
@@ -40,16 +36,10 @@ const MainSorter = () => {
         </MenuButton>
         <MenuList>
           <MenuItem>
-            <Icon as={FcAlphabeticalSortingAz} w="10" h="10" />
+            <Icon as={CustomSortAzSvg} w="10" h="10" />
           </MenuItem>
           <MenuItem>
-            <Icon as={FcAlphabeticalSortingZa} w="10" h="10" />
-          </MenuItem>
-          <MenuItem>
-            <Icon as={FcGenericSortingAsc} w="10" h="10" />
-          </MenuItem>
-          <MenuItem>
-            <Icon as={FcGenericSortingDesc} w="10" h="10" />
+            <Icon as={CustomSortZaSvg} w="10" h="10" />
           </MenuItem>
         </MenuList>
       </Menu>

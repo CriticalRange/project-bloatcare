@@ -17,13 +17,16 @@ import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { AiOutlineEye, AiOutlineUser } from "react-icons/ai";
-import { BiLockAlt } from "react-icons/bi";
 import { useRecoilState } from "recoil";
 import { communityNameCheckerAtom } from "../../../../atoms/checkers/communityNameCheckerAtom";
 import { createCommunityModalAtom } from "../../../../atoms/createCommunityModalAtom";
 import { auth, firestore } from "../../../../firebase/clientApp";
 import CommunityNameChecker from "./communityNameChecker";
+import {
+  CustomEyeOpen,
+  CustomLockIcon,
+  CustomUserEmptyIcon,
+} from "../../../../Icons/IconComponents/IconComponents";
 
 const CreateCommunityForm = () => {
   const toast = useToast();
@@ -199,7 +202,7 @@ const CreateCommunityForm = () => {
                     size="xl"
                   >
                     <Icon
-                      as={AiOutlineUser}
+                      as={CustomUserEmptyIcon}
                       fill="black"
                       _dark={{ fill: "white" }}
                       height="14"
@@ -232,7 +235,7 @@ const CreateCommunityForm = () => {
                     size="xl"
                   >
                     <Icon
-                      as={AiOutlineEye}
+                      as={CustomEyeOpen}
                       fill="black"
                       _dark={{ fill: "white" }}
                       height="14"
@@ -265,7 +268,7 @@ const CreateCommunityForm = () => {
                     size="xl"
                   >
                     <Icon
-                      as={BiLockAlt}
+                      as={CustomLockIcon}
                       fill="black"
                       _dark={{ fill: "white" }}
                       height="14"

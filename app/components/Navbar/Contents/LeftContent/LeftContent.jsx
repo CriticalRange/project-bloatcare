@@ -1,28 +1,21 @@
 "use client";
 
-import { Box, Image, SkeletonText, Text } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
-import SearchInput from "./SearchInput";
+import { Box, Flex, SkeletonText, Text } from "@chakra-ui/react";
 import useCommunityData from "../../../../hooks/useCommunityData";
+import { BloatcareIcon } from "../../../Icons/IconComponents/IconComponents";
+import SearchInput from "./SearchInput";
 
 const LeftContent = () => {
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
 
   return (
-    <>
-      <Link href="/">
-        <Image
-          src="/favicon.ico"
-          cursor="pointer"
-          marginLeft="3"
-          borderRadius="9999px"
-          mr={{ base: "2", md: "3" }}
-          height="12"
-          width="12"
-          alt="Profile picture"
-        />
-      </Link>
-
+    <Flex align="center">
+      <Box>
+        <Link href="/">
+          <BloatcareIcon w="10" h="10" fill="#107cf1" cursor="pointer" mx="5" />
+        </Link>
+      </Box>
       <Link href="/">
         <Box
           display={{ base: "block", sm: "none" }}
@@ -37,7 +30,7 @@ const LeftContent = () => {
         </Box>
       </Link>
       <SearchInput />
-    </>
+    </Flex>
   );
 };
 

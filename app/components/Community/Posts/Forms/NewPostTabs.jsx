@@ -1,9 +1,11 @@
 "use client";
 
 import { Button, Flex, Stack, Text } from "@chakra-ui/react";
-import { FaWpforms } from "react-icons/fa";
-import { MdOutlinePermMedia } from "react-icons/md";
 import { useRecoilState } from "recoil";
+import {
+  CustomFormIcon,
+  CustomMediaIcon,
+} from "../../../Icons/IconComponents/IconComponents";
 import { createPostTabAtom } from "../../../atoms/createPostTabAtom";
 
 const NewPostTabs = () => {
@@ -21,7 +23,7 @@ const NewPostTabs = () => {
           borderWidth="2px"
           borderBottomColor={selectedTab === "post" ? "blue" : "none"}
         >
-          <FaWpforms size={36} />
+          <CustomFormIcon w="8" h="8" />
           <Text fontSize="xl">Post</Text>
         </Flex>
         <Flex
@@ -33,7 +35,7 @@ const NewPostTabs = () => {
           borderWidth="2px"
           borderBottomColor={selectedTab === "media" ? "blue" : "none"}
         >
-          <MdOutlinePermMedia size={36} />
+          <CustomMediaIcon w="8" h="8" />
           <Text fontSize="xl">Media</Text>
         </Flex>
       </Stack>

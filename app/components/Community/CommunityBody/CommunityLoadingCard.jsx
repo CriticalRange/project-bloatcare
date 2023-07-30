@@ -1,23 +1,26 @@
 "use client";
 
 import {
+  Button,
   Card,
+  CardBody,
+  CardFooter,
   CardHeader,
   Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  Skeleton,
   SkeletonCircle,
   SkeletonText,
-  IconButton,
-  CardBody,
-  Skeleton,
-  CardFooter,
-  Button,
-  Menu,
   Text,
-  MenuButton,
 } from "@chakra-ui/react";
-import { BiCommentDots } from "react-icons/bi";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { MdOutlineThumbsUpDown } from "react-icons/md";
+import {
+  CustomCommentDotsVerticalIcon,
+  CustomThumbsUpIcon,
+  CustomThumbsDownIcon,
+  CustomCommentDotsIcon,
+} from "../../Icons/IconComponents/IconComponents";
 
 const CommunityLoadingCard = () => {
   return (
@@ -57,7 +60,7 @@ const CommunityLoadingCard = () => {
               variant="ghost"
               colorScheme="gray"
               aria-label="See menu"
-              icon={<BsThreeDotsVertical />}
+              icon={<CustomCommentDotsVerticalIcon />}
             />
           </Flex>
         </Flex>
@@ -73,7 +76,8 @@ const CommunityLoadingCard = () => {
               variant="ghost"
               colorScheme="gray"
               aria-label="Likes & Dislikes"
-              leftIcon={<MdOutlineThumbsUpDown />}
+              leftIcon={<CustomThumbsUpIcon />}
+              rightIcon={<CustomThumbsDownIcon />}
             >
               {" "}
               •
@@ -90,7 +94,7 @@ const CommunityLoadingCard = () => {
               variant="ghost"
               colorScheme="gray"
               aria-label="Comments"
-              leftIcon={<BiCommentDots />}
+              leftIcon={<CustomCommentDotsIcon />}
             >
               {" "}
               •{" "}
@@ -114,7 +118,7 @@ const CommunityLoadingCard = () => {
                 variant="ghost"
                 colorScheme="gray"
                 aria-label="See menu"
-                icon={<BsThreeDotsVertical />}
+                icon={<CustomCommentDotsVerticalIcon />}
               ></MenuButton>
             </Menu>
           </Flex>

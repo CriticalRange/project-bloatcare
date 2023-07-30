@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 
 export const metadata = {
   title: "BloatCare",
-  description: "Learning how to build a Blog post website using Next.js",
+  description: "Unleash Your Passions, Ignite Discussions",
 };
 
 const RootLayout = ({ children }) => {

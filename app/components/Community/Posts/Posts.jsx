@@ -11,7 +11,7 @@ import {
   where,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -23,8 +23,8 @@ import CommunityCards from "../CommunityBody/CommunityCards";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 
 const Posts = () => {
-  const searchParams = useSearchParams();
-  const communityId = searchParams.get("communityId");
+  const params = useParams();
+  const communityIdParam = params.communityId;
   const router = useRouter();
   const [postsLoading, setPostsLoading] = useRecoilState(postsLoadingAtom);
   const [user] = useAuthState(auth);
@@ -78,12 +78,15 @@ const Posts = () => {
   };
 
   useEffect(() => {
-    getPosts();
+    if (communityIdParam === communityData.communityId) {
+      getPosts();
+      console.log("Conditial get posts working");
+    }
     setStartAfterDoc(null);
     if (!user) {
       return;
     }
-  }, [communityData.communityId]);
+  }, [communityIdParam]);
   return (
     <Box my="3" h={postsLoading ? "1000px" : "inherit"} w="inherit">
       <InfiniteScroll
@@ -129,7 +132,9 @@ const Posts = () => {
                 You haven&apos;t created any communities yet!
               </Text>
               <Button
-                onClick={() => router.push(`/communities/${communityId}/new`)}
+                onClick={() =>
+                  router.push(`/communities/${communityIdParam}/new`)
+                }
               >
                 Create One
               </Button>

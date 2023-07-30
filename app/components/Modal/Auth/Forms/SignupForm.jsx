@@ -5,20 +5,21 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
-  Center,
   Flex,
   IconButton,
   Input,
   InputGroup,
-  InputRightAddon,
   InputRightElement,
   Text,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useRecoilState } from "recoil";
+import {
+  CustomEyeClosed,
+  CustomEyeOpen,
+} from "../../../Icons/IconComponents/IconComponents";
 import { passwordCheckerAtom } from "../../../atoms/checkers/passwordCheckerAtom";
 import { showPasswordAtom } from "../../../atoms/showPasswordAtom";
 import { auth } from "../../../firebase/clientApp";
@@ -30,7 +31,6 @@ import PasswordChecker, {
 
 export default function SignupForm() {
   const toast = useToast();
-
   // UseState hooks (will only use here so didn't make an atom for it)
   const [remainingChars, setRemainingChars] = useState(21);
   const [signupForm, setSignupForm] = useState({
@@ -273,7 +273,13 @@ export default function SignupForm() {
                 mt="6"
                 mr="2"
                 aria-label="show Password"
-                icon={showPassword.showPassword ? <HiEye /> : <HiEyeOff />}
+                icon={
+                  showPassword.showPassword ? (
+                    <CustomEyeOpen />
+                  ) : (
+                    <CustomEyeClosed />
+                  )
+                }
               />
             </InputRightElement>
           </InputGroup>

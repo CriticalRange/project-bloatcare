@@ -1,7 +1,6 @@
 "use client";
 
-import { useAuth0 } from "@auth0/auth0-react";
-import { Box, Flex, IconButton, createIcon, useToast } from "@chakra-ui/react";
+import { Box, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { useEffect } from "react";
 import {
   useSignInWithFacebook,
@@ -11,16 +10,20 @@ import {
   useSignInWithTwitter,
   useSignInWithYahoo,
 } from "react-firebase-hooks/auth";
-import { BsDiscord, BsFacebook, BsTwitter } from "react-icons/bs";
 import { useRecoilState } from "recoil";
+import {
+  DiscordIcon,
+  FacebookIcon,
+  GithubIcon,
+  GoogleIcon,
+  MicrosoftIcon,
+  TwitchIcon,
+  TwitterIcon,
+  YahooIcon,
+} from "../../../Icons/IconComponents/IconComponents";
 import { discordButtonLoading } from "../../../atoms/discordButtonLoading";
 import { twitchButtonLoading } from "../../../atoms/twitchButtonLoading";
 import { auth } from "../../../firebase/clientApp";
-import GithubSvg from "./Icons/GithubSvg";
-import GoogleSvg from "./Icons/GoogleSvg";
-import MicrosoftSvg from "./Icons/MicrosoftSvg";
-import TwitchSvg from "./Icons/TwitchSvg";
-import YahooSvg from "./Icons/YahooSvg";
 
 function OAuthButtons() {
   const toast = useToast();
@@ -40,44 +43,6 @@ function OAuthButtons() {
     useSignInWithTwitter(auth);
   const [signInWithFacebook, facebookUser, facebookLoading, facebookError] =
     useSignInWithFacebook(auth);
-
-  const {
-    loginWithPopup,
-    loginWithRedirect,
-    isLoading,
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
-  } = useAuth0();
-
-  const MicrosoftIcon = createIcon({
-    displayName: "MicrosoftIcon",
-    viewBox: "0 0 23 23",
-    path: <MicrosoftSvg />,
-  });
-
-  const GoogleIcon = createIcon({
-    displayName: "GoogleIcon",
-    viewBox: "0 0 48 48",
-    path: <GoogleSvg />,
-  });
-
-  const GithubIcon = createIcon({
-    displayName: "GithubIcon",
-    viewBox: "0 0 98 96",
-    path: <GithubSvg />,
-  });
-
-  const YahooIcon = createIcon({
-    displayName: "YahooIcon",
-    viewBox: "0 0 520 480",
-    path: <YahooSvg />,
-  });
-
-  const TwitchIcon = createIcon({
-    displayName: "TwitchIcon",
-    viewBox: "0 0 24 24",
-    path: <TwitchSvg />,
-  });
 
   // Handle mechanisms
   const handleGoogleSignin = async () => {
@@ -270,7 +235,7 @@ function OAuthButtons() {
             isLoading={discordLoading}
             onClick={handleDiscordSignin}
             aria-label="Sign in with Discord"
-            icon={<BsDiscord size={36} color="#5562ea" />}
+            icon={<DiscordIcon h="10" w="10" color="#5562ea" />}
           />
         </Box>
       </Flex>
@@ -297,7 +262,7 @@ function OAuthButtons() {
             isLoading={twitterLoading}
             onClick={handleTwitterSignin}
             aria-label="Sign in with Twitter"
-            icon={<BsTwitter size={36} color="#1d9bf0" />}
+            icon={<TwitterIcon h="10" w="10" color="#1d9bf0" />}
           ></IconButton>
         </Box>
         {" • "}
@@ -306,7 +271,7 @@ function OAuthButtons() {
             isLoading={facebookLoading}
             onClick={handleFacebookSignin}
             aria-label="Sign in with Facebook"
-            icon={<BsFacebook size={36} color="#1877f2" />}
+            icon={<FacebookIcon h="10" w="10" color="#1877f2" />}
           ></IconButton>
         </Box>
         {" • "}

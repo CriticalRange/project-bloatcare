@@ -15,16 +15,20 @@ const themeConfig = {
     useSystemColorMode: false,
   },
   colors: {
-    transparent: "transparent",
-    customGray: "#1c212e",
-    customWhite: "#e3ded1",
-    black: "#000",
-    white: "#fff",
-    softCyan: "#32daf0",
-    brand: {
-      bg: "#6576c7",
-      primary: "#1e40af",
-      secondary: "#60a5fa",
+    colors: {
+      transparent: "transparent",
+      customYellow: "#d19900",
+      customGray: "#1c212e",
+      customWhite: "#e3ded1",
+      black: "#000",
+      white: "#fff",
+      softCyan: "#32daf0",
+      hardCyan: "#1e40af",
+      brand: {
+        bg: "#6576c7",
+        primary: "#1e40af",
+        secondary: "#60a5fa",
+      },
     },
   },
   fonts: {

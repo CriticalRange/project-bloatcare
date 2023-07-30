@@ -76,7 +76,7 @@ export default function AuthModal() {
             width="100%"
             h="1"
             mx="auto"
-            bg="gray.400"
+            bg="colors.customGray"
             borderRadius="5px"
             my={{ base: "3", md: "3" }}
             _dark={{ bg: "gray.700" }}
@@ -85,9 +85,9 @@ export default function AuthModal() {
             <Button
               textColor="white"
               mb="3"
-              bg="brand.primary"
+              bg="colors.brand.primary"
               _hover={{
-                bg: "brand.secondary",
+                bg: "colors.brand.secondary",
               }}
               onClick={() => {
                 authModalState.authModalView === "signin"

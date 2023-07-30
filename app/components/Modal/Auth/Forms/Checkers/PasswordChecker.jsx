@@ -1,24 +1,18 @@
 "use client";
 
-import {
-  Box,
-  Collapse,
-  Flex,
-  Icon,
-  Progress,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import { FcCheckmark, FcCancel } from "react-icons/fc";
-import { passwordCheckerAtom } from "../../../../atoms/checkers/passwordCheckerAtom";
+import { Box, Collapse, Flex, Progress, Stack, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
+import {
+  CustomCheckmark,
+  CustomRemoveIcon,
+} from "../../../../Icons/IconComponents/IconComponents";
+import { passwordCheckerAtom } from "../../../../atoms/checkers/passwordCheckerAtom";
 
 export const passwordValidateRegex = ["[A-Z]", "[a-z]", "[0-9]", "\\W"];
 
 const PasswordChecker = () => {
   const [passwordChecker, setPasswordChecker] =
     useRecoilState(passwordCheckerAtom);
-
   const calculateStrengthPercentage = () => {
     const {
       showPasswordChecker,
@@ -55,36 +49,51 @@ const PasswordChecker = () => {
           </Text>
 
           <Box ml="2">
-            <Icon
-              as={passwordChecker.testIsLowercase ? FcCheckmark : FcCancel}
-            />{" "}
+            {passwordChecker.testIsLowercase ? (
+              <CustomCheckmark color="green" />
+            ) : (
+              <CustomRemoveIcon color="red" />
+            )}{" "}
             A lowercase letter
           </Box>
 
           <Box ml="2">
-            <Icon
-              as={passwordChecker.testIsUppercase ? FcCheckmark : FcCancel}
-            />{" "}
+            {" "}
+            {passwordChecker.testIsUppercase ? (
+              <CustomCheckmark color="green" />
+            ) : (
+              <CustomRemoveIcon color="red" />
+            )}{" "}
             A capital (uppercase) letter
           </Box>
 
           <Box ml="2">
             {" "}
-            <Icon as={passwordChecker.testIsNumbers ? FcCheckmark : FcCancel} />
+            {passwordChecker.testIsNumbers ? (
+              <CustomCheckmark color="green" />
+            ) : (
+              <CustomRemoveIcon color="red" />
+            )}{" "}
             A number
           </Box>
 
           <Box ml="2">
-            <Icon
-              as={passwordChecker.testIsSpecialChars ? FcCheckmark : FcCancel}
-            />{" "}
+            {" "}
+            {passwordChecker.testIsSpecialChars ? (
+              <CustomCheckmark color="green" />
+            ) : (
+              <CustomRemoveIcon color="red" />
+            )}{" "}
             A special Character
           </Box>
 
           <Box ml="2">
-            <Icon
-              as={passwordChecker.testPasswordLength ? FcCheckmark : FcCancel}
-            />{" "}
+            {" "}
+            {passwordChecker.testPasswordLength ? (
+              <CustomCheckmark color="green" />
+            ) : (
+              <CustomRemoveIcon color="red" />
+            )}{" "}
             Minimum 8 characters
           </Box>
         </Flex>

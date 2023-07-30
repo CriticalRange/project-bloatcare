@@ -1,23 +1,23 @@
 "use client";
 
 import {
+  Box,
   Button,
   Flex,
-  Input,
-  Image,
-  Center,
-  IconButton,
-  Box,
-  Text,
   Icon,
+  IconButton,
+  Image,
+  Input,
   Tooltip,
   useToast,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { useRef, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import { BiLinkExternal } from "react-icons/bi";
+import { useRecoilState } from "recoil";
+import {
+  CustomAnimatedRemoveIcon,
+  CustomExternalLinkIcon,
+} from "../../../Icons/IconComponents/IconComponents";
+import { selectedFileAtom } from "../../../atoms/postsAtom";
 
 const NewPostsMedia = () => {
   const toast = useToast();
@@ -81,7 +81,7 @@ const NewPostsMedia = () => {
                         <Icon
                           w="8"
                           h="8"
-                          as={FaTrash}
+                          as={CustomAnimatedRemoveIcon}
                           color="white"
                           _dark={{ color: "black" }}
                         />
@@ -97,7 +97,7 @@ const NewPostsMedia = () => {
                           <Icon
                             w="8"
                             h="8"
-                            as={BiLinkExternal}
+                            as={CustomExternalLinkIcon}
                             color="white"
                             _dark={{ color: "black" }}
                           />

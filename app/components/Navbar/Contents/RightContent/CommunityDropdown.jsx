@@ -2,31 +2,32 @@
 
 import {
   Flex,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   useToast,
 } from "@chakra-ui/react";
-import { LiaPlusSolid } from "react-icons/lia";
-import { IconButton } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
-import { authModalAtom } from "../../../atoms/authModalAtom";
-import { useRouter, usePathname } from "next/navigation";
+import { useRecoilState } from "recoil";
 import useCommunityData from "../../../../hooks/useCommunityData";
+import { CustomPLusIcon } from "../../../Icons/IconComponents/IconComponents";
+import { authModalAtom } from "../../../atoms/authModalAtom";
+import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
+import { auth } from "../../../firebase/clientApp";
 
 const CommunityDropdown = () => {
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
   const toast = useToast();
   const router = useRouter();
   const pathname = usePathname();
+  const params = useParams();
 
   const redirectToNewPostPage = () => {
     const currentUrl = pathname;
-    if (currentUrl !== "/communities/[communityId]") {
+    if (currentUrl !== `/communities/${params.communityId}`) {
       console.log("Please make a decent posts selection page");
       // Make a decent posts selection page later
       return;
@@ -46,7 +47,10 @@ const CommunityDropdown = () => {
   return (
     <Flex mr="2">
       <Menu>
-        <MenuButton as={IconButton} icon={<LiaPlusSolid />}></MenuButton>
+        <MenuButton
+          as={IconButton}
+          icon={<CustomPLusIcon w="6" h="6" />}
+        ></MenuButton>
         <MenuList
           bg="white"
           textColor="black"

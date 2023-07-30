@@ -1,40 +1,35 @@
 "use client";
 
 import {
-  Card,
-  Flex,
-  Stack,
-  Text,
-  Heading,
-  CardBody,
-  CardHeader,
-  CardFooter,
   Avatar,
-  IconButton,
-  Box,
-  Image,
   Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Flex,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  SkeletonCircle,
-  SkeletonText,
-  Skeleton,
-  Divider,
+  Text,
 } from "@chakra-ui/react";
-import moment from "moment/moment";
-import { BiCommentDots } from "react-icons/bi";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { MdOutlineThumbsUpDown } from "react-icons/md";
-import usePosts from "../../../hooks/usePosts";
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import moment from "moment/moment";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
+import usePosts from "../../../hooks/usePosts";
 import { postsLoadingAtom } from "../../atoms/postsAtom";
-import { MotionFadingImage } from "./MotionFadingImage";
-import { communityLoading } from "../../atoms/communityLoading";
 import CommunityLoadingCard from "./CommunityLoadingCard";
+import { MotionFadingImage } from "./MotionFadingImage";
+import {
+  CustomCommentDotsIcon,
+  CustomThumbsUpIcon,
+  CustomThumbsDownIcon,
+  CustomCommentsIcon,
+  CustomCommentDotsVerticalIcon,
+} from "../../Icons/IconComponents/IconComponents";
 
 const CommunityCards = ({ post }) => {
   const { postState, setPostState, onSelectPost, onDeletePost } = usePosts();
@@ -97,7 +92,7 @@ const CommunityCards = ({ post }) => {
                     variant="ghost"
                     colorScheme="gray"
                     aria-label="See menu"
-                    icon={<BsThreeDotsVertical />}
+                    icon={<CustomCommentDotsIcon w="6" h="6" />}
                   />
                 </Flex>
               </Flex>
@@ -113,23 +108,29 @@ const CommunityCards = ({ post }) => {
                 direction="row"
                 align="center"
               >
-                <Flex align="inherit" cursor="pointer">
-                  <Button
-                    variant="ghost"
-                    colorScheme="gray"
-                    aria-label="Likes & Dislikes"
-                    leftIcon={<MdOutlineThumbsUpDown />}
-                  >
-                    {" "}
-                    • <Text ml="3">{post.numberOfLikes}</Text>
-                  </Button>
+                <Flex cursor="pointer">
+                  <Flex align="center" justify="space-around">
+                    <IconButton
+                      aria-label="Likes"
+                      icon={<CustomThumbsUpIcon />}
+                    ></IconButton>{" "}
+                    <Text ml="2" mr="2">
+                      {post.numberOfLikes}
+                    </Text>
+                    •<Text ml="2">10</Text>
+                    <IconButton
+                      ml="2"
+                      aria-label="Dislikes"
+                      icon={<CustomThumbsDownIcon />}
+                    ></IconButton>
+                  </Flex>
                 </Flex>
                 <Flex align="inherit" direction="row" cursor="pointer">
                   <Button
                     variant="ghost"
                     colorScheme="gray"
                     aria-label="Comments"
-                    leftIcon={<BiCommentDots />}
+                    leftIcon={<CustomCommentsIcon />}
                   >
                     {" "}
                     • <Text ml="3">{post.numberOfComments}</Text>
@@ -147,7 +148,7 @@ const CommunityCards = ({ post }) => {
                       variant="ghost"
                       colorScheme="gray"
                       aria-label="See menu"
-                      icon={<BsThreeDotsVertical />}
+                      icon={<CustomCommentDotsVerticalIcon />}
                     ></MenuButton>
                     <MenuList
                       onClick={() => handleDelete()}

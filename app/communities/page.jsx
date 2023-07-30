@@ -9,12 +9,11 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
 import CommunityImage from "../components/Community/CommunityHeader/CommunityImage";
 import { auth } from "../components/firebase/clientApp";
 import useCommunityData from "../hooks/useCommunityData";
-import { LiaUsersCogSolid } from "react-icons/lia";
+import { CustomUserSettingsIcon } from "../components/Icons/IconComponents/IconComponents";
 
 const Communities = () => {
   const [user] = useAuthState(auth);
@@ -49,7 +48,11 @@ const Communities = () => {
                 communityData.userSnippets.map((snippet) => {
                   if (snippet.isJoined === true) {
                     return (
-                      <Flex key={snippet.communityId} direction="row">
+                      <Flex
+                        key={snippet.communityId}
+                        direction="row"
+                        align="center"
+                      >
                         <a href={`communities/${snippet.communityId}`}>
                           <Flex
                             w={{ base: "400px", md: "600px" }}
@@ -69,7 +72,7 @@ const Communities = () => {
                             </Text>
                             <Flex flex="1" justify="flex-end">
                               {snippet.isModerator === true ? (
-                                <Icon as={LiaUsersCogSolid} />
+                                <CustomUserSettingsIcon w="10" h="10" />
                               ) : null}
                             </Flex>
                           </Flex>

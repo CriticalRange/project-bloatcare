@@ -16,7 +16,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
@@ -24,8 +24,8 @@ import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { auth, firestore, storage } from "../../../firebase/clientApp";
 
 const NewPostsForm = () => {
-  const searchParams = useSearchParams();
-  const communityId = searchParams.get("communityId");
+  const params = useParams();
+  const communityIdParam = params.communityId;
   const [user] = useAuthState(auth);
   const router = useRouter();
 
@@ -47,7 +47,7 @@ const NewPostsForm = () => {
     try {
       // Firestore post reference
       const postDocRef = await addDoc(collection(firestore, "posts"), {
-        communityId: communityId,
+        communityId: communityIdParam,
         creatorId: user?.uid,
         creatorDisplayName:
           user?.displayName !== undefined
@@ -74,7 +74,7 @@ const NewPostsForm = () => {
         });
       }
       setLoading(false);
-      router.back();
+      router.push(`/communities/${communityIdParam}`);
     } catch (error) {
       console.log("Handle New Post Form Error: ", error.message);
     }
