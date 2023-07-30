@@ -9,11 +9,6 @@ import theme from "./components/theme/index";
 const Providers = dynamic(() => import("./providers"), { ssr: false });
 import dynamic from "next/dynamic";
 
-export const metadata = {
-  title: "BloatCare",
-  description: "Unleash Your Passions, Ignite Discussions",
-};
-
 const RootLayout = ({ children }) => {
   const pathname = usePathname();
   return (
