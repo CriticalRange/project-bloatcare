@@ -17,6 +17,7 @@ import { CustomPLusIcon } from "../../../Icons/IconComponents/IconComponents";
 import { authModalAtom } from "../../../atoms/authModalAtom";
 import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
 import { auth } from "../../../firebase/clientApp";
+import CreateCommunityModal from "../../../Modal/Community/Create/CommunityCreateModal";
 
 const CommunityDropdown = () => {
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
@@ -94,6 +95,7 @@ const CommunityDropdown = () => {
           </MenuItem>
         </MenuList>
       </Menu>
+      <CreateCommunityModal />
     </Flex>
   );
 };

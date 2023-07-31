@@ -8,6 +8,7 @@ import { ColorModeScript } from "@chakra-ui/react";
 import theme from "./components/theme/index";
 const Providers = dynamic(() => import("./providers"), { ssr: false });
 import dynamic from "next/dynamic";
+import ConfirmationModal from "./components/Modal/Confirmation/ConfirmationModal";
 
 const metadata = {
   title: "BloatCare",
@@ -25,8 +26,6 @@ const RootLayout = ({ children }) => {
             <Navbar />
           )}
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-          <CreateCommunityModal />
-          <AuthModal />
           {children}
         </Providers>
       </body>

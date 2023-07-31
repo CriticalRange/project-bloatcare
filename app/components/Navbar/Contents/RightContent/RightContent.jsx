@@ -9,6 +9,7 @@ import NavbarProfile from "./Profile/NavbarProfile";
 import LightSwitch from "./LightSwitch";
 import CommunityDropdown from "./CommunityDropdown";
 import { Suspense, useEffect, useState } from "react";
+import AuthModal from "../../../Modal/Auth/AuthModal";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
@@ -48,6 +49,7 @@ const RightContent = () => {
           Login
         </Button>
       )}
+      <AuthModal />
     </Flex>
   );
 };

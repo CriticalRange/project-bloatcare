@@ -122,23 +122,21 @@ const CreateCommunityForm = () => {
           isJoined: true,
         }
       );
-      setTimeout(() => {
-        setButtonLoading(false);
-        toast({
-          title: "Creation success!",
-          description: `You successfully created your community named ${communityName}. ${
-            redirectSwitch ? "Redirecting..." : ""
-          }`,
-          status: "success",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        if (redirectSwitch) {
-          router.push(`/communities/${communityName}`);
-        }
-        setCreateCommunityModal({ openCreateCommunityModal: false });
-      }, 3000);
+      setButtonLoading(false);
+      toast({
+        title: "Creation success!",
+        description: `You successfully created your community named ${communityName}. ${
+          redirectSwitch ? "Redirecting..." : ""
+        }`,
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+      if (redirectSwitch) {
+        router.push(`/communities/${communityName}`);
+      }
+      setCreateCommunityModal({ openCreateCommunityModal: false });
     });
   };
 

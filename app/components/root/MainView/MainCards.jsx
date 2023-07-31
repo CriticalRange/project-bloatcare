@@ -29,6 +29,8 @@ import { useRecoilState } from "recoil";
 import usePosts from "../../../hooks/usePosts";
 import { postsLoadingAtom } from "../../atoms/postsAtom";
 import {
+  CustomAnimatedRemoveIcon,
+  CustomCommentDotsIcon,
   CustomCommentDotsVerticalIcon,
   CustomCommentsIcon,
   CustomThumbsDownIcon,
@@ -79,7 +81,7 @@ const MainCards = () => {
                     variant="ghost"
                     colorScheme="gray"
                     aria-label="See menu"
-                    icon={<CustomCommentDotsVerticalIcon />}
+                    icon={<CustomCommentDotsIcon />}
                   />
                 </Flex>
               </Flex>
@@ -105,11 +107,15 @@ const MainCards = () => {
                     <IconButton
                       aria-label="Likes"
                       icon={<CustomThumbsUpIcon />}
+                      mr={{ base: "2", sm: "0" }}
                     ></IconButton>{" "}
-                    <Text ml="2" mr="2">
+                    <Text display={{ base: "none", sm: "block" }} ml="2" mr="2">
                       9999
                     </Text>
-                    •<Text ml="2">10</Text>
+                    •
+                    <Text ml="2" display={{ base: "none", sm: "block" }}>
+                      10
+                    </Text>
                     <IconButton
                       ml="2"
                       aria-label="Dislikes"
@@ -125,7 +131,9 @@ const MainCards = () => {
                     leftIcon={<CustomCommentsIcon />}
                   >
                     {" "}
-                    • <Text ml="3">9999</Text>
+                    <Text ml="3" display={{ base: "none", sm: "block" }}>
+                      • 9999
+                    </Text>
                   </Button>
                 </Flex>
                 <Flex
@@ -142,12 +150,13 @@ const MainCards = () => {
                       aria-label="See menu"
                       icon={<CustomCommentDotsVerticalIcon />}
                     ></MenuButton>
-                    <MenuList
-                      onClick={() => {}}
-                      border="1px solid gray"
-                      bg="#a60a0a"
-                    >
-                      <MenuItem bg="#a60a0a">Delete</MenuItem>
+                    <MenuList onClick={() => {}} border="1px solid gray">
+                      <Flex align="center">
+                        <MenuItem>
+                          <CustomAnimatedRemoveIcon color="#a60a0a" mr="2" />
+                          Delete
+                        </MenuItem>
+                      </Flex>
                     </MenuList>
                   </Menu>
                 </Flex>

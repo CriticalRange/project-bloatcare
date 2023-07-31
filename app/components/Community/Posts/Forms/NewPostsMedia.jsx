@@ -18,16 +18,35 @@ import {
   CustomExternalLinkIcon,
 } from "../../../Icons/IconComponents/IconComponents";
 import { selectedFileAtom } from "../../../atoms/postsAtom";
+import { Link } from "@chakra-ui/next-js";
+import { confirmationModalAtom } from "../../../atoms/confirmationModalAtom";
+import ConfirmationModal from "../../../Modal/Confirmation/ConfirmationModal";
 
 const NewPostsMedia = () => {
   const toast = useToast();
   const inputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useRecoilState(selectedFileAtom);
   const [hoverPreview, setHoverPreview] = useState(false);
+  const [confirmationModal, setConfirmationModal] = useRecoilState(
+    confirmationModalAtom
+  );
 
   const onImageSelected = (event) => {
     const reader = new FileReader();
     if (event.target.files?.[0]) {
+      if (event.target.files?.[0].type !== "image/png") {
+        setSelectedFile("");
+        toast({
+          title: "Image format is not supported.",
+          description: "Please try again with a png.",
+          status: "error",
+          duration: 3500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        event.target.value = "";
+        return;
+      }
       reader.readAsDataURL(event.target.files[0]);
     }
     reader.onload = (readerEvent) => {
@@ -49,66 +68,60 @@ const NewPostsMedia = () => {
         <Input ref={inputRef} hidden type="file" onChange={onImageSelected} />
       </Flex>
       <hr />
-      <Flex mt="2" maxW="600px" maxH="600px">
+      <Flex w="90%" h="80%">
         {selectedFile !== "" ? (
-          <Box>
-            <Flex
-              mx="3"
-              transition="filter 0.3s ease"
-              _hover={{ filter: "brightness(50%)" }}
-              onMouseEnter={() => setHoverPreview(true)}
-              onMouseLeave={() => setHoverPreview(false)}
-            >
-              <Image src={selectedFile} alt="The selected file" />
-              {hoverPreview ? (
-                <Box position="absolute">
-                  <Tooltip label="Delete">
+          <Flex maxW="250px" maxH="150px" p="2">
+            <Box position="absolute">
+              <Tooltip label="Delete">
+                <IconButton
+                  onClick={() => {
+                    setConfirmationModal({
+                      confirmationModalView: "removeImage",
+                      openConfirmationModal: true,
+                    });
+                  }}
+                  bg="transparent"
+                  aria-label="Delete"
+                  icon={
+                    <Icon
+                      w="8"
+                      h="8"
+                      as={CustomAnimatedRemoveIcon}
+                      color="white"
+                      _dark={{ color: "black" }}
+                    />
+                  }
+                />
+              </Tooltip>
+              <Box>
+                <a
+                  href={selectedFile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Tooltip label="Open">
                     <IconButton
-                      onClick={() => {
-                        setSelectedFile("");
-                        toast({
-                          title: "Successfully removed.",
-                          description: "Successfully removed the file.",
-                          status: "success",
-                          duration: 3500,
-                          position: "bottom-left",
-                          isClosable: true,
-                        });
-                      }}
                       bg="transparent"
                       aria-label="Delete"
                       icon={
                         <Icon
                           w="8"
                           h="8"
-                          as={CustomAnimatedRemoveIcon}
+                          as={CustomExternalLinkIcon}
                           color="white"
                           _dark={{ color: "black" }}
                         />
                       }
                     />
                   </Tooltip>
-                  <Box>
-                    <Tooltip label="View">
-                      <IconButton
-                        bg="transparent"
-                        aria-label="Delete"
-                        icon={
-                          <Icon
-                            w="8"
-                            h="8"
-                            as={CustomExternalLinkIcon}
-                            color="white"
-                            _dark={{ color: "black" }}
-                          />
-                        }
-                      />
-                    </Tooltip>
-                  </Box>
-                </Box>
-              ) : null}
+                </a>
+              </Box>
+            </Box>
+            <Flex justify="flex-start">
+              <Image src={selectedFile} alt="The selected file" />
             </Flex>
-          </Box>
+            <ConfirmationModal inputRef={inputRef} />
+          </Flex>
         ) : null}
       </Flex>
     </Flex>

@@ -8,11 +8,13 @@ import theme from "./components/theme/index";
 
 const Providers = ({ children }) => {
   return (
-    <RecoilRoot>
-      <CacheProvider>
-        <ChakraProvider theme={theme}>{children}</ChakraProvider>
-      </CacheProvider>
-    </RecoilRoot>
+    <StrictMode>
+      <RecoilRoot>
+        <CacheProvider>
+          <ChakraProvider theme={theme}>{children}</ChakraProvider>
+        </CacheProvider>
+      </RecoilRoot>
+    </StrictMode>
   );
 };
 

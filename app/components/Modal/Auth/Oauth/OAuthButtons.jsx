@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, Flex, IconButton, useToast } from "@chakra-ui/react";
-import { useEffect } from "react";
 import {
   useSignInWithFacebook,
   useSignInWithGithub,
@@ -115,66 +114,6 @@ function OAuthButtons() {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (googleUser) {
-      console.log("User (Google): ", googleUser);
-    }
-  }, [googleUser]);
-
-  useEffect(() => {
-    console.log(googleError);
-  }, [googleError]);
-
-  useEffect(() => {
-    if (facebookUser) {
-      console.log("User (Facebook): ", facebookUser);
-    }
-  }, [facebookUser]);
-
-  useEffect(() => {
-    console.log(facebookError);
-  }, [facebookError]);
-
-  useEffect(() => {
-    if (githubUser) {
-      console.log("User (GitHub): ", githubUser);
-    }
-  }, [githubUser]);
-
-  useEffect(() => {
-    console.log(githubError);
-  }, [githubError]);
-
-  useEffect(() => {
-    if (microsoftUser) {
-      console.log("User (Microsoft): ", microsoftUser);
-    }
-  }, [microsoftUser]);
-
-  useEffect(() => {
-    console.log(microsoftError);
-  }, [microsoftError]);
-
-  useEffect(() => {
-    if (twitterUser) {
-      console.log("User (Twitter): ", twitterUser);
-    }
-  }, [twitterUser]);
-
-  useEffect(() => {
-    console.log(twitterError);
-  }, [twitterError]);
-
-  useEffect(() => {
-    if (yahooUser) {
-      console.log("User (Yahoo): ", yahooUser);
-    }
-  }, [yahooUser]);
-
-  useEffect(() => {
-    console.log(yahooError);
-  }, [yahooError]);
 
   return (
     <Flex

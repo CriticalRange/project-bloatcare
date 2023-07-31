@@ -123,10 +123,8 @@ const useCommunityData = () => {
         isJoined: false,
       }));
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, [user]);
+    setLoading(false);
+  }, []);
 
   return {
     //data and functions

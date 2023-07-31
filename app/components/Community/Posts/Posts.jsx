@@ -53,24 +53,20 @@ const Posts = () => {
         );
     console.log("Getting docs");
     const postDocs = await getDocs(postQuery);
-    console.log("If empty, setting posts loading states");
+    console.log("Post docs that are being loaded: ", postDocs);
     if (postDocs.empty) {
+      console.log("Post document empty, setting posts loading states to false");
       setPostsLoading({ postsLoading: false, postsLoadingMore: false });
       return;
     }
-
-    const newPosts = (await postDocs).docs.map((doc) => ({
+    const newPosts = postDocs.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
-    const filteredPosts = newPosts.filter(
-      (post) =>
-        !postState.posts?.some((existingPost) => existingPost.id === post.id)
-    );
-    console.log("Setting posts loading state 2nd");
-    await setPostState((prev) => ({
+    console.log("Setting posts loading state 2nd", newPosts);
+    setPostState((prev) => ({
       ...prev,
-      posts: startAfterDoc ? [...prev.posts, ...filteredPosts] : filteredPosts,
+      posts: [newPosts],
     }));
     setStartAfterDoc(postDocs.docs[postDocs.docs.length - 1]);
     console.log("Finishing up");
@@ -78,15 +74,14 @@ const Posts = () => {
   };
 
   useEffect(() => {
-    if (communityIdParam === communityData.communityId) {
-      getPosts();
-      console.log("Conditial get posts working");
-    }
+    getPosts();
+    console.log("Get posts working");
     setStartAfterDoc(null);
     if (!user) {
       return;
     }
-  }, [communityIdParam]);
+  }, []);
+
   return (
     <Box my="3" h={postsLoading ? "1000px" : "inherit"} w="inherit">
       <InfiniteScroll
@@ -125,30 +120,29 @@ const Posts = () => {
         }
       >
         {" "}
-        {postState.posts ? (
-          postState.posts.length === 0 ? (
-            <Center key={postState.posts} my="10">
-              <Text fontSize="3xl" fontWeight="semibold">
-                You haven&apos;t created any communities yet!
-              </Text>
-              <Button
-                onClick={() =>
-                  router.push(`/communities/${communityIdParam}/new`)
-                }
-              >
-                Create One
-              </Button>
-            </Center>
-          ) : (
-            postState.posts.map((post) => {
-              if (post.communityId === communityData.communityId) {
+        {postState.posts
+          ? (console.log("Poststate posts: ", postState.posts[0]),
+            postState.posts[0].length === 0 ? (
+              <Center key={postState.posts[0]} my="10">
+                <Text fontSize="3xl" fontWeight="semibold">
+                  You haven&apos;t created any communities yet!
+                </Text>
+                <Button
+                  onClick={() =>
+                    router.push(`/communities/${communityIdParam}/new`)
+                  }
+                >
+                  Create One
+                </Button>
+              </Center>
+            ) : (
+              postState.posts[0].map((post) => {
                 // Generate a unique key for each post using post.id and communityData.communityId
                 const uniqueKey = `${post.id}-${communityData.communityId}`;
                 return <CommunityCards key={uniqueKey} post={post} />;
-              }
-            })
-          )
-        ) : null}
+              })
+            ))
+          : null}
       </InfiniteScroll>
     </Box>
   );

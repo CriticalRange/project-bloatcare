@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { authModalAtom } from "./components/atoms/authModalAtom";
 import { auth } from "./components/firebase/clientApp";
 import MainCards from "./components/root/MainView/MainCards";
+import AuthModal from "./components/Modal/Auth/AuthModal";
 
 export default function Home() {
   const [user] = useAuthState(auth);
@@ -69,7 +70,7 @@ export default function Home() {
             )}
           </Flex>
         </Flex>
-        <Flex maxW={{ base: "50%", sm: "850px" }} mt="3" direction="column">
+        <Flex maxW="850px" mt="3" direction="column">
           <Text ml="4" fontSize="3xl" mb="2">
             Most popular posts
           </Text>
