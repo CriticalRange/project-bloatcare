@@ -1,13 +1,13 @@
 "use client";
 
-import { Flex, Heading, Text, useColorMode } from "@chakra-ui/react";
-import CommunityCards from "./CommunityCards";
-import CommunitySorter from "./CommunitySorter";
-import useCommunityData from "../../../hooks/useCommunityData";
+import { Flex, Text, useColorMode } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { communitiesAtom } from "../../atoms/communitiesAtom";
 import Posts from "../Posts/Posts";
+import CommunitySorter from "./CommunitySorter";
 
 const CommunityBody = () => {
-  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
+  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (

@@ -28,7 +28,7 @@ export const postsState = atom({
   key: "postsState",
   default: {
     selectedPost: null,
-    posts: null,
+    posts: [],
   },
 });
 

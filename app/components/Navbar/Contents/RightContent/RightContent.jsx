@@ -7,7 +7,7 @@ import { authModalAtom } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import NavbarProfile from "./Profile/NavbarProfile";
 import LightSwitch from "./LightSwitch";
-import CommunityDropdown from "./CommunityDropdown";
+import CommunitiesDropdown from "./CommunitiesDropdown";
 import { Suspense, useEffect, useState } from "react";
 import AuthModal from "../../../Modal/Auth/AuthModal";
 
@@ -24,7 +24,7 @@ const RightContent = () => {
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
-      <CommunityDropdown />
+      <CommunitiesDropdown />
       {userIsLoaded && user ? (
         <NavbarProfile />
       ) : (

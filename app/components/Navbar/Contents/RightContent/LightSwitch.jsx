@@ -19,7 +19,7 @@ const LightSwitch = () => {
           colorMode === "light" ? (
             <Icon icon="line-md:sun-rising-loop" width="24" height="24" />
           ) : (
-            <CustomMoonIcon w="6" h="6" />
+            <Icon icon="line-md:moon-filled-loop" width="24" height="24" />
           )
         }
       />{" "}

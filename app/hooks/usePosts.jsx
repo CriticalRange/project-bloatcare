@@ -1,13 +1,66 @@
 "use client";
 
 import { useRecoilState } from "recoil";
-import { postsState } from "../components/atoms/postsAtom";
+import { postsLoadingAtom, postsState } from "../components/atoms/postsAtom";
 import { deleteObject, getDownloadURL, ref } from "firebase/storage";
-import { firestore, storage } from "../components/firebase/clientApp";
-import { deleteDoc, doc } from "firebase/firestore";
+import { auth, firestore, storage } from "../components/firebase/clientApp";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import useCommunityData from "./useCommunityData";
 
 const usePosts = () => {
+  const params = useParams();
+  const communityIdParam = params.communityId;
+  const [loading, setLoading] = useState(false);
+  const [lastPost, setLastPost] = useState(null);
+  const { communityData, onJoinOrLeaveCommunity, communityLoading } =
+    useCommunityData();
   const [postState, setPostState] = useRecoilState(postsState);
+
+  const getPosts = async () => {
+    const batchSize = 10; // Number of posts to fetch in each batch
+    const postQuery = lastPost
+      ? query(
+          collection(firestore, "posts"),
+          where("communityId", "==", communityIdParam),
+          orderBy("createdAt", "desc"),
+          startAfter(lastPost.createdAt),
+          limit(batchSize) // Limit the number of posts fetched per batch
+        )
+      : query(
+          collection(firestore, "posts"),
+          where("communityId", "==", communityIdParam),
+          orderBy("createdAt", "desc"),
+          limit(batchSize)
+        );
+    const postDocs = await getDocs(postQuery);
+    if (postDocs.empty) {
+      setLastPost(null);
+      setLoading(false);
+      return;
+    }
+    const newPosts = postDocs.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setPostState((prev) => ({
+      ...prev,
+      posts: newPosts,
+    }));
+    console.log("Post state posts: ", postState.posts);
+  };
 
   const onSelectPost = () => {};
 
@@ -48,6 +101,7 @@ const usePosts = () => {
   };
 
   return {
+    getPosts,
     postState,
     setPostState,
     onSelectPost,

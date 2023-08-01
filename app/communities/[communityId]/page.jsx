@@ -44,7 +44,7 @@ const CommunityPage = () => {
   useEffect(() => {
     getCommunityDocuments();
     setPageLoaded(true);
-  }, [communityIdParam]);
+  }, []);
   return (
     <Box>
       {pageLoaded && communityDataExists === "no" ? (
