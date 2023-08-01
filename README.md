@@ -13,7 +13,7 @@
 
 - Second, this is my first proper next.js project. So please be kind :)
 
-#### Want to help develop this? (I would like to have some ideas from you)
+## Want to help develop this? (I would like to have some ideas from you)
 
 First, download the dependencies:
 
@@ -39,7 +39,7 @@ Open [http://localhost:3000](http://localhost:3000) (if you didn't change the po
 
 You can start editing the pages. The page auto-updates as you edit the file thanks to hot-reload feature.
 
-## Learn More
+### Learn More
 
 If you need to learn more about Next.js, take a look at the following resources:
 
@@ -47,9 +47,3 @@ If you need to learn more about Next.js, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploying on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
