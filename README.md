@@ -1,3 +1,6 @@
+![BloatCare-logos_transparent_cropped](https://github.com/CriticalRange/project-bloatcare/assets/29708696/b8ffd442-55c8-4d9b-ab61-552747ab8e97)
+
+
 # Unleash Your Passions, Ignite Discussions
 
 - Welcome to Bloatcare, the ultimate online destination where passions thrive, and discussions come alive.
