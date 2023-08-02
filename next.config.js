@@ -4,7 +4,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer");
 
 // analyze
 const shouldAnalyzeBundles = process.env.ANALYZE === "true";
-const nextConfig = {
+module.exports = {
   webpack(config, { isServer }) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find(
@@ -25,5 +25,3 @@ const nextConfig = {
     domains: ["localhost"],
   },
 };
-
-module.exports = nextConfig;

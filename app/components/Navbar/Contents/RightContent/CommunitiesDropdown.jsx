@@ -70,7 +70,7 @@ const CommunityDropdown = () => {
         <MenuButton as={Button}>
           <Flex direction="row" align="center">
             <Text display={{ base: "none", sm: "block" }}>Communities</Text>
-            <CustomPLusIcon w="6" h="6" ml={{ base: "0", md: "2" }} />
+            <CustomPLusIcon w="6" h="6" ml="2" />
           </Flex>
         </MenuButton>
 

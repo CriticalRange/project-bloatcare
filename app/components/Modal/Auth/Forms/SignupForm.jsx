@@ -13,13 +13,15 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
+import { updateProfile } from "firebase/auth";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
+import { useDebouncedCallback } from "use-debounce";
 import {
   CustomAnimatedLoadingSpinnerIcon,
   CustomEyeClosed,
@@ -33,12 +35,10 @@ import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
 
 export default function SignupForm() {
   const toast = useToast();
-  // UseState hooks (will only use here so didn't make an atom for it)
+  // STATES
   const [remainingChars, setRemainingChars] = useState(21);
   const [signupForm, setSignupForm] = useState({
     username: "",
@@ -48,15 +48,56 @@ export default function SignupForm() {
   });
   const [isFormValid, setFormValid] = useState(false);
   const [formChecker, setFormChecker] = useState({
-    usernameTaken: false,
+    usernameStatus: "unknown",
     usernameLoading: false,
     usernameInvalid: false,
   });
-
-  // Atoms
   const [passwordChecker, setPasswordChecker] =
     useRecoilState(passwordCheckerAtom);
   const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
+
+  const debouncedUsername = useDebouncedCallback(async (value) => {
+    if (value.length != 0) {
+      const usernameDocRef = doc(firestore, "usernames", value);
+      setFormChecker((prev) => ({
+        ...prev,
+        usernameLoading: true,
+        usernameInvalid: false,
+      }));
+      await getDoc(usernameDocRef)
+        .then((docSnapshot) => {
+          if (docSnapshot.exists()) {
+            setFormChecker((prev) => ({
+              ...prev,
+              usernameLoading: false,
+              usernameStatus: "taken",
+              usernameInvalid: false,
+            }));
+            console.log("Username is taken");
+            return;
+          } else {
+            setFormChecker((prev) => ({
+              ...prev,
+              usernameLoading: false,
+              usernameStatus: "available",
+              usernameInvalid: false,
+            }));
+            console.log("Username is available");
+            return;
+          }
+        })
+        .catch((error) => {
+          console.log("Error checking username: ", error);
+          return;
+        });
+    } else {
+      console.log("Value length is 0");
+      setFormChecker((prev) => ({
+        ...prev,
+        usernameStatus: "unknown",
+      }));
+    }
+  }, 1000);
 
   // Firebase auth hook
   const [createUserWithEmailAndPassword, fbUser, loading, userError] =
@@ -78,38 +119,58 @@ export default function SignupForm() {
       return;
     }
 
-    // Create user (firebase)
-    try {
-      await createUserWithEmailAndPassword(
-        signupForm.email,
-        signupForm.password
-      ).then(async (userCredential) => {
-        await updateProfile(userCredential.user, {
-          displayName: signupForm.username,
+    if (isFormValid) {
+      // Create user (firebase)
+      try {
+        await createUserWithEmailAndPassword(
+          signupForm.email,
+          signupForm.password
+        ).then(async (userCredential) => {
+          await updateProfile(userCredential.user, {
+            displayName: signupForm.username,
+          });
+          const usernameDocRef = doc(
+            firestore,
+            "usernames",
+            userCredential.user.displayName
+          );
+          await setDoc(usernameDocRef, {
+            userUid: userCredential.user.uid,
+          });
+          const usersDocRef = doc(firestore, "users", userCredential.user.uid);
+          return await updateDoc(usersDocRef, {
+            displayName: signupForm.username,
+          });
         });
-        const usernameDocRef = doc(
-          firestore,
-          "usernames",
-          userCredential.user.displayName
-        );
-        await setDoc(usernameDocRef, {
-          userUid: userCredential.user.uid,
+        setSignupForm({
+          confirmPassword: "",
+          email: "",
+          password: "",
+          username: "",
         });
-        const usersDocRef = doc(firestore, "users", userCredential.user.uid);
-        return await updateDoc(usersDocRef, {
-          displayName: signupForm.username,
+        setPasswordChecker({
+          showPasswordChecker: false,
+          showConfirmPasswordChecker: false,
+          passwordsMatch: false,
+          testIsLowercase: false,
+          testIsUppercase: false,
+          testIsNumbers: false,
+          testIsSpecialChars: false,
+          testPasswordLength: false,
         });
-      });
-      toast({
-        title: "Signup success!",
-        description:
-          "You successfully signed up and logged in to your account.",
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-    } catch (error) {}
+        toast({
+          title: "Signup success!",
+          description:
+            "You successfully signed up and logged in to your account.",
+          status: "success",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+      } catch (error) {
+        console.log("Error creating account: ", error.message);
+      }
+    }
   };
 
   const onFormInfoChange = async (event) => {
@@ -125,47 +186,7 @@ export default function SignupForm() {
         }));
       }
       setRemainingChars(21 - truncatedValue.length);
-
-      if (value.length != 0) {
-        const usernameDocRef = doc(firestore, "usernames", truncatedValue);
-        setFormChecker((prev) => ({
-          ...prev,
-          usernameLoading: true,
-          usernameInvalid: false,
-        }));
-        await getDoc(usernameDocRef)
-          .then((docSnapshot) => {
-            if (docSnapshot.exists()) {
-              setFormChecker((prev) => ({
-                ...prev,
-                usernameLoading: false,
-                usernameTaken: true,
-                usernameInvalid: false,
-              }));
-              console.log("Username is taken");
-              return;
-            } else {
-              setFormChecker((prev) => ({
-                ...prev,
-                usernameLoading: false,
-                usernameTaken: false,
-                usernameInvalid: false,
-              }));
-              console.log("Username is available");
-              return;
-            }
-          })
-          .catch((error) => {
-            console.log("Error checking username: ", error);
-            return;
-          });
-      } else {
-        console.log("Value length is 0");
-        setFormChecker((prev) => ({
-          ...prev,
-          usernameEmpty: true,
-        }));
-      }
+      debouncedUsername(value);
     }
     if (name === "password") {
       passwordValidateRegex.forEach((regex, i) => {
@@ -239,7 +260,9 @@ export default function SignupForm() {
       passwordChecker.testIsUppercase &&
       passwordChecker.testIsNumbers &&
       passwordChecker.testIsSpecialChars &&
-      passwordChecker.testPasswordLength;
+      passwordChecker.testPasswordLength &&
+      formChecker.usernameStatus === "available" &&
+      signupForm.password === signupForm.confirmPassword;
 
     const isFormValid = isPasswordValid;
     setFormValid(isFormValid);
@@ -249,6 +272,9 @@ export default function SignupForm() {
     passwordChecker.testIsNumbers,
     passwordChecker.testIsSpecialChars,
     passwordChecker.testPasswordLength,
+    formChecker.usernameStatus,
+    signupForm.password,
+    signupForm.confirmPassword,
   ]);
 
   return (
@@ -286,15 +312,15 @@ export default function SignupForm() {
               </FormHelperText>
             ) : formChecker.usernameLoading ? (
               <CustomAnimatedLoadingSpinnerIcon my="1" w="6" h="6" />
-            ) : formChecker.usernameInvalid ? (
+            ) : formChecker.usernameStatus === "unknown" ? (
               <FormHelperText fontWeight="semibold" my="1" color="gray">
                 Pick something eligible
               </FormHelperText>
-            ) : formChecker.usernameTaken ? (
+            ) : formChecker.usernameStatus === "taken" ? (
               <FormHelperText my="1" color="red.400">
                 Username is taken
               </FormHelperText>
-            ) : !formChecker.usernameTaken ? (
+            ) : formChecker.usernameStatus === "available" ? (
               <FormHelperText my="1" color="green.500">
                 Username is available to use
               </FormHelperText>

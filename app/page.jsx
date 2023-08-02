@@ -9,6 +9,24 @@ import { auth } from "./components/firebase/clientApp";
 import MainCards from "./components/root/MainView/MainCards";
 import AuthModal from "./components/Modal/Auth/AuthModal";
 
+export const metadata = {
+  metadataBase: new URL("https://project-bloatcare.vercel.app/"),
+  alternates: {
+    manifest: "/manifest.json",
+  },
+  title: {
+    default: "BloatCare",
+  },
+  applicationName: "BloatCare",
+  referrer: "no-referrer",
+  keywords: ["Next.js", "React", "JavaScript", "BloatCare"],
+  authors: [{ name: "CriticalRange" }],
+  creator: "CriticalRange",
+  publisher: "Vercel",
+
+  description: "Unleash Your Passions, Ignite Discussions",
+};
+
 export default function Home() {
   const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);

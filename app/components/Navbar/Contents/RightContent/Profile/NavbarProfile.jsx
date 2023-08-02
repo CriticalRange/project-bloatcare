@@ -34,13 +34,15 @@ export default function NavbarProfile() {
             textColor: "white",
           }}
           rightIcon={<ProfileIcon />}
+          textOverflow="ellipsis"
         >
           <Text
-            noOfLines={1}
             textOverflow="ellipsis"
+            overflow="hidden"
+            maxWidth="30"
             display={{ base: "none", md: "unset" }}
           >
-            {user?.displayName ? user?.displayName : user.email}
+            {user?.displayName ? user?.displayName : user?.email}
           </Text>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
