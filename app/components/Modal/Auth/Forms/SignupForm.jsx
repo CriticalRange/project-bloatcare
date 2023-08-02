@@ -6,10 +6,14 @@ import {
   AlertTitle,
   Button,
   Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -17,17 +21,20 @@ import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import {
+  CustomAnimatedLoadingSpinnerIcon,
   CustomEyeClosed,
   CustomEyeOpen,
 } from "../../../Icons/IconComponents/IconComponents";
 import { passwordCheckerAtom } from "../../../atoms/checkers/passwordCheckerAtom";
 import { showPasswordAtom } from "../../../atoms/showPasswordAtom";
-import { auth } from "../../../firebase/clientApp";
+import { auth, firestore } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -40,6 +47,11 @@ export default function SignupForm() {
     confirmPassword: "",
   });
   const [isFormValid, setFormValid] = useState(false);
+  const [formChecker, setFormChecker] = useState({
+    usernameTaken: false,
+    usernameLoading: false,
+    usernameInvalid: false,
+  });
 
   // Atoms
   const [passwordChecker, setPasswordChecker] =
@@ -71,7 +83,23 @@ export default function SignupForm() {
       await createUserWithEmailAndPassword(
         signupForm.email,
         signupForm.password
-      );
+      ).then(async (userCredential) => {
+        await updateProfile(userCredential.user, {
+          displayName: signupForm.username,
+        });
+        const usernameDocRef = doc(
+          firestore,
+          "usernames",
+          userCredential.user.displayName
+        );
+        await setDoc(usernameDocRef, {
+          userUid: userCredential.user.uid,
+        });
+        const usersDocRef = doc(firestore, "users", userCredential.user.uid);
+        return await updateDoc(usersDocRef, {
+          displayName: signupForm.username,
+        });
+      });
       toast({
         title: "Signup success!",
         description:
@@ -84,7 +112,7 @@ export default function SignupForm() {
     } catch (error) {}
   };
 
-  const onFormInfoChange = (event) => {
+  const onFormInfoChange = async (event) => {
     const { name, value } = event.target;
     if (name === "username") {
       const truncatedValue = value.slice(0, 21);
@@ -97,6 +125,47 @@ export default function SignupForm() {
         }));
       }
       setRemainingChars(21 - truncatedValue.length);
+
+      if (value.length != 0) {
+        const usernameDocRef = doc(firestore, "usernames", truncatedValue);
+        setFormChecker((prev) => ({
+          ...prev,
+          usernameLoading: true,
+          usernameInvalid: false,
+        }));
+        await getDoc(usernameDocRef)
+          .then((docSnapshot) => {
+            if (docSnapshot.exists()) {
+              setFormChecker((prev) => ({
+                ...prev,
+                usernameLoading: false,
+                usernameTaken: true,
+                usernameInvalid: false,
+              }));
+              console.log("Username is taken");
+              return;
+            } else {
+              setFormChecker((prev) => ({
+                ...prev,
+                usernameLoading: false,
+                usernameTaken: false,
+                usernameInvalid: false,
+              }));
+              console.log("Username is available");
+              return;
+            }
+          })
+          .catch((error) => {
+            console.log("Error checking username: ", error);
+            return;
+          });
+      } else {
+        console.log("Value length is 0");
+        setFormChecker((prev) => ({
+          ...prev,
+          usernameEmpty: true,
+        }));
+      }
     }
     if (name === "password") {
       passwordValidateRegex.forEach((regex, i) => {
@@ -186,107 +255,124 @@ export default function SignupForm() {
     <Flex direction="column" mb={{ base: "3" }}>
       <form onSubmit={handleSignup} className="form" key="loginForm">
         <label key="usernameLabel">
-          <h4>Username</h4>
-          <InputGroup>
-            <Input
-              my="2"
-              name="username"
-              onKeyDown={(event) => {
-                if (event.code === "Space") event.preventDefault();
-              }}
-              key="username"
-              onChange={onFormInfoChange}
-              required
-              type="username"
-              placeholder="Username"
-              overflowY="hidden"
-              display="block"
-              w="full"
-              h="12"
-              borderRadius="0.375rem"
-            />
-            <InputRightElement my="3" mr="1">
-              <Text>{remainingChars}</Text>
-            </InputRightElement>
-          </InputGroup>
-          <Text>Pick something eligible :D</Text>{" "}
-          {/* Make a username checker when firestore initializes */}
+          <FormControl isRequired isInvalid={formChecker.usernameInvalid}>
+            <FormLabel>Username</FormLabel>
+            <InputGroup>
+              <Input
+                maxLength={21}
+                my="2"
+                name="username"
+                onKeyDown={(event) => {
+                  if (event.code === "Space") event.preventDefault();
+                }}
+                key="username"
+                onChange={onFormInfoChange}
+                required
+                type="username"
+                placeholder="Username"
+                overflowY="hidden"
+                display="block"
+                w="full"
+                h="12"
+                borderRadius="0.375rem"
+              />
+              <InputRightElement my="3" mr="1">
+                <Text>{remainingChars}</Text>
+              </InputRightElement>
+            </InputGroup>
+            {formChecker.usernameInvalid ? (
+              <FormHelperText my="1" color="red.400">
+                Username can&apos;t be empty
+              </FormHelperText>
+            ) : formChecker.usernameLoading ? (
+              <CustomAnimatedLoadingSpinnerIcon my="1" w="6" h="6" />
+            ) : formChecker.usernameInvalid ? (
+              <FormHelperText fontWeight="semibold" my="1" color="gray">
+                Pick something eligible
+              </FormHelperText>
+            ) : formChecker.usernameTaken ? (
+              <FormHelperText my="1" color="red.400">
+                Username is taken
+              </FormHelperText>
+            ) : !formChecker.usernameTaken ? (
+              <FormHelperText my="1" color="green.500">
+                Username is available to use
+              </FormHelperText>
+            ) : null}{" "}
+          </FormControl>
         </label>
         <label key="emailLabel">
-          <h4>Email</h4>
-          <Input
-            my="2"
-            name="email"
-            onKeyDown={(event) => {
-              if (event.code === "Space") event.preventDefault();
-            }}
-            key="emailInput"
-            onChange={onFormInfoChange}
-            required
-            type="email"
-            placeholder="example@mail.com"
-            overflowY="hidden"
-            display="block"
-            w="full"
-            h="12"
-            borderRadius="0.375rem"
-          />
-        </label>
-        <label key="passwordLabel">
-          <h4>Password</h4>
-          <InputGroup size="md" alignContent="center">
+          <FormControl isRequired>
+            <FormLabel>Email</FormLabel>
             <Input
-              onFocus={onPasswordFocus}
-              onBlur={() =>
-                setPasswordChecker((prev) => ({
-                  ...prev,
-                  showPasswordChecker: false,
-                }))
-              }
+              my="2"
+              name="email"
               onKeyDown={(event) => {
                 if (event.code === "Space") event.preventDefault();
               }}
-              my="2"
-              name="password"
-              key="passwordInput"
+              key="emailInput"
               onChange={onFormInfoChange}
               required
-              type={showPassword.showPassword ? "text" : "password"}
-              placeholder="Password"
-              autoComplete="on"
+              type="email"
+              placeholder="example@mail.com"
               overflowY="hidden"
               display="block"
               w="full"
               h="12"
               borderRadius="0.375rem"
             />
-            <InputRightElement
-              onClick={() => {
-                setShowPassword((prev) => ({
-                  ...prev,
-                  showPassword: !showPassword.showPassword,
-                }));
-              }}
-              alignContent="center"
-            >
-              <IconButton
-                mt="6"
-                mr="2"
-                aria-label="show Password"
-                icon={
-                  showPassword.showPassword ? (
-                    <CustomEyeOpen />
-                  ) : (
-                    <CustomEyeClosed />
-                  )
-                }
-              />
-            </InputRightElement>
-          </InputGroup>
+          </FormControl>
         </label>
-        <PasswordChecker />
-        <label key="confirmPasswordLabel">
-          <h4>Confirm Password</h4>
+        <label key="passwordLabel">
+          <FormControl isRequired>
+            <FormLabel>Password</FormLabel>
+            <InputGroup size="md" alignContent="center">
+              <Input
+                onFocus={onPasswordFocus}
+                onKeyDown={(event) => {
+                  if (event.code === "Space") event.preventDefault();
+                }}
+                my="2"
+                name="password"
+                key="passwordInput"
+                onChange={onFormInfoChange}
+                required
+                type={showPassword.showPassword ? "text" : "password"}
+                placeholder="Password"
+                autoComplete="on"
+                overflowY="hidden"
+                display="block"
+                w="full"
+                h="12"
+                borderRadius="0.375rem"
+              />
+              <InputRightElement
+                onClick={() => {
+                  setShowPassword((prev) => ({
+                    ...prev,
+                    showPassword: !showPassword.showPassword,
+                  }));
+                }}
+                alignContent="center"
+              >
+                <IconButton
+                  mt="6"
+                  mr="2"
+                  aria-label="show Password"
+                  icon={
+                    showPassword.showPassword ? (
+                      <CustomEyeOpen />
+                    ) : (
+                      <CustomEyeClosed />
+                    )
+                  }
+                />
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+        </label>
+        <FormControl isRequired>
+          <FormLabel>Confirm Password</FormLabel>
           <Input
             onKeyDown={(event) => {
               if (event.code === "Space") event.preventDefault();
@@ -300,7 +386,6 @@ export default function SignupForm() {
             onBlur={onConfirmPasswordFocus}
             my="2"
             name="confirmPassword"
-            key="confirmPasswordInput"
             onChange={onFormInfoChange}
             required
             type="password"
@@ -312,7 +397,8 @@ export default function SignupForm() {
             h="12"
             borderRadius="0.375rem"
           />
-        </label>
+        </FormControl>
+        <PasswordChecker />
         {signupForm.password !== signupForm.confirmPassword &&
         signupForm.password !== "" ? (
           <ConfirmPasswordChecker />
