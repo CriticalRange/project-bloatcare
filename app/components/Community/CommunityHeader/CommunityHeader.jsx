@@ -56,7 +56,7 @@ const Header = () => {
                 onClick={() => onJoinOrLeaveCommunity()}
                 isLoading={loading}
               >
-                {communityData.isJoined ? (
+                {communityData.isJoined && user ? (
                   <Text fontSize="md">Joined</Text>
                 ) : (
                   <Text fontSize="md">Join</Text>

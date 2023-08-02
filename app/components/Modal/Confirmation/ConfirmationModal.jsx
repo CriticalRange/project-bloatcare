@@ -59,39 +59,41 @@ const ConfirmationModal = ({ inputRef }) => {
           ) : null}
         </ModalBody>
         <ModalFooter>
-          <Button
-            variant="ghost"
-            onClick={() =>
-              setConfirmationModalState((prev) => ({
-                ...prev,
-                openConfirmationModal: false,
-              }))
-            }
-          >
-            Cancel
-          </Button>
-          <Button
-            colorScheme="red"
-            mr={3}
-            onClick={() => {
-              setConfirmationModalState((prev) => ({
-                ...prev,
-                openConfirmationModal: false,
-              }));
-              setSelectedFile("");
-              inputRef.current.value = "";
-              toast({
-                title: "Successfully removed.",
-                description: "Successfully removed the file.",
-                status: "success",
-                duration: 3500,
-                position: "bottom-left",
-                isClosable: true,
-              });
-            }}
-          >
-            Delete
-          </Button>
+          <Box>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                setConfirmationModalState((prev) => ({
+                  ...prev,
+                  openConfirmationModal: false,
+                }))
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => {
+                setConfirmationModalState((prev) => ({
+                  ...prev,
+                  openConfirmationModal: false,
+                }));
+                setSelectedFile("");
+                inputRef.current.value = "";
+                toast({
+                  title: "Successfully removed.",
+                  description: "Successfully removed the file.",
+                  status: "success",
+                  duration: 3500,
+                  position: "bottom-left",
+                  isClosable: true,
+                });
+              }}
+            >
+              Delete
+            </Button>
+          </Box>
         </ModalFooter>
       </ModalContent>
     </Modal>

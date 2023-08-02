@@ -1,4 +1,4 @@
-const LoadingSpinnerAnimatedSvg = (props) => (
+const CustomAnimatedLoadingSpinnerSvg = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -22,4 +22,4 @@ const LoadingSpinnerAnimatedSvg = (props) => (
     </circle>
   </svg>
 );
-export default LoadingSpinnerAnimatedSvg;
+export default CustomAnimatedLoadingSpinnerSvg;

@@ -1,17 +1,27 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import AuthModal from "./components/Modal/Auth/AuthModal";
-import CreateCommunityModal from "./components/Modal/Community/Create/CommunityCreateModal";
-import Navbar from "./components/Navbar/Navbar";
 import { ColorModeScript } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+import Navbar from "./components/Navbar/Navbar";
 import theme from "./components/theme/index";
 const Providers = dynamic(() => import("./providers"), { ssr: false });
-import dynamic from "next/dynamic";
-import ConfirmationModal from "./components/Modal/Confirmation/ConfirmationModal";
 
-const metadata = {
-  title: "BloatCare",
+export const metadata = {
+  metadataBase: new URL("https://project-bloatcare.vercel.app/"),
+  alternates: {
+    manifest: "/manifest.json",
+  },
+  title: {
+    default: "BloatCare",
+  },
+  applicationName: "BloatCare",
+  referrer: "no-referrer",
+  keywords: ["Next.js", "React", "JavaScript", "BloatCare"],
+  authors: [{ name: "CriticalRange" }],
+  creator: "CriticalRange",
+  publisher: "Vercel",
+
   description: "Unleash Your Passions, Ignite Discussions",
 };
 

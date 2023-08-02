@@ -14,9 +14,10 @@ export default function ProfileIcon() {
         <Avatar
           size="md"
           name="User"
+          referrerPolicy="no-referrer"
           src={user?.photoURL !== null ? `${user?.photoURL}` : ""}
           icon={user?.photoURL === null ? <CustomUserEmptyIcon /> : null}
-        ></Avatar>
+        />
       </WrapItem>
     </Flex>
   );

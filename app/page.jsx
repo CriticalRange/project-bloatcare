@@ -15,10 +15,13 @@ export default function Home() {
 
   return (
     <div>
-      <Flex direction={{ base: "column", md: "row" }} overflowX="hidden">
-        <Flex w="auto" h="auto" mx="10" mt="12" direction="column">
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        justify="center"
+        overflowX="hidden"
+      >
+        <Flex mx="10" mt="12" align="center" direction="column">
           <Text
-            position="sticky"
             bgGradient="linear(to-l, colors.softCyan, colors.hardCyan)"
             bgClip="text"
             fontSize="5xl"
@@ -69,17 +72,6 @@ export default function Home() {
               </Text>
             )}
           </Flex>
-        </Flex>
-        <Flex maxW="850px" mt="3" direction="column">
-          <Text ml="4" fontSize="3xl" mb="2">
-            Most popular posts
-          </Text>
-          <Stack>
-            <MainCards />
-            <MainCards />
-            <MainCards />
-            <MainCards />
-          </Stack>
         </Flex>
       </Flex>
     </div>

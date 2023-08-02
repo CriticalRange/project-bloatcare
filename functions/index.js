@@ -39,9 +39,11 @@ exports.applyDummyImage = functions.firestore
   });
 
 exports.createUserDocument = functions.auth.user().onCreate(async (user) => {
+  // Create a user document inside the "users" collection to make changes whenever needed
   db.collection("users")
     .doc(user.uid)
     .set(JSON.parse(JSON.stringify(user)));
+  // Inside the user document, create a communitySnippets collection to hold the communities visited/joined
   db.collection("users")
     .doc(user.uid)
     .collection("communitySnippets")

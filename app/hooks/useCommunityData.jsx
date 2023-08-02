@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 import { authModalAtom } from "../components/atoms/authModalAtom";
 import { communityLoading } from "../components/atoms/communityLoading";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const useCommunityData = () => {
   const [user, userLoading, userError] = useAuthState(auth);
@@ -23,6 +23,8 @@ const useCommunityData = () => {
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const [loading, setLoading] = useRecoilState(communityLoading);
+  const params = useParams();
+  const communityIdParam = params.commnityId;
 
   const getSnippets = async () => {
     // Get the required user's Community snippet document
@@ -127,7 +129,7 @@ const useCommunityData = () => {
       }));
     }
     setLoading(false);
-  }, []);
+  }, [communityIdParam]);
 
   return {
     //data and functions

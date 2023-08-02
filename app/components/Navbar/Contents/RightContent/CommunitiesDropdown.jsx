@@ -4,6 +4,8 @@ import {
   Avatar,
   Button,
   Flex,
+  Icon,
+  IconButton,
   ListItem,
   Menu,
   MenuButton,
@@ -19,7 +21,11 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import useCommunityData from "../../../../hooks/useCommunityData";
-import { CustomPLusIcon } from "../../../Icons/IconComponents/IconComponents";
+import {
+  CustomAddCommunityIcon,
+  CustomAnimatedDescriptionIcon,
+  CustomPLusIcon,
+} from "../../../Icons/IconComponents/IconComponents";
 import CreateCommunityModal from "../../../Modal/Community/Create/CommunityCreateModal";
 import { authModalAtom } from "../../../atoms/authModalAtom";
 import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
@@ -37,18 +43,6 @@ const CommunityDropdown = () => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
-
-  const CustomAnimatedDescriptionIcon = createIcon({
-    displayName: "CustomAnimatedDescriptionIcon",
-    viewBox: "0 0 24 24",
-    path: <CustomAnimatedDescriptionSvg />,
-  });
-
-  const CustomAddCommunityIcon = createIcon({
-    displayName: "CustomAddCommunityIcon",
-    viewBox: "0 0 24 24",
-    path: <CustomAddCommunitySvg />,
-  });
 
   const [user] = useAuthState(auth);
 
@@ -72,10 +66,14 @@ const CommunityDropdown = () => {
 
   return (
     <Flex mr="2">
-      <Menu isLazy size="xl">
-        <MenuButton as={Button} rightIcon={<CustomPLusIcon w="6" h="6" />}>
-          <Text display={{ base: "none", sm: "block" }}>Communities</Text>
+      <Menu isLazy preventOverflow>
+        <MenuButton as={Button}>
+          <Flex direction="row" align="center">
+            <Text display={{ base: "none", sm: "block" }}>Communities</Text>
+            <CustomPLusIcon w="6" h="6" ml={{ base: "0", md: "2" }} />
+          </Flex>
         </MenuButton>
+
         <MenuDivider />
         <MenuList
           bg="white"
@@ -83,50 +81,78 @@ const CommunityDropdown = () => {
           _dark={{ bg: "black", textColor: "white" }}
         >
           <MenuGroup title="Communities">
-            {user ? (
-              communityData.userSnippets.length !== 0 ? (
-                communityData.userSnippets.map((snippet) => {
-                  if (snippet.isJoined === true) {
-                    return (
-                      <Link
-                        display={user ? "block" : "none"}
-                        key={snippet.communityId}
-                        href={`/communities/${snippet.communityId}`}
-                      >
-                        <MenuItem
-                          bg="white"
-                          textColor="black"
-                          _dark={{ bg: "black", textColor: "white" }}
+            <MenuList
+              overflow={user ? "scroll" : "hidden"}
+              overflowX="hidden"
+              bg="white"
+              h={user ? "300" : "inherit"}
+              _dark={{ bg: "black" }}
+            >
+              {user ? (
+                communityData.userSnippets.length !== 0 ? (
+                  communityData.userSnippets.map((snippet) => {
+                    if (snippet.isJoined === true) {
+                      return (
+                        <Link
+                          display={user ? "block" : "none"}
+                          key={snippet.communityId}
+                          href={`/communities/${snippet.communityId}`}
                         >
-                          <Avatar
-                            icon={<CustomAnimatedUserSvg />}
-                            bg="transparent"
-                            size="sm"
-                          />
-                          <Text ml="3">{snippet.communityId}</Text>
-                        </MenuItem>
-                      </Link>
-                    );
-                  }
-                })
-              ) : null
-            ) : (
-              <MenuItem
-                bg="white"
-                textColor="black"
-                _dark={{ bg: "black", textColor: "white" }}
-                onClick={() => {
-                  setAuthModalState({
-                    openAuthModal: true,
-                    authModalView: "signin",
-                  });
-                }}
-              >
-                <Button bg="colors.brand.primary">
-                  You are not logged in. Click to login
-                </Button>
-              </MenuItem>
-            )}
+                          <MenuItem
+                            bg="white"
+                            textColor="black"
+                            _dark={{ bg: "black", textColor: "white" }}
+                          >
+                            <Avatar
+                              icon={
+                                <Icon
+                                  as={CustomAnimatedUserSvg}
+                                  color="black"
+                                  _dark={{ color: "white" }}
+                                  w="8"
+                                  h="8"
+                                />
+                              }
+                              bg="transparent"
+                              size="sm"
+                            />
+                            <Text ml="3">{snippet.communityId}</Text>
+                          </MenuItem>
+                        </Link>
+                      );
+                    }
+                  })
+                ) : null
+              ) : (
+                <MenuItem
+                  bg="white"
+                  textColor="black"
+                  _dark={{ bg: "black", textColor: "white" }}
+                  onClick={() => {
+                    setAuthModalState({
+                      openAuthModal: true,
+                      authModalView: "signin",
+                    });
+                  }}
+                >
+                  <Flex
+                    h="10"
+                    align="center"
+                    borderRadius="md"
+                    bg="colors.brand.primary"
+                  >
+                    <Text
+                      fontSize="md"
+                      fontWeight="semibold"
+                      mx="3"
+                      color="white"
+                    >
+                      You are not logged in. Click to login
+                    </Text>
+                  </Flex>
+                </MenuItem>
+              )}
+            </MenuList>
           </MenuGroup>
           <MenuDivider />
           <MenuGroup title="Create">

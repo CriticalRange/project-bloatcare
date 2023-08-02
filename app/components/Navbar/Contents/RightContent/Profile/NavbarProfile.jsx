@@ -26,7 +26,7 @@ export default function NavbarProfile() {
 
   return (
     <Flex mr="2">
-      <Menu>
+      <Menu preventOverflow>
         <MenuButton
           as={Button}
           textColor="black"
@@ -35,14 +35,13 @@ export default function NavbarProfile() {
           }}
           rightIcon={<ProfileIcon />}
         >
-          <SkeletonText
-            isLoaded={!userLoading}
+          <Text
             noOfLines={1}
             textOverflow="ellipsis"
             display={{ base: "none", md: "unset" }}
           >
-            {user?.displayName === null ? user.email : user?.displayName}
-          </SkeletonText>
+            {user?.displayName ? user?.displayName : user.email}
+          </Text>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <Link href="/account">

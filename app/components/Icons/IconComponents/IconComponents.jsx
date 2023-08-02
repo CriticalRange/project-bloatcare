@@ -1,5 +1,5 @@
 import { createIcon } from "@chakra-ui/react";
-import LoadingSpinnerAnimatedSvg from "../LoadingSpinnerAnimatedSvg";
+import CustomAnimatedLoadingSpinnerSvg from "../CustomAnimatedLoadingSpinnerSvg";
 import CustomUserSettingsSvg from "../CustomUserSettingsSvg";
 import CustomCommentDotsSvg from "../CustomCommentDotsSvg";
 import CustomCommentDotsVerticalSvg from "../CustomCommentDotsVerticalSvg";
@@ -29,11 +29,14 @@ import CustomUserEmptySvg from "../CustomUserEmptySvg";
 import CustomLockSvg from "../CustomLockSvg";
 import CustomSunSvg from "../CustomSunSvg";
 import CustomMoonSvg from "../CustomMoonSvg";
+import CustomAnimatedArrowRightSvg from "../CustomAnimatedArrowRightSvg";
+import CustomAnimatedDescriptionSvg from "../CustomAnimatedDescriptionSvg";
+import CustomAddCommunitySvg from "../CustomAddCommunitySvg";
 
-export const LoadingSpinnerAnimated = createIcon({
-  displayName: "LoadingSpinnerAnimated",
+export const CustomAnimatedLoadingSpinnerIcon = createIcon({
+  displayName: "CustomAnimatedLoadingSpinnerIcon",
   viewBox: "0 0 24 24",
-  path: <LoadingSpinnerAnimatedSvg />,
+  path: <CustomAnimatedLoadingSpinnerSvg />,
 });
 
 export const CustomUserSettingsIcon = createIcon({
@@ -204,4 +207,22 @@ export const CustomMoonIcon = createIcon({
   displayName: "CustomMoonIcon",
   viewBox: "0 0 24 24",
   path: <CustomMoonSvg />,
+});
+
+export const CustomAnimatedArrowRightIcon = createIcon({
+  displayName: "CustomAnimatedArrowRightIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomAnimatedArrowRightSvg />,
+});
+
+export const CustomAnimatedDescriptionIcon = createIcon({
+  displayName: "CustomAnimatedDescriptionIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomAnimatedDescriptionSvg />,
+});
+
+export const CustomAddCommunityIcon = createIcon({
+  displayName: "CustomAddCommunityIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomAddCommunitySvg />,
 });

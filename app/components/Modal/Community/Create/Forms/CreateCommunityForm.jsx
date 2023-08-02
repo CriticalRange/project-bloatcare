@@ -1,5 +1,5 @@
 "use client";
-// Form of Community creation form
+// Community creation form
 // TODO: Add fade effect
 import {
   Button,
@@ -182,8 +182,8 @@ const CreateCommunityForm = () => {
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 width={{ base: "200px", md: "350px" }}
-                bg="brand.secondary"
-                color="white"
+                bg="colors.brand.secondary"
+                color="colors.white"
                 _dark={{ color: "black" }}
                 hasArrow
                 placement="left"
@@ -216,8 +216,8 @@ const CreateCommunityForm = () => {
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 width={{ base: "200px", md: "350px" }}
-                bg="brand.secondary"
-                color="white"
+                bg="colors.brand.secondary"
+                color="colors.white"
                 _dark={{ color: "black" }}
                 hasArrow
                 placement="left"
@@ -248,10 +248,10 @@ const CreateCommunityForm = () => {
             <Flex alignContent="center" cursor="pointer">
               <Tooltip
                 width={{ base: "200px", md: "350px" }}
-                bg="brand.secondary"
-                color="white"
+                bg="colors.brand.secondary"
+                color="colors.white"
                 _dark={{
-                  color: "black",
+                  color: "colors.black",
                 }}
                 hasArrow
                 placement="left"
@@ -267,7 +267,7 @@ const CreateCommunityForm = () => {
                   >
                     <Icon
                       as={CustomLockIcon}
-                      fill="black"
+                      fill="colors.black"
                       _dark={{ fill: "white" }}
                       height="14"
                       width="14"

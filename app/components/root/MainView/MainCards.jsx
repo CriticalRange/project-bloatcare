@@ -1,33 +1,25 @@
 "use client";
 
 import {
-  Card,
-  Flex,
-  Stack,
-  Text,
-  Heading,
-  CardBody,
-  Image,
   Avatar,
   Button,
+  Card,
+  CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Text,
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
 import { AnimatePresence, motion } from "framer-motion";
-import moment from "moment";
-import CommunityLoadingCard from "../../Community/CommunityBody/CommunityLoadingCard";
-import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import usePosts from "../../../hooks/usePosts";
-import { postsLoadingAtom } from "../../atoms/postsAtom";
+import CommunityLoadingCard from "../../Community/CommunityBody/CommunityLoadingCard";
 import {
   CustomAnimatedRemoveIcon,
   CustomCommentDotsIcon,
@@ -36,6 +28,7 @@ import {
   CustomThumbsDownIcon,
   CustomThumbsUpIcon,
 } from "../../Icons/IconComponents/IconComponents";
+import { postsLoadingAtom } from "../../atoms/postsAtom";
 
 const MainCards = () => {
   const { postState, setPostState, onSelectPost, onDeletePost } = usePosts();

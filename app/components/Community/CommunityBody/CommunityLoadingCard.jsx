@@ -113,13 +113,16 @@ const CommunityLoadingCard = () => {
             cursor="pointer"
           >
             <Menu flip>
-              <MenuButton
-                as={IconButton}
-                variant="ghost"
-                colorScheme="gray"
-                aria-label="See menu"
-                icon={<CustomCommentDotsVerticalIcon />}
-              ></MenuButton>
+              <MenuButton>
+                <Flex>
+                  <IconButton
+                    variant="ghost"
+                    colorScheme="gray"
+                    aria-label="See menu"
+                    icon={<CustomCommentDotsVerticalIcon />}
+                  ></IconButton>
+                </Flex>
+              </MenuButton>
             </Menu>
           </Flex>
         </Flex>
