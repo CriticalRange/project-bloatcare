@@ -1,6 +1,16 @@
 "use client";
 
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Flex,
+  Input,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import axios from "axios";
 import {
   createUserWithEmailAndPassword,
@@ -10,11 +20,23 @@ import {
 } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth } from "../../components/firebase/clientApp";
+import PasswordChecker, {
+  passwordValidateRegex,
+} from "../../components/Modal/Auth/Forms/Checkers/PasswordChecker";
+import { passwordCheckerAtom } from "../../components/atoms/checkers/passwordCheckerAtom";
+import { useRecoilState } from "recoil";
 
 const DiscordAuth = ({ searchParams }) => {
+  const toast = useToast();
   const [discordOauthPassword, setDiscordOauthPassword] = useState({
-    discordOauthPassword: "",
-    discordOauthPasswordAgain: "",
+    password: "",
+    passwordAgain: "",
+  });
+  const [isFormValid, setFormValid] = useState(false);
+  const [passwordChecker, setPasswordChecker] =
+    useRecoilState(passwordCheckerAtom);
+  const [formChecker, setFormChecker] = useState({
+    passwordsMatch: "unknown",
   });
   const [accountCreatedBefore, setAccountCreatedBefore] = useState(false);
   const [userDataState, setUserDataState] = useState({
@@ -88,8 +110,54 @@ const DiscordAuth = ({ searchParams }) => {
     }
   };
 
-  const onDiscordOauthPasswordChange = (event) => {
+  const onPasswordChange = (event) => {
     const { name, value } = event.target;
+    if (name === "password") {
+      passwordValidateRegex.forEach((regex, i) => {
+        const regexTestResult = new RegExp(regex).test(value);
+        if (regex === "[a-z]") {
+          setPasswordChecker((prev) => ({
+            ...prev,
+            testIsLowercase: regexTestResult,
+          }));
+        } else if (regex === "[A-Z]") {
+          setPasswordChecker((prev) => ({
+            ...prev,
+            testIsUppercase: regexTestResult,
+          }));
+        } else if (regex === "[0-9]") {
+          setPasswordChecker((prev) => ({
+            ...prev,
+            testIsNumbers: regexTestResult,
+          }));
+        } else if (regex === "\\W") {
+          setPasswordChecker((prev) => ({
+            ...prev,
+            testIsSpecialChars: regexTestResult,
+          }));
+        }
+        if (value.length < 8) {
+          setPasswordChecker((prev) => ({
+            ...prev,
+            testPasswordLength: false,
+          }));
+        } else if (value.length >= 8) {
+          setPasswordChecker((prev) => ({ ...prev, testPasswordLength: true }));
+        }
+        let isPasswordValid = false;
+        if (
+          passwordChecker.testIsLowercase &&
+          passwordChecker.testIsUppercase &&
+          passwordChecker.testIsNumbers &&
+          passwordChecker.testIsSpecialChars &&
+          passwordChecker.testPasswordLength
+        ) {
+          isPasswordValid = true;
+        }
+        const isFormValid = isPasswordValid;
+        setFormValid(isFormValid);
+      });
+    }
     setDiscordOauthPassword((prev) => ({
       ...prev,
       [name]: value,
@@ -99,44 +167,65 @@ const DiscordAuth = ({ searchParams }) => {
   const handleDiscordFirebaseAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
-    console.log(userDataState);
-    if (
-      discordOauthPassword.discordOauthPassword !==
-        discordOauthPassword.discordOauthPasswordAgain ||
-      discordOauthPassword.discordOauthPassword === "" ||
-      discordOauthPassword.discordOauthPasswordAgain === ""
-    ) {
-      console.log("Passwords did not match!");
+    if (!isFormValid) {
       setAuthHandlerLoading(false);
       return;
-    }
-    if (accountCreatedBefore) {
-      await signInWithEmailAndPassword(
-        auth,
-        `discord.${userDataState.email}`,
-        discordOauthPassword.discordOauthPassword
-      );
-      await updateProfile(auth.currentUser, {
-        displayName: userDataState.displayName,
-        photoURL: userDataState.avatarUrl,
-      });
-      console.log("Current user: ", auth.currentUser);
     } else {
-      await createUserWithEmailAndPassword(
-        auth,
-        `discord.${userDataState.email}`,
-        discordOauthPassword.discordOauthPassword
-      );
-      await updateProfile(auth.currentUser, {
-        displayName: userDataState.displayName,
-        photoURL: userDataState.avatarUrl,
-      });
+      if (accountCreatedBefore) {
+        await signInWithEmailAndPassword(
+          auth,
+          `discord.${userDataState.email}`,
+          discordOauthPassword.password
+        );
+        await updateProfile(auth.currentUser, {
+          displayName: userDataState.displayName,
+          photoURL: userDataState.avatarUrl,
+        });
+        console.log("Current user: ", auth.currentUser);
+      } else {
+        await createUserWithEmailAndPassword(
+          auth,
+          `discord.${userDataState.email}`,
+          discordOauthPassword.password
+        );
+        await updateProfile(auth.currentUser, {
+          displayName: userDataState.displayName,
+          photoURL: userDataState.avatarUrl,
+        });
+      }
+      setAuthHandlerLoading(false);
+      window.close();
     }
-    setAuthHandlerLoading(false);
-    window.close();
   };
+
+  useEffect(() => {
+    const isPasswordValid =
+      passwordChecker.testIsLowercase &&
+      passwordChecker.testIsUppercase &&
+      passwordChecker.testIsNumbers &&
+      passwordChecker.testIsSpecialChars &&
+      passwordChecker.testPasswordLength;
+
+    const isFormValid = isPasswordValid;
+    setFormValid(isFormValid);
+  }, [
+    passwordChecker.testIsLowercase,
+    passwordChecker.testIsUppercase,
+    passwordChecker.testIsNumbers,
+    passwordChecker.testIsSpecialChars,
+    passwordChecker.testPasswordLength,
+  ]);
+
   return (
     <Flex w="90%" h="300" mt="10" mx="5" direction="column">
+      <Text fontSize="4xl" mb="2">
+        Welcome {accountCreatedBefore ? " back " : " "}{" "}
+        {` ${
+          userDataState.displayName
+            ? userDataState.displayName
+            : userDataState.email
+        }`}
+      </Text>
       <form onSubmit={handleDiscordFirebaseAuth}>
         <Text fontSize="2xl">
           For your security, please also{" "}
@@ -144,26 +233,46 @@ const DiscordAuth = ({ searchParams }) => {
         </Text>
         <Input
           mt="3"
-          name="discordOauthPassword"
+          name="password"
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onDiscordOauthPasswordChange}
+          onFocus={() =>
+            setPasswordChecker((prev) => ({
+              ...prev,
+              showConfirmPasswordChecker: true,
+            }))
+          }
+          onChange={onPasswordChange}
+          type="password"
           key="discordOauthPassword"
           placeholder="Password"
         />
         <Input
           mt="3"
-          name="discordOauthPasswordAgain"
+          name="passwordAgain"
+          type="password"
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onDiscordOauthPasswordChange}
+          onChange={onPasswordChange}
           key="discordOauthPasswordAgain"
           placeholder="Password Again"
         />
+        {formChecker.passwordsMatch === "no-match" ? (
+          <Alert mt="3" borderRadius="5" status="error">
+            <AlertIcon />
+            <AlertTitle>Passwords didn&apos;t match!</AlertTitle>
+          </Alert>
+        ) : !isFormValid ? (
+          <Alert mt="3" borderRadius="5" status="error">
+            <AlertIcon />
+            <AlertTitle>Passwords doesn&apos;t match the standarts.</AlertTitle>
+          </Alert>
+        ) : null}
+        <PasswordChecker />
         <Button isLoading={authHandlerLoading} type="submit" mt="4">
-          Apply
+          {accountCreatedBefore ? "Login" : "Signup"}
         </Button>
       </form>
     </Flex>

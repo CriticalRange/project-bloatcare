@@ -8,9 +8,9 @@ import SearchInput from "./SearchInput";
 const LeftContent = () => {
   return (
     <Flex align="center">
-      <Box>
+      <Box mx="5">
         <Link href="/">
-          <BloatcareIcon w="10" h="10" fill="#107cf1" cursor="pointer" mx="5" />
+          <BloatcareIcon w="10" h="10" fill="#107cf1" cursor="pointer" />
         </Link>
       </Box>
       <SearchInput />
