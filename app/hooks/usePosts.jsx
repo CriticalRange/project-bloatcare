@@ -23,7 +23,7 @@ const usePosts = () => {
   const [hasMore, setHasMore] = useState(true);
   const communityIdParam = params.communityId;
   const [loading, setLoading] = useState(false);
-  const [lastPost, setLastPost] = useState(null);
+  const [lastPost, setLastPost] = useState(undefined);
   const [postState, setPostState] = useRecoilState(postsState);
 
   const getPosts = async () => {

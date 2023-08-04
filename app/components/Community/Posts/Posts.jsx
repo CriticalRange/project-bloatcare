@@ -1,17 +1,16 @@
 "use client";
 
-import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Link } from "@chakra-ui/next-js";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilState } from "recoil";
+import InfiniteScroll from "react-infinite-scroll-component";
 import useCommunityData from "../../../hooks/useCommunityData";
 import usePosts from "../../../hooks/usePosts";
 import { auth } from "../../firebase/clientApp";
 import CommunityCards from "../CommunityBody/CommunityCards";
-import InfiniteScroll from "react-infinite-scroll-component";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
-import { useParams, usePathname } from "next/navigation";
-import { Link } from "@chakra-ui/next-js";
 
 const Posts = () => {
   const {
@@ -39,10 +38,6 @@ const Posts = () => {
       posts: null,
     }));
     getPosts();
-    if (!loading && postState.posts?.length === 0) {
-      console.log("no more");
-      setHasMore(false);
-    }
     if (!user) {
       return;
     }
@@ -87,7 +82,7 @@ const Posts = () => {
           )
         }
       >
-        {postState.posts?.length === 0 && !loading && (
+        {postState.posts?.length === 0 && !loading && !hasMore && (
           <Flex direction="column" justify="center" align="center">
             <Text fontSize="3xl" my="2">
               Looks like there are no posts yet.
