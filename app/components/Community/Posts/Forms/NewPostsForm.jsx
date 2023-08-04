@@ -53,6 +53,7 @@ const NewPostsForm = () => {
           user?.displayName !== undefined
             ? user?.displayName
             : user?.email.split("@")[0],
+        creatorImage: user?.photoURL,
         title: newPostFormInfo.title,
         description: newPostFormInfo.description,
         numberOfComments: 0,

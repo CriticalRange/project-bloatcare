@@ -2,7 +2,7 @@
 
 import { Box, Button, Flex, Stack, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "./components/atoms/authModalAtom";
+import { authModalAtom } from "./components/atoms/modalAtoms";
 import MainCards from "./components/root/MainView/MainCards";
 import React from "react";
 

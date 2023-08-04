@@ -91,7 +91,6 @@ export default function SignupForm() {
           return;
         });
     } else {
-      console.log("Value length is 0");
       setFormChecker((prev) => ({
         ...prev,
         usernameStatus: "unknown",
@@ -177,8 +176,6 @@ export default function SignupForm() {
     const { name, value } = event.target;
     if (name === "username") {
       const truncatedValue = value.slice(0, 21);
-      console.log("Truncated: ", truncatedValue);
-      console.log("Value length: ", value.length);
       if (remainingChars <= 0) {
         setSignupForm((prev) => ({
           ...prev,

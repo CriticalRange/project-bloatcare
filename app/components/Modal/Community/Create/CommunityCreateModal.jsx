@@ -12,7 +12,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
+import { createCommunityModalAtom } from "../../../atoms/modalAtoms";
 import CreateCommunityForm from "./Forms/CreateCommunityForm";
 
 const CreateCommunityModal = () => {
@@ -23,10 +23,13 @@ const CreateCommunityModal = () => {
   return (
     <Box>
       <Modal
-        size="3xl"
+        size="xl"
         isOpen={createCommunityModal.openCreateCommunityModal}
         onClose={() =>
-          setCreateCommunityModal({ openCreateCommunityModal: false })
+          setCreateCommunityModal((prev) => ({
+            ...prev,
+            openCreateCommunityModal: false,
+          }))
         }
       >
         <ModalOverlay />

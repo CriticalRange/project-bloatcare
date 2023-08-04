@@ -15,7 +15,7 @@ import {
 import { useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/authModalAtom";
+import { authModalAtom } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 

@@ -3,7 +3,7 @@
 import { Flex, Button, Text, Box } from "@chakra-ui/react";
 import React from "react";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../atoms/authModalAtom";
+import { authModalAtom } from "../atoms/modalAtoms";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase/clientApp";
 

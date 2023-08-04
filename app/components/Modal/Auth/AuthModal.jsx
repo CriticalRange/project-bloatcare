@@ -15,7 +15,7 @@ import {
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../atoms/authModalAtom";
+import { authModalAtom } from "../../atoms/modalAtoms";
 import { auth } from "../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";

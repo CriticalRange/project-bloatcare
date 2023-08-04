@@ -31,8 +31,6 @@ const Posts = () => {
     useCommunityData();
 
   useEffect(() => {
-    console.log("UseEffect working");
-    console.log("Empty? ", postState.isEmpty);
     setPostState((prev) => ({
       ...prev,
       posts: null,
@@ -49,7 +47,6 @@ const Posts = () => {
       // Check if there are more posts to fetch, if not, set hasMore to false
       // This will disable further loading
       if (postState.posts?.length === 0) {
-        console.log("no more");
         setHasMore(false);
       }
     });

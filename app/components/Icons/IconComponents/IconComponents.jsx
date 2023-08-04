@@ -32,6 +32,7 @@ import CustomMoonSvg from "../CustomMoonSvg";
 import CustomAnimatedArrowRightSvg from "../CustomAnimatedArrowRightSvg";
 import CustomAnimatedDescriptionSvg from "../CustomAnimatedDescriptionSvg";
 import CustomAddCommunitySvg from "../CustomAddCommunitySvg";
+import CustomCommunitySettingsSvg from "../CustomCommunitySettingsSvg";
 
 export const CustomAnimatedLoadingSpinnerIcon = createIcon({
   displayName: "CustomAnimatedLoadingSpinnerIcon",
@@ -225,4 +226,10 @@ export const CustomAddCommunityIcon = createIcon({
   displayName: "CustomAddCommunityIcon",
   viewBox: "0 0 24 24",
   path: <CustomAddCommunitySvg />,
+});
+
+export const CustomCommunitySettingsIcon = createIcon({
+  displayName: "CustomCommunitySettingsIcon",
+  viewBox: "0 0 32 32",
+  path: <CustomCommunitySettingsSvg />,
 });

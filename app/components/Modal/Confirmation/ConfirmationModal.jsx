@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef } from "react";
 import { useRecoilState } from "recoil";
-import { confirmationModalAtom } from "../../atoms/confirmationModalAtom";
+import { confirmationModalAtom } from "../../atoms/modalAtoms";
 import {
   Box,
   Button,

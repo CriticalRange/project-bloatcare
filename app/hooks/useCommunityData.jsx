@@ -13,7 +13,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { authModalAtom } from "../components/atoms/authModalAtom";
+import { authModalAtom } from "../components/atoms/modalAtoms";
 import { communityLoading } from "../components/atoms/communityLoading";
 import { useParams, useRouter } from "next/navigation";
 
@@ -41,15 +41,17 @@ const useCommunityData = () => {
     // Also save the "isJoined" parameter for easy use
     snippets.filter(async (item) => {
       if (item.communityId === communityData.communityId) {
-        await setCommunityData((prev) => ({
+        setCommunityData((prev) => ({
           ...prev,
           isJoined: item.isJoined,
+          isModerator: item.isModerator,
         }));
       }
     });
   };
 
   const onJoinOrLeaveCommunity = () => {
+    // If pressed join, user will be prompted to sign in
     if (!user) {
       setAuthModal((prev) => ({
         ...prev,
@@ -57,6 +59,7 @@ const useCommunityData = () => {
       }));
       return;
     }
+    // If user is signed in, check if user is joined.
     if (!communityData.isJoined) {
       joinCommunity();
     } else {

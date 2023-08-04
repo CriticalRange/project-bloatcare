@@ -27,8 +27,10 @@ import {
   CustomPLusIcon,
 } from "../../../Icons/IconComponents/IconComponents";
 import CreateCommunityModal from "../../../Modal/Community/Create/CommunityCreateModal";
-import { authModalAtom } from "../../../atoms/authModalAtom";
-import { createCommunityModalAtom } from "../../../atoms/createCommunityModalAtom";
+import {
+  authModalAtom,
+  createCommunityModalAtom,
+} from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 import useCommunities from "../../../../hooks/useCommunities";
 import CommunityImage from "../../../Community/CommunityHeader/CommunityImage";
@@ -66,7 +68,7 @@ const CommunityDropdown = () => {
 
   return (
     <Flex mr="2">
-      <Menu isLazy preventOverflow>
+      <Menu isLazy preventOverflow size="lg">
         <MenuButton as={Button}>
           <Flex direction="row" align="center">
             <Text display={{ base: "none", sm: "block" }}>Communities</Text>
@@ -183,7 +185,7 @@ const CommunityDropdown = () => {
                 }
               }}
             >
-              Create Post
+              <Text>Create Post</Text>
             </MenuItem>
             <MenuItem
               bg="white"
@@ -192,7 +194,10 @@ const CommunityDropdown = () => {
               icon={<CustomAddCommunityIcon w="8" h="8" />}
               onClick={() => {
                 if (user) {
-                  setCreateCommunityModal({ openCreateCommunityModal: true });
+                  setCreateCommunityModal((prev) => ({
+                    ...prev,
+                    openCreateCommunityModal: true,
+                  }));
                 } else {
                   {
                     setAuthModalState({
@@ -212,7 +217,7 @@ const CommunityDropdown = () => {
                 }
               }}
             >
-              Create a Community
+              <Text>Create a Community</Text>
             </MenuItem>
           </MenuGroup>
         </MenuList>

@@ -19,7 +19,7 @@ import {
 } from "../../../Icons/IconComponents/IconComponents";
 import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { Link } from "@chakra-ui/next-js";
-import { confirmationModalAtom } from "../../../atoms/confirmationModalAtom";
+import { confirmationModalAtom } from "../../../atoms/modalAtoms";
 import ConfirmationModal from "../../../Modal/Confirmation/ConfirmationModal";
 
 const NewPostsMedia = () => {

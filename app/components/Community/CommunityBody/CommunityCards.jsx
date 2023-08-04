@@ -67,7 +67,7 @@ const CommunityCards = ({ post }) => {
               alignItems="center"
               flexWrap="wrap"
             >
-              <Avatar name={post.creatorDisplayName} src="" />
+              <Avatar name={post.creatorDisplayName} src={post.creatorImage} />
               <Flex direction="column">
                 <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
                   {post.title}

@@ -45,7 +45,6 @@ const usePosts = () => {
         );
     const postDocs = await getDocs(postQuery);
     if (postDocs.empty) {
-      console.log("PostDocs is empty");
       setHasMore(false);
       setPostState((prev) => ({
         ...prev,
@@ -55,7 +54,6 @@ const usePosts = () => {
       setLoading(false);
       return;
     }
-    console.log("PostDocs isn't empty");
     const newPosts = postDocs.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -69,12 +67,8 @@ const usePosts = () => {
     // Update the lastPost to the last fetched post
     setLastPost(newPosts[newPosts.length - 1]);
     if (postDocs.size < batchSize) {
-      console.log(
-        "post docs size is less than batch size, setting hasMore to false"
-      );
       setHasMore(false);
     }
-    console.log("Post state posts: ", postState.posts);
   };
 
   const onSelectPost = () => {};

@@ -1,17 +1,25 @@
 "use client";
 
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../atoms/authModalAtom";
-import { auth } from "../../firebase/clientApp";
 import useCommunityData from "../../../hooks/useCommunityData";
+import { CustomCommunitySettingsIcon } from "../../Icons/IconComponents/IconComponents";
+import {
+  authModalAtom,
+  communitySettingsModalAtom,
+} from "../../atoms/modalAtoms";
+import { auth } from "../../firebase/clientApp";
 import CommunityImage from "./CommunityImage";
+import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
 
 const Header = () => {
   const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
+  const [communitySettingsModal, setcommunitySettingsModal] = useRecoilState(
+    communitySettingsModalAtom
+  );
 
   return (
     <Flex direction="row">
@@ -45,7 +53,25 @@ const Header = () => {
                 {communityData.communityId}
               </Text>
             </Flex>
-            <Flex flex="1" mr="10" justify="flex-end">
+            <Flex flex="1" mr="10" justify="flex-end" align="center">
+              {communityData.isModerator ? (
+                <>
+                  <CommunitySettingsModal />
+                  <IconButton
+                    onClick={() =>
+                      setcommunitySettingsModal((prev) => ({
+                        ...prev,
+                        openCommunitySettingsModal: true,
+                      }))
+                    }
+                    aria-label="Community Settings"
+                    mr="3"
+                    size="md"
+                    icon={<CustomCommunitySettingsIcon />}
+                  />
+                </>
+              ) : null}
+
               <Button
                 bg="brand.primary"
                 _dark={{ bg: "black" }}
