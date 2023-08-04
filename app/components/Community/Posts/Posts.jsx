@@ -1,58 +1,108 @@
 "use client";
 
-import { Box, Button, Center, Flex, Spinner, Text } from "@chakra-ui/react";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from "firebase/firestore";
-import { motion } from "framer-motion";
-import { useParams, useRouter } from "next/navigation";
+import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { useRecoilState } from "recoil";
-import { postsLoadingAtom, postsState } from "../../atoms/postsAtom";
-import { auth, firestore } from "../../firebase/clientApp";
 import useCommunityData from "../../../hooks/useCommunityData";
-import CommunityCards from "../CommunityBody/CommunityCards";
-import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 import usePosts from "../../../hooks/usePosts";
+import { auth } from "../../firebase/clientApp";
+import CommunityCards from "../CommunityBody/CommunityCards";
+import InfiniteScroll from "react-infinite-scroll-component";
+import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
+import { useParams, usePathname } from "next/navigation";
+import { Link } from "@chakra-ui/next-js";
 
 const Posts = () => {
-  const { getPosts, postState, setPostState, onSelectPost, onDeletePost } =
-    usePosts();
-  const [user] = useAuthState(auth);
-  const [postsLoading, setPostsLoading] = useRecoilState(postsLoadingAtom);
-
+  const {
+    getPosts,
+    postState,
+    setPostState,
+    onSelectPost,
+    onDeletePost,
+    loading,
+    hasMore,
+    setHasMore,
+  } = usePosts();
   const params = useParams();
   const communityIdParam = params.communityId;
+  const [user] = useAuthState(auth);
+
   const { communityData, onJoinOrLeaveCommunity, communityLoading } =
     useCommunityData();
 
   useEffect(() => {
     console.log("UseEffect working");
+    console.log("Empty? ", postState.isEmpty);
     setPostState((prev) => ({
       ...prev,
       posts: null,
     }));
     getPosts();
+    if (!loading && postState.posts?.length === 0) {
+      console.log("no more");
+      setHasMore(false);
+    }
     if (!user) {
       return;
     }
-  }, []);
+    return;
+  }, [communityIdParam]);
+
+  const fetchMoreData = () => {
+    getPosts().then(() => {
+      // Check if there are more posts to fetch, if not, set hasMore to false
+      // This will disable further loading
+      if (postState.posts?.length === 0) {
+        console.log("no more");
+        setHasMore(false);
+      }
+    });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }; // scroll to top button action
 
   return (
-    <Box my="3" h={postsLoading ? "1000px" : "inherit"} w="inherit">
-      {postState.posts?.map((post) => {
-        // Generate a unique key for each post using post.id and communityData.communityId
-        const uniqueKey = `${post.id}-${communityData.communityId}`;
-        return <CommunityCards key={uniqueKey} post={post} />;
-      })}
+    <Box my="3" h={loading ? "1000px" : "inherit"} w="inherit">
+      <InfiniteScroll
+        dataLength={postState.posts?.length || 0}
+        next={fetchMoreData}
+        hasMore={hasMore}
+        loader={loading && <CommunityLoadingCard />}
+        endMessage={
+          !loading &&
+          postState.posts &&
+          postState.posts?.length !== 0 && (
+            <Flex direction="column" justify="center" align="center">
+              <Text fontSize="3xl" my="2">
+                Looks like no more post left.
+              </Text>
+              <Button onClick={scrollToTop}>Go up</Button>
+            </Flex>
+          )
+        }
+      >
+        {postState.posts?.length === 0 && !loading && (
+          <Flex direction="column" justify="center" align="center">
+            <Text fontSize="3xl" my="2">
+              Looks like there are no posts yet.
+            </Text>
+            <Link href={`/communities/${communityIdParam}/new`}>
+              <Button>Create one</Button>
+            </Link>
+          </Flex>
+        )}
+        {postState.posts?.map((post, index) => {
+          // Generate a unique key for each post using post.id and communityData.communityId
+          const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
+          return <CommunityCards key={uniqueKey} post={post} />;
+        })}
+      </InfiniteScroll>
     </Box>
   );
 };

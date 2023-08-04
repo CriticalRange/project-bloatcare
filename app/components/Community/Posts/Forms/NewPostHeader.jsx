@@ -15,11 +15,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
 import useCommunityData from "../../../../hooks/useCommunityData";
 import { Link } from "@chakra-ui/next-js";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 const NewPostHeader = () => {
-  const searchParams = useSearchParams();
-  const communityId = searchParams.get("communityId");
+  const params = useParams();
+  const communityIdParam = params.communityId;
   const [user] = useAuthState(auth);
   const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
   return (
@@ -32,7 +32,9 @@ const NewPostHeader = () => {
             as={Button}
             rightIcon={<ChevronDownIcon />}
           >
-            {communityId}
+            {communityIdParam === null
+              ? "Please choose a community"
+              : communityIdParam}
           </MenuButton>
           <MenuList>
             {user

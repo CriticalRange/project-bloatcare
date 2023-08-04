@@ -1,9 +1,9 @@
 "use client";
 
 import { useRecoilState } from "recoil";
-import { postsLoadingAtom, postsState } from "../components/atoms/postsAtom";
+import { postsState } from "../components/atoms/postsAtom";
 import { deleteObject, getDownloadURL, ref } from "firebase/storage";
-import { auth, firestore, storage } from "../components/firebase/clientApp";
+import { firestore, storage } from "../components/firebase/clientApp";
 import {
   collection,
   deleteDoc,
@@ -17,26 +17,24 @@ import {
 } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import useCommunityData from "./useCommunityData";
 
 const usePosts = () => {
   const params = useParams();
+  const [hasMore, setHasMore] = useState(true);
   const communityIdParam = params.communityId;
   const [loading, setLoading] = useState(false);
   const [lastPost, setLastPost] = useState(null);
-  const { communityData, onJoinOrLeaveCommunity, communityLoading } =
-    useCommunityData();
   const [postState, setPostState] = useRecoilState(postsState);
 
   const getPosts = async () => {
+    setLoading(true);
     const batchSize = 10; // Number of posts to fetch in each batch
     const postQuery = lastPost
       ? query(
           collection(firestore, "posts"),
           where("communityId", "==", communityIdParam),
           orderBy("createdAt", "desc"),
-          startAfter(lastPost.createdAt),
+          startAfter(lastPost.createdAt), // Start after the last fetched post's createdAt
           limit(batchSize) // Limit the number of posts fetched per batch
         )
       : query(
@@ -47,18 +45,35 @@ const usePosts = () => {
         );
     const postDocs = await getDocs(postQuery);
     if (postDocs.empty) {
-      setLastPost(null);
+      console.log("PostDocs is empty");
+      setHasMore(false);
+      setPostState((prev) => ({
+        ...prev,
+        posts: [],
+      }));
+      setLastPost(null); // Reset lastPost when there are no more posts to fetch
       setLoading(false);
       return;
     }
+    console.log("PostDocs isn't empty");
     const newPosts = postDocs.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
     setPostState((prev) => ({
       ...prev,
-      posts: newPosts,
+      posts: lastPost ? [...prev.posts, ...newPosts] : newPosts,
     }));
+    setLoading(false);
+
+    // Update the lastPost to the last fetched post
+    setLastPost(newPosts[newPosts.length - 1]);
+    if (postDocs.size < batchSize) {
+      console.log(
+        "post docs size is less than batch size, setting hasMore to false"
+      );
+      setHasMore(false);
+    }
     console.log("Post state posts: ", postState.posts);
   };
 
@@ -89,7 +104,6 @@ const usePosts = () => {
       await deleteDoc(postDocRef);
 
       // Update recoil state
-      console.log(postState.posts);
       setPostState((prev) => ({
         ...prev,
         posts: prev.posts.filter((item) => item.id !== post.id),
@@ -106,6 +120,9 @@ const usePosts = () => {
     setPostState,
     onSelectPost,
     onDeletePost,
+    loading,
+    hasMore,
+    setHasMore,
   };
 };
 

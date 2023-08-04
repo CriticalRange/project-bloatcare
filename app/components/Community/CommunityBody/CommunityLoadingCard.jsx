@@ -27,6 +27,9 @@ const CommunityLoadingCard = () => {
     <Card w="full" bg="transparent" border="4px solid gray">
       <CardHeader>
         <Flex
+          mx="8"
+          mt="2"
+          mb="3"
           direction="row"
           flex="1"
           gap={2}
@@ -113,16 +116,13 @@ const CommunityLoadingCard = () => {
             cursor="pointer"
           >
             <Menu flip>
-              <MenuButton>
-                <Flex>
-                  <IconButton
-                    variant="ghost"
-                    colorScheme="gray"
-                    aria-label="See menu"
-                    icon={<CustomCommentDotsVerticalIcon />}
-                  ></IconButton>
-                </Flex>
-              </MenuButton>
+              <MenuButton
+                as={IconButton}
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="See menu"
+                icon={<CustomCommentDotsVerticalIcon />}
+              ></MenuButton>
             </Menu>
           </Flex>
         </Flex>
