@@ -10,33 +10,48 @@ import MainCards from "./MainView/MainCards";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useMainPosts from "../../hooks/useMainPosts";
 import CommunityLoadingCard from "../Community/CommunityBody/CommunityLoadingCard";
-import { Link } from "@chakra-ui/next-js";
 import useCommunityData from "../../hooks/useCommunityData";
 import MainSorter from "./MainView/MainSorter";
 
 const MainViewPage = () => {
   const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { getPosts, postState, setPostState, loading, hasMore, setHasMore } =
-    useMainPosts();
+  const {
+    getPostsNoLogin,
+    getPostsLogin,
+    postState,
+    setPostState,
+    loading,
+    hasMore,
+    setHasMore,
+  } = useMainPosts();
   const { communityData, onJoinOrLeaveCommunity, communityLoading } =
     useCommunityData();
 
   useEffect(() => {
     setPostState((prev) => ({
       ...prev,
-      posts: null,
+      posts: [],
     }));
-    getPosts();
     if (!user) {
+      getPostsNoLogin();
       return;
     }
-  }, []);
+    getPostsLogin();
+  }, [user]);
 
   const fetchMoreData = () => {
-    getPosts().then(() => {
-      // Check if there are more posts to fetch, if not, set hasMore to false
-      // This will disable further loading
+    if (!user) {
+      getPostsNoLogin().then(() => {
+        // Check if there are more posts to fetch, if not, set hasMore to false
+        // This will disable further loading
+        if (postState.posts?.length === 0) {
+          setHasMore(false);
+        }
+      });
+      return;
+    }
+    getPostsLogin().then(() => {
       if (postState.posts?.length === 0) {
         setHasMore(false);
       }
@@ -63,7 +78,7 @@ const MainViewPage = () => {
       <Flex mx={{ base: "4", md: "16" }} mt="6">
         <InfiniteScroll
           dataLength={postState.posts?.length || 0}
-          next={getPosts}
+          next={fetchMoreData}
           hasMore={hasMore}
           loader={loading && <CommunityLoadingCard />}
           endMessage={

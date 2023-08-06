@@ -1,8 +1,8 @@
 "use client";
 
 import { Link } from "@chakra-ui/next-js";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import { useParams } from "next/navigation";
+import { Box, Button, Flex, Text, useToast } from "@chakra-ui/react";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -11,6 +11,8 @@ import usePosts from "../../../hooks/usePosts";
 import { auth } from "../../firebase/clientApp";
 import CommunityCards from "../CommunityBody/CommunityCards";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
+import { useRecoilState } from "recoil";
+import { authModalAtom } from "../../atoms/modalAtoms";
 
 const Posts = () => {
   const {
@@ -23,12 +25,15 @@ const Posts = () => {
     hasMore,
     setHasMore,
   } = usePosts();
+  const router = useRouter();
+  const toast = useToast();
   const params = useParams();
   const communityIdParam = params.communityId;
   const [user] = useAuthState(auth);
 
   const { communityData, onJoinOrLeaveCommunity, communityLoading } =
     useCommunityData();
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
 
   useEffect(() => {
     setPostState((prev) => ({
@@ -84,9 +89,27 @@ const Posts = () => {
             <Text fontSize="3xl" my="2">
               Looks like there are no posts yet.
             </Text>
-            <Link href={`/communities/${communityIdParam}/new`}>
-              <Button>Create one</Button>
-            </Link>
+            <Button
+              onClick={() =>
+                !user
+                  ? (setAuthModal((prev) => ({
+                      ...prev,
+                      openAuthModal: true,
+                    })),
+                    toast({
+                      title: "You are not logged in!",
+                      description:
+                        "You are not allowed to create communities unless you log in",
+                      status: "error",
+                      duration: 2500,
+                      position: "bottom-left",
+                      isClosable: true,
+                    }))
+                  : router.push(`/communities/${communityIdParam}/new`)
+              }
+            >
+              Create one
+            </Button>
           </Flex>
         )}
         {postState.posts?.map((post, index) => {
