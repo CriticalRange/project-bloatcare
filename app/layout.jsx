@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import CustomNavbar from "./CustomNavbar";
+import NextTopLoader from "nextjs-toploader";
 const Providers = dynamic(() => import("./providers"), { ssr: false });
 
 export const metadata = {
@@ -24,6 +25,7 @@ const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <body>
+        <NextTopLoader showSpinner={false} color="#1e40af" shadow={false} />
         <Providers>
           <CustomNavbar />
           {children}
