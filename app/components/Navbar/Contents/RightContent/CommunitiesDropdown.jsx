@@ -1,12 +1,11 @@
 "use client";
 
+import { Link } from "@chakra-ui/next-js";
 import {
   Avatar,
   Button,
   Flex,
   Icon,
-  IconButton,
-  ListItem,
   Menu,
   MenuButton,
   MenuDivider,
@@ -14,13 +13,13 @@ import {
   MenuItem,
   MenuList,
   Text,
-  createIcon,
   useToast,
 } from "@chakra-ui/react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import useCommunityData from "../../../../hooks/useCommunityData";
+import useCommunities from "../../../../hooks/useCommunities";
+import CustomAnimatedUserSvg from "../../../Icons/CustomAnimatedUserSvg";
 import {
   CustomAddCommunityIcon,
   CustomAnimatedDescriptionIcon,
@@ -32,13 +31,6 @@ import {
   createCommunityModalAtom,
 } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
-import useCommunities from "../../../../hooks/useCommunities";
-import CommunityImage from "../../../Community/CommunityHeader/CommunityImage";
-import CustomAnimatedUserSvg from "../../../Icons/CustomAnimatedUserSvg";
-import { Link } from "@chakra-ui/next-js";
-import { useEffect, useState } from "react";
-import CustomAnimatedDescriptionSvg from "../../../Icons/CustomAnimatedDescriptionSvg";
-import CustomAddCommunitySvg from "../../../Icons/CustomAddCommunitySvg";
 
 const CommunityDropdown = () => {
   const toast = useToast();
