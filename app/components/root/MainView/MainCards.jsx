@@ -14,25 +14,81 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import usePosts from "../../../hooks/usePosts";
 import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
+import useMainPosts from "../../../hooks/useMainPosts";
 import {
   CustomCommentDotsIcon,
   CustomThumbsUpIcon,
   CustomThumbsDownIcon,
   CustomCommentsIcon,
   CustomCommentDotsVerticalIcon,
+  CustomThumbsDownOutlineIcon,
+  CustomThumbsUpOutlineIcon,
 } from "../../Icons/IconComponents/IconComponents";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, firestore } from "../../firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useDebouncedCallback } from "use-debounce";
+import { authModalAtom } from "../../atoms/modalAtoms";
 
-const CommunityCards = ({ post }) => {
-  const { postState, setPostState, onSelectPost, onDeletePost } = usePosts();
-  const [error, setError] = useState(false);
+const MainCards = ({ post }) => {
+  const {
+    getPostsLogin,
+    getPostsNoLogin,
+    postState,
+    setPostState,
+    onSelectPost,
+    onDeletePost,
+    onLikePost,
+    onDislikePost,
+    loading,
+    hasMore,
+    setHasMore,
+    isLiked,
+    isDisliked,
+  } = useMainPosts();
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const [user] = useAuthState(auth);
+  const toast = useToast();
   const [hasEnteredView, setHasEnteredView] = useState(false);
+  const [currentLikeStatus, setCurrentLikeStatus] = useState(
+    post.numberOfLikes
+  );
+  const [currentDislikeStatus, setCurrentDislikeStatus] = useState(
+    post.numberOfDislikes
+  );
+  const [isLikedLocal, setIsLikedLocal] = useState(false);
+  const [isDislikedLocal, setIsDislikedLocal] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  const debouncedLike = useDebouncedCallback(
+    async (isLikedLocal, isDislikedLocal) => {
+      const success = await onLikePost(post, isLikedLocal, isDislikedLocal);
+      if (!success) {
+        setIsLikedLocal(isLikedLocal);
+        setLikeLoading(false);
+        setCurrentLikeStatus(currentLikeStatus);
+        toast({
+          title: `There was an error while ${
+            isLiked ? "removing the like" : "adding a like"
+          }`,
+          description: "Please try again",
+          status: "error",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        throw new Error("There was an error while liking the post");
+      }
+    },
+    1000
+  );
 
   const handleDelete = async () => {
     try {
@@ -41,14 +97,131 @@ const CommunityCards = ({ post }) => {
         throw new Error("There was an error while deleting the post");
       }
     } catch (error) {
-      setError(error.message);
+      console.log(error);
     }
   };
+
+  const handleLike = async () => {
+    try {
+      setLikeLoading(true);
+      if (!user) {
+        setAuthModal((prev) => ({
+          ...prev,
+          openAuthModal: true,
+        }));
+        toast({
+          title: "You are not logged in!",
+          description: "You are not allowed to like posts unless you log in",
+          status: "error",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        setLikeLoading(false);
+        return;
+      }
+      setIsLikedLocal(!isLikedLocal);
+      setIsDislikedLocal(false);
+      setCurrentDislikeStatus(
+        isDislikedLocal ? currentDislikeStatus - 1 : currentDislikeStatus
+      );
+      setCurrentLikeStatus(
+        isLikedLocal === false ? currentLikeStatus + 1 : currentLikeStatus - 1
+      );
+      debouncedLike(isLikedLocal, isDislikedLocal);
+      setLikeLoading(false);
+      toast({
+        title: `Successfully ${isLikedLocal ? "removed like" : "added like"}`,
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDislike = async () => {
+    try {
+      setLikeLoading(true);
+      if (!user) {
+        setAuthModal((prev) => ({
+          ...prev,
+          openAuthModal: true,
+        }));
+        toast({
+          title: "You are not logged in!",
+          description: "You are not allowed to dislike posts unless you log in",
+          status: "error",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        return;
+      }
+      setIsDislikedLocal(!isDislikedLocal);
+      setIsLikedLocal(false);
+      setCurrentLikeStatus(isLiked ? currentLikeStatus - 1 : currentLikeStatus);
+      setCurrentDislikeStatus(
+        isDislikedLocal === false
+          ? currentDislikeStatus + 1
+          : currentDislikeStatus - 1
+      );
+      const success = await onDislikePost(post);
+      if (!success) {
+        setIsDislikedLocal(isDislikedLocal);
+        setLikeLoading(false);
+        setCurrentDislikeStatus(currentDislikeStatus);
+        toast({
+          title: `There was an error while ${
+            isDisliked ? "removing the dislike" : "adding a dislike"
+          }`,
+          description: "Please try again",
+          status: "error",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        throw new Error("There was an error while disliking the post");
+      }
+      setLikeLoading(false);
+      toast({
+        title: `Successfully ${
+          isDislikedLocal ? "removed dislike" : "added dislike"
+        }`,
+        status: "success",
+        duration: 2500,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCurrentLikeStatus = async () => {
+    const userPostDocRef = doc(
+      firestore,
+      `users/${user?.uid}/postSnippets/${post.id}`
+    );
+    const userPostDoc = await getDoc(userPostDocRef);
+    if (!userPostDoc.exists()) {
+      console.warn("User post document on getCurrentLikeStatus doesn't exist");
+      return;
+    }
+    setIsLikedLocal(userPostDoc.data().isLiked);
+    console.log(userPostDoc.data().isLiked);
+    setIsDislikedLocal(userPostDoc.data().isDisliked);
+  };
+
+  useEffect(() => {
+    getCurrentLikeStatus();
+  }, []);
 
   return (
     <AnimatePresence>
       <Flex
-        my="4"
         as={motion.div}
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={
@@ -59,7 +232,7 @@ const CommunityCards = ({ post }) => {
         exit={{ opacity: 1, scale: 1 }}
         onViewportEnter={() => setHasEnteredView(true)}
       >
-        <Card w="full" bg="transparent" border="4px solid gray">
+        <Card mb="2" w="full" bg="transparent" border="4px solid gray">
           <CardHeader>
             <Flex
               direction="row"
@@ -70,13 +243,18 @@ const CommunityCards = ({ post }) => {
             >
               <Avatar name={post.creatorDisplayName} src={post.creatorImage} />
               <Flex direction="column">
-                <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
+                <Text
+                  fontSize="3xl"
+                  color="black"
+                  _dark={{ color: "white" }}
+                  noOfLines={3}
+                >
                   {post.title}
                 </Text>
                 <Text size="sm">
                   By {post.creatorDisplayName}
                   {" • "}
-                  {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
+                  {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
                 </Text>
               </Flex>
               <Flex flex="1" direction="row" justify="flex-end">
@@ -103,18 +281,41 @@ const CommunityCards = ({ post }) => {
               <Flex cursor="pointer">
                 <Flex align="center" justify="space-around">
                   <IconButton
-                    aria-label="Likes"
-                    icon={<CustomThumbsUpIcon />}
-                  ></IconButton>{" "}
-                  <Text ml="2" mr="2">
-                    {post.numberOfLikes}
+                    isDisabled={likeLoading}
+                    onClick={handleLike}
+                    aria-label="Like"
+                    icon={
+                      isLikedLocal ? (
+                        <CustomThumbsUpIcon w="6" h="6" />
+                      ) : (
+                        <CustomThumbsUpOutlineIcon stroke="#fff" w="6" h="6" />
+                      )
+                    }
+                  />{" "}
+                  <Text cursor="auto" ml="2" mr="2">
+                    {currentLikeStatus}
                   </Text>
-                  •<Text ml="2">10</Text>
+                  •
+                  <Text cursor="auto" ml="2">
+                    {currentDislikeStatus}
+                  </Text>
                   <IconButton
+                    isDisabled={likeLoading}
+                    onClick={handleDislike}
                     ml="2"
-                    aria-label="Dislikes"
-                    icon={<CustomThumbsDownIcon />}
-                  ></IconButton>
+                    aria-label="Dislike"
+                    icon={
+                      isDislikedLocal ? (
+                        <CustomThumbsDownIcon w="6" h="6" />
+                      ) : (
+                        <CustomThumbsDownOutlineIcon
+                          stroke="#fff"
+                          w="6"
+                          h="6"
+                        />
+                      )
+                    }
+                  />
                 </Flex>
               </Flex>
               <Flex align="inherit" direction="row" cursor="pointer">
@@ -159,4 +360,4 @@ const CommunityCards = ({ post }) => {
   );
 };
 
-export default CommunityCards;
+export default MainCards;

@@ -19,7 +19,7 @@ import { authModalAtom } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 
-export default function SigninForm() {
+export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
 
   const [rememberDisplay, setRememberDisplay] = useState(false);
@@ -65,6 +65,7 @@ export default function SigninForm() {
         <chakra.label key="emailLabel">
           <h4>Email</h4>
           <Input
+            ref={InitialFocusRef}
             my="2"
             name="email"
             key="emailInput"

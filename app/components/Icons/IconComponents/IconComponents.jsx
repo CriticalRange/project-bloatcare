@@ -33,6 +33,10 @@ import CustomAnimatedArrowRightSvg from "../CustomAnimatedArrowRightSvg";
 import CustomAnimatedDescriptionSvg from "../CustomAnimatedDescriptionSvg";
 import CustomAddCommunitySvg from "../CustomAddCommunitySvg";
 import CustomCommunitySettingsSvg from "../CustomCommunitySettingsSvg";
+import CustomAnimatedTwitchSvg from "../CustomAnimatedTwitchSvg";
+import CustomThumbsDownOutlineSvg from "../CustomThumbsDownOutlineSvg";
+import CustomThumbsUpOutlineSvg from "../CustomThumbsUpOutlineSvg";
+import CustomAnimatedSearchSvg from "../CustomAnimatedSearchSvg";
 
 export const CustomAnimatedLoadingSpinnerIcon = createIcon({
   displayName: "CustomAnimatedLoadingSpinnerIcon",
@@ -232,4 +236,28 @@ export const CustomCommunitySettingsIcon = createIcon({
   displayName: "CustomCommunitySettingsIcon",
   viewBox: "0 0 32 32",
   path: <CustomCommunitySettingsSvg />,
+});
+
+export const CustomAnimatedTwitchIcon = createIcon({
+  displayName: "CustomAnimatedTwitchIcon",
+  viewBox: "0 0 111 127",
+  path: <CustomAnimatedTwitchSvg />,
+});
+
+export const CustomThumbsDownOutlineIcon = createIcon({
+  displayName: "CustomThumbsDownOutlineIcon",
+  viewBox: "0 0 1200 1200",
+  path: <CustomThumbsDownOutlineSvg />,
+});
+
+export const CustomThumbsUpOutlineIcon = createIcon({
+  displayName: "CustomThumbsUpOutlineIcon",
+  viewBox: "0 0 1200 1200",
+  path: <CustomThumbsUpOutlineSvg />,
+});
+
+export const CustomAnimatedSearchIcon = createIcon({
+  displayName: "CustomAnimatedSearchIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomAnimatedSearchSvg />,
 });

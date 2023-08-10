@@ -11,6 +11,7 @@ import {
 } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import {
+  CustomAnimatedTwitchIcon,
   DiscordIcon,
   FacebookIcon,
   GithubIcon,
@@ -219,7 +220,7 @@ function OAuthButtons() {
             isLoading={twitchLoading}
             onClick={handleTwitchSignin}
             aria-label="Sign in with Twitch"
-            icon={<TwitchIcon w="10" h="10" fill="#a970ff" />}
+            icon={<CustomAnimatedTwitchIcon w="10" h="10" fill="#a970ff" />}
           ></IconButton>
         </Box>
       </Flex>

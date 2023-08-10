@@ -21,6 +21,8 @@ const Posts = () => {
     setPostState,
     onSelectPost,
     onDeletePost,
+    onLikePost,
+    onDislikePost,
     loading,
     hasMore,
     setHasMore,

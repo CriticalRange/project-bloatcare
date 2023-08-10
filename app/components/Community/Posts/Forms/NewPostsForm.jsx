@@ -12,7 +12,9 @@ import {
 import {
   addDoc,
   collection,
+  doc,
   getCountFromServer,
+  getDoc,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -48,6 +50,9 @@ const NewPostsForm = () => {
     const postsCollection = collection(firestore, "posts");
     const totalPostsData = await getCountFromServer(postsCollection);
     const totalPosts = totalPostsData.data().count;
+    const activePostDocRef = doc(firestore, "postsQuery", "loggedInQuery");
+    const activePostDoc = await getDoc(activePostDocRef);
+    console.log(activePostDoc.data());
     try {
       // Firestore post reference
       const postDocRef = await addDoc(collection(firestore, "posts"), {
@@ -65,6 +70,12 @@ const NewPostsForm = () => {
         numberOfLikes: 0,
         numberOfDislikes: 0,
         createdAt: serverTimestamp(),
+      });
+      await updateDoc(activePostDocRef, {
+        [postDocRef.id]: {
+          postId: totalPosts + 1,
+          communityId: communityIdParam,
+        },
       });
       // Check if a file is selected
       if (selectedFile) {

@@ -30,7 +30,14 @@ import {
 } from "../../Icons/IconComponents/IconComponents";
 
 const CommunityCards = ({ post }) => {
-  const { postState, setPostState, onSelectPost, onDeletePost } = usePosts();
+  const {
+    postState,
+    setPostState,
+    onSelectPost,
+    onDeletePost,
+    onLikePost,
+    onDislikePost,
+  } = usePosts();
   const [error, setError] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
 

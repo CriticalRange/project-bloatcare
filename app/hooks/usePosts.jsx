@@ -1,9 +1,5 @@
 "use client";
 
-import { useRecoilState } from "recoil";
-import { postsState } from "../components/atoms/postsAtom";
-import { deleteObject, getDownloadURL, ref } from "firebase/storage";
-import { firestore, storage } from "../components/firebase/clientApp";
 import {
   collection,
   deleteDoc,
@@ -15,8 +11,12 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
+import { deleteObject, getDownloadURL, ref } from "firebase/storage";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { postsState } from "../components/atoms/postsAtom";
+import { firestore, storage } from "../components/firebase/clientApp";
 
 const usePosts = () => {
   const params = useParams();

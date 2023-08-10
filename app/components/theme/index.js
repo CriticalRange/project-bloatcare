@@ -83,6 +83,7 @@ const themeConfig = {
     widest: "0.1em",
   },
   breakpoints: {
+    xs: "16em",
     sm: "30em",
     md: "48em",
     lg: "62em",

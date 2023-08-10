@@ -12,18 +12,25 @@ import useMainPosts from "../../hooks/useMainPosts";
 import CommunityLoadingCard from "../Community/CommunityBody/CommunityLoadingCard";
 import useCommunityData from "../../hooks/useCommunityData";
 import MainSorter from "./MainView/MainSorter";
+import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
 
 const MainViewPage = () => {
   const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const {
-    getPostsNoLogin,
     getPostsLogin,
+    getPostsNoLogin,
     postState,
     setPostState,
+    onSelectPost,
+    onDeletePost,
+    onLikePost,
+    onDislikePost,
     loading,
     hasMore,
     setHasMore,
+    isLiked,
+    isDisliked,
   } = useMainPosts();
   const { communityData, onJoinOrLeaveCommunity, communityLoading } =
     useCommunityData();
@@ -68,47 +75,68 @@ const MainViewPage = () => {
   return (
     <Box>
       <Flex justify="center">
-        <Text fontSize="2xl" mt="4">
+        <Text fontSize="4xl" my="2">
           Unleash Your Passions, Ignite Discussions
         </Text>
       </Flex>
-      <Flex mx={{ base: "4", md: "16" }} mt="6">
-        <MainSorter />
-      </Flex>
-      <Flex mx={{ base: "4", md: "16" }} mt="6">
-        <InfiniteScroll
-          dataLength={postState.posts?.length || 0}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={loading && <CommunityLoadingCard />}
-          endMessage={
-            !loading &&
-            postState.posts &&
-            postState.posts?.length !== 0 && (
+      <Flex direction="row">
+        <Flex
+          w={{ base: "100%", md: "60%" }}
+          ml={{ base: "0%", md: "2%" }}
+          direction="column"
+        >
+          <MainSorter />
+          <InfiniteScroll
+            dataLength={postState.posts?.length || 0}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={loading && <CommunityLoadingCard />}
+            endMessage={
+              !loading &&
+              postState.posts &&
+              postState.posts?.length !== 0 && (
+                <Flex direction="column" justify="center" align="center">
+                  <Text fontSize="3xl" my="2">
+                    Looks like no more post left.
+                  </Text>
+                  <Button onClick={scrollToTop}>Go up</Button>
+                </Flex>
+              )
+            }
+          >
+            {postState.posts?.length === 0 && !loading && !hasMore && (
               <Flex direction="column" justify="center" align="center">
                 <Text fontSize="3xl" my="2">
-                  Looks like no more post left.
+                  Looks like there are no posts yet.
                 </Text>
-                <Button onClick={scrollToTop}>Go up</Button>
+                <Button>Create one</Button>
               </Flex>
-            )
-          }
-        >
-          {postState.posts?.length === 0 && !loading && !hasMore && (
-            <Flex direction="column" justify="center" align="center">
-              <Text fontSize="3xl" my="2">
-                Looks like there are no posts yet.
-              </Text>
-              <Button>Create one</Button>
-            </Flex>
-          )}
+            )}
 
-          {postState.posts?.map((post, index) => {
-            // Generate a unique key for each post using post.id and communityData.communityId
-            const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
-            return <MainCards key={uniqueKey} post={post} />;
-          })}
-        </InfiniteScroll>
+            {postState.posts?.map((post, index) => {
+              // Generate a unique key for each post using post.id and communityData.communityId
+              const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
+              return <MainCards key={uniqueKey} post={post} />;
+            })}
+          </InfiniteScroll>
+        </Flex>{" "}
+        <Flex
+          w={{ base: "0%", md: "35%" }}
+          mx="2%"
+          direction="column"
+          align="center"
+        >
+          <Text display={{ base: "none", md: "block" }} fontSize="3xl">
+            Communities (Beta)
+          </Text>
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+          <MainViewCommunityCard />
+        </Flex>
       </Flex>
     </Box>
   );

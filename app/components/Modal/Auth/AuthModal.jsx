@@ -12,7 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
@@ -25,6 +25,7 @@ import OAuthButtons from "./Oauth/OAuthButtons";
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
+  const authModalInitialFocus = useRef(null);
 
   const handleAuthModalClose = () => {
     setAuthModalState((prev) => ({
@@ -40,6 +41,7 @@ export default function AuthModal() {
   return (
     <Modal
       isOpen={authModalState.openAuthModal}
+      initialFocusRef={authModalInitialFocus}
       onClose={handleAuthModalClose}
       size="sm"
       key="signupModal"
@@ -65,7 +67,7 @@ export default function AuthModal() {
         <ModalCloseButton />
         <ModalBody key="signupModalBody">
           {authModalState.authModalView === "signin" ? (
-            <SigninForm />
+            <SigninForm InitialFocusRef={authModalInitialFocus} />
           ) : authModalState.authModalView === "signup" ? (
             <SignupForm />
           ) : authModalState.authModalView === "passwordReset" ? (
