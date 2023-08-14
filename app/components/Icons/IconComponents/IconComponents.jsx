@@ -37,6 +37,7 @@ import CustomAnimatedTwitchSvg from "../CustomAnimatedTwitchSvg";
 import CustomThumbsDownOutlineSvg from "../CustomThumbsDownOutlineSvg";
 import CustomThumbsUpOutlineSvg from "../CustomThumbsUpOutlineSvg";
 import CustomAnimatedSearchSvg from "../CustomAnimatedSearchSvg";
+import CustomAnimatedShareSvg from "../CustomAnimatedShareSvg";
 
 export const CustomAnimatedLoadingSpinnerIcon = createIcon({
   displayName: "CustomAnimatedLoadingSpinnerIcon",
@@ -260,4 +261,10 @@ export const CustomAnimatedSearchIcon = createIcon({
   displayName: "CustomAnimatedSearchIcon",
   viewBox: "0 0 24 24",
   path: <CustomAnimatedSearchSvg />,
+});
+
+export const CustomAnimatedShareIcon = createIcon({
+  displayName: "CustomAnimatedShareIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomAnimatedShareSvg />,
 });

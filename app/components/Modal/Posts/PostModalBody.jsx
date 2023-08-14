@@ -16,30 +16,28 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { AnimatePresence, motion } from "framer-motion";
-import moment from "moment/moment";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import { postModalAtom } from "../../atoms/postModalAtom";
+import moment from "moment";
 import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
-import useMainPosts from "../../../hooks/useMainPosts";
 import {
   CustomCommentDotsIcon,
   CustomThumbsUpIcon,
+  CustomThumbsUpOutlineIcon,
   CustomThumbsDownIcon,
+  CustomThumbsDownOutlineIcon,
   CustomCommentsIcon,
   CustomCommentDotsVerticalIcon,
-  CustomThumbsDownOutlineIcon,
-  CustomThumbsUpOutlineIcon,
 } from "../../Icons/IconComponents/IconComponents";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, firestore } from "../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDebouncedCallback } from "use-debounce";
+import useMainPosts from "../../../hooks/useMainPosts";
 import { authModalAtom } from "../../atoms/modalAtoms";
-import PostModal from "../../Modal/Posts/PostModal";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import { auth, firestore } from "../../firebase/clientApp";
 
-const MainCards = ({ post }) => {
+const PostModalBody = () => {
   const {
     getPostsLogin,
     getPostsNoLogin,
@@ -55,44 +53,51 @@ const MainCards = ({ post }) => {
     isLiked,
     isDisliked,
   } = useMainPosts();
+  const [postModal, setPostModal] = useRecoilState(postModalAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [user] = useAuthState(auth);
   const toast = useToast();
   const [hasEnteredView, setHasEnteredView] = useState(false);
   const [currentLikeStatus, setCurrentLikeStatus] = useState(
-    post.numberOfLikes
+    postModal.postInfo.numberOfLikes
   );
-  const [postModal, setPostModal] = useRecoilState(postModalAtom);
   const [currentDislikeStatus, setCurrentDislikeStatus] = useState(
-    post.numberOfDislikes
+    postModal.postInfo.numberOfDislikes
   );
   const [isLikedLocal, setIsLikedLocal] = useState(false);
   const [isDislikedLocal, setIsDislikedLocal] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
 
-  const debouncedLike = useDebouncedCallback(async () => {
-    const success = await onLikePost(post, isLikedLocal, isDislikedLocal);
-    if (!success) {
-      setIsLikedLocal(isLikedLocal);
-      setLikeLoading(false);
-      setCurrentLikeStatus(currentLikeStatus);
-      toast({
-        title: `There was an error while ${
-          isLiked ? "removing the like" : "adding a like"
-        }`,
-        description: "Please try again",
-        status: "error",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-      throw new Error("There was an error while liking the post");
-    }
-  }, 1000);
+  const debouncedLike = useDebouncedCallback(
+    async (isLikedLocal, isDislikedLocal) => {
+      const success = await onLikePost(
+        postModal.postInfo,
+        isLikedLocal,
+        isDislikedLocal
+      );
+      if (!success) {
+        setIsLikedLocal(isLikedLocal);
+        setLikeLoading(false);
+        setCurrentLikeStatus(currentLikeStatus);
+        toast({
+          title: `There was an error while ${
+            isLiked ? "removing the like" : "adding a like"
+          }`,
+          description: "Please try again",
+          status: "error",
+          duration: 2500,
+          position: "bottom-left",
+          isClosable: true,
+        });
+        throw new Error("There was an error while liking the post");
+      }
+    },
+    1000
+  );
 
   const handleDelete = async () => {
     try {
-      const success = await onDeletePost(post);
+      const success = await onDeletePost(postModal.postInfo);
       if (!success) {
         throw new Error("There was an error while deleting the post");
       }
@@ -128,7 +133,7 @@ const MainCards = ({ post }) => {
       setCurrentLikeStatus(
         isLikedLocal === false ? currentLikeStatus + 1 : currentLikeStatus - 1
       );
-      debouncedLike();
+      debouncedLike(isLikedLocal, isDislikedLocal);
       setLikeLoading(false);
       toast({
         title: `Successfully ${isLikedLocal ? "removed like" : "added like"}`,
@@ -168,7 +173,7 @@ const MainCards = ({ post }) => {
           ? currentDislikeStatus + 1
           : currentDislikeStatus - 1
       );
-      const success = await onDislikePost(post);
+      const success = await onDislikePost(postModal.postInfo);
       if (!success) {
         setIsDislikedLocal(isDislikedLocal);
         setLikeLoading(false);
@@ -200,19 +205,10 @@ const MainCards = ({ post }) => {
     }
   };
 
-  const handleSelectPost = () => {
-    onSelectPost();
-    setPostModal((prev) => ({
-      ...prev,
-      openPostModal: true,
-      postInfo: post,
-    }));
-  };
-
   const getCurrentLikeStatus = async () => {
     const userPostDocRef = doc(
       firestore,
-      `users/${user?.uid}/postSnippets/${post.id}`
+      `users/${user?.uid}/postSnippets/${postModal.postInfo.id}`
     );
     const userPostDoc = await getDoc(userPostDocRef);
     if (!userPostDoc.exists()) {
@@ -228,72 +224,59 @@ const MainCards = ({ post }) => {
   }, []);
 
   return (
-    <AnimatePresence>
-      <Flex
-        as={motion.div}
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={
-          hasEnteredView
-            ? { opacity: 1, scale: 1 }
-            : { opacity: 0, scale: 0.95 }
-        }
-        exit={{ opacity: 1, scale: 1 }}
-        onViewportEnter={() => setHasEnteredView(true)}
-      >
-        <Card mb="2" w="full" bg="transparent" boxShadow="0px 2px">
-          <CardHeader>
-            <Flex
-              direction="row"
-              flex="1"
-              gap={2}
-              alignItems="center"
-              flexWrap="wrap"
-            >
-              <Avatar name={post.creatorDisplayName} src={post.creatorImage} />
-              <Flex direction="column">
-                <Text
-                  fontSize="3xl"
-                  color="black"
-                  cursor="pointer"
-                  _dark={{ color: "white" }}
-                  noOfLines={3}
-                  onClick={handleSelectPost}
-                >
-                  {post.title}
-                </Text>
-                <Text size="sm">
-                  By {post.creatorDisplayName}
-                  {" • "}
-                  {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
-                </Text>
-              </Flex>
-              <Flex flex="1" direction="row" justify="flex-end">
-                <IconButton
-                  variant="ghost"
-                  colorScheme="gray"
-                  aria-label="See menu"
-                  icon={<CustomCommentDotsIcon w="6" h="6" />}
-                />
-              </Flex>
+    <Flex>
+      <Card mb="2" w="full" bg="transparent" boxShadow="0px 2px">
+        <CardHeader>
+          <Flex
+            direction="row"
+            flex="1"
+            gap={2}
+            alignItems="center"
+            flexWrap="wrap"
+          >
+            <Flex direction="row" align="center">
+              <Avatar
+                name={postModal.postInfo.creatorDisplayName}
+                src={postModal.postInfo.creatorImage}
+                mr="3"
+              />
+              <Text
+                fontSize="xl"
+                color="black"
+                _dark={{ color: "white" }}
+                noOfLines={3}
+              >
+                {postModal.postInfo.creatorDisplayName}
+                {" • "}
+                {moment(
+                  new Date(postModal.postInfo.createdAt?.seconds * 1000)
+                ).fromNow()}
+              </Text>
             </Flex>
-          </CardHeader>
-          <CardBody>
-            <Text>{post.description}</Text>
-            <MotionFadingImage key={post.id} post={post} />
-          </CardBody>
-          <CardFooter>
-            <Flex
-              w="full"
-              justify="space-around"
-              direction="row"
-              align="center"
-            >
+            <Flex flex="1" direction="row" justify="flex-end">
+              <IconButton
+                variant="ghost"
+                colorScheme="gray"
+                aria-label="See menu"
+                icon={<CustomCommentDotsIcon w="6" h="6" />}
+              />
+            </Flex>
+          </Flex>
+        </CardHeader>
+        <CardBody>
+          <Text>{postModal.postInfo.description}</Text>
+          <MotionFadingImage
+            key={postModal.postInfo.id}
+            post={postModal.postInfo}
+          />
+        </CardBody>
+        <CardFooter>
+          <Flex w="full" justify="space-around" direction="row" align="center">
+            <Flex cursor="pointer">
               <Flex align="center" justify="space-around">
                 <IconButton
                   isDisabled={likeLoading}
                   onClick={handleLike}
-                  backgroundColor="transparent"
-                  _hover={{ backgroundColor: "transparent" }}
                   aria-label="Like"
                   icon={
                     isLikedLocal ? (
@@ -314,8 +297,6 @@ const MainCards = ({ post }) => {
                   isDisabled={likeLoading}
                   onClick={handleDislike}
                   ml="2"
-                  backgroundColor="transparent"
-                  _hover={{ backgroundColor: "transparent" }}
                   aria-label="Dislike"
                   icon={
                     isDislikedLocal ? (
@@ -326,47 +307,35 @@ const MainCards = ({ post }) => {
                   }
                 />
               </Flex>
-              <Flex align="inherit" direction="row" cursor="pointer">
-                <Button
+            </Flex>
+            <Flex
+              align="inherit"
+              direction="row"
+              justify="center"
+              cursor="pointer"
+            >
+              <Menu flip>
+                <MenuButton
+                  as={IconButton}
                   variant="ghost"
                   colorScheme="gray"
-                  aria-label="Comments"
-                  leftIcon={<CustomCommentsIcon />}
-                  onClick={handleSelectPost}
+                  aria-label="See menu"
+                  icon={<CustomCommentDotsVerticalIcon />}
+                ></MenuButton>
+                <MenuList
+                  onClick={() => handleDelete()}
+                  border="1px solid gray"
+                  bg="#a60a0a"
                 >
-                  {" "}
-                  • <Text ml="3">{post.numberOfComments}</Text>
-                </Button>
-              </Flex>
-              <Flex
-                align="inherit"
-                direction="row"
-                justify="center"
-                cursor="pointer"
-              >
-                <Menu flip isLazy>
-                  <MenuButton
-                    as={IconButton}
-                    variant="ghost"
-                    colorScheme="gray"
-                    aria-label="See menu"
-                    icon={<CustomCommentDotsVerticalIcon />}
-                  ></MenuButton>
-                  <MenuList
-                    onClick={() => handleDelete()}
-                    border="1px solid gray"
-                    bg="#a60a0a"
-                  >
-                    <MenuItem bg="#a60a0a">Delete</MenuItem>
-                  </MenuList>
-                </Menu>
-              </Flex>
+                  <MenuItem bg="#a60a0a">Delete</MenuItem>
+                </MenuList>
+              </Menu>
             </Flex>
-          </CardFooter>
-        </Card>
-      </Flex>
-    </AnimatePresence>
+          </Flex>
+        </CardFooter>
+      </Card>
+    </Flex>
   );
 };
 
-export default MainCards;
+export default PostModalBody;

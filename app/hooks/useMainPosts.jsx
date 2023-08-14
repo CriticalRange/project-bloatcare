@@ -49,7 +49,6 @@ const useMainPosts = () => {
   };
 
   const getPostsNoLogin = async () => {
-    console.log("Get posts no login works");
     try {
       setLoading(true);
       const batchSize = 10; // Number of posts to fetch in each batch
@@ -58,7 +57,6 @@ const useMainPosts = () => {
       const totalPostsData = await getCountFromServer(postsCollection);
       const totalPosts = totalPostsData.data().count;
       const randomIndices = getRandomPostIndices(totalPosts, batchSize);
-      console.log(randomIndices);
       const postQuery = lastPost
         ? query(
             collection(firestore, "posts"),
@@ -99,8 +97,6 @@ const useMainPosts = () => {
   };
 
   const getPostsLogin = async () => {
-    console.log("Get posts login works");
-    console.log(`Changes for ${user?.displayName} `);
     try {
       setLoading(true);
       const batchSize = 10; // Number of posts to fetch in each batch
@@ -109,7 +105,6 @@ const useMainPosts = () => {
       const totalPostsData = await getCountFromServer(postsCollection);
       const totalPosts = totalPostsData.data().count;
       const randomIndices = getRandomPostIndices(totalPosts, batchSize);
-      console.log(randomIndices);
 
       const userCommunitySnippetsRef = collection(
         firestore,
@@ -120,7 +115,6 @@ const useMainPosts = () => {
       const userCommunitySnippets = userCommunitySnippetsDoc.docs.map(
         (snippet) => snippet.data().communityId
       );
-      console.log("User community snippets: ", userCommunitySnippets);
       const postQuery = lastPost
         ? query(
             collection(firestore, "posts"),
@@ -174,7 +168,7 @@ const useMainPosts = () => {
           await deleteObject(imageRef);
         } catch (error) {
           if (error.code === "object-not-found") {
-            console.log("Image not found in storage:", error);
+            console.warn("Image not found in storage:", error);
           } else {
             console.error("Error while deleting the image:", error);
           }
@@ -197,6 +191,12 @@ const useMainPosts = () => {
   };
 
   const onLikePost = async (post, isLikedLocal, isDislikedLocal) => {
+    console.log(
+      "liking post, isLikedLocal: ",
+      isLikedLocal,
+      "isDislikedLocal: ",
+      isDislikedLocal
+    );
     try {
       const userPostSnippetRef = doc(
         firestore,
@@ -207,7 +207,10 @@ const useMainPosts = () => {
       );
       const postDocRef = doc(firestore, "posts", post.id);
       const userPostSnippetDoc = await getDoc(userPostSnippetRef);
+      const postDoc = await getDoc(postDocRef);
+      // if User's post snippet document doesnt exist
       if (!userPostSnippetDoc.exists()) {
+        console.log("onLikePost, deosn't exist");
         console.error(
           "User snippet document doesn't exist, setting liked to true"
         );
@@ -217,12 +220,25 @@ const useMainPosts = () => {
         });
         setIsLiked(true);
         setIsDisliked(false);
-
+        await updateDoc(postDocRef, {
+          numberOfLikes: postDoc.data().numberOfLikes + 1,
+        });
         return true;
       }
-      const postDoc = await getDoc(postDocRef);
-      if (!postDoc.data().isLiked && !isLikedLocal) {
-        if (!postDoc.data().isDisliked && !isDislikedLocal) {
+      // if User's post snippet document isn't liked
+      if (!postDoc.data().isLiked) {
+        console.log("onLikePost, isn't liked");
+        // if User's post snippet document is also not disliked
+        if (!postDoc.data().isDisliked) {
+          console.log("onLikePost, isn't disliked");
+          if (userPostSnippetDoc.data().isLiked === isLikedLocal) {
+            console.log(
+              "onLikePost, is liked equals to local so returning true"
+            );
+            return true;
+          }
+          setIsLiked(true);
+          setIsDisliked(false);
           await setDoc(userPostSnippetRef, {
             isLiked: !isLikedLocal,
             isDisliked: false,
@@ -230,13 +246,12 @@ const useMainPosts = () => {
           setIsLiked(true);
           setIsDisliked(false);
           await updateDoc(postDocRef, {
-            numberOfLikes: isLikedLocal
-              ? postDoc.data().numberOfLikes - 1
-              : postDoc.data().numberOfLikes + 1,
+            numberOfLikes: postDoc.data().numberOfLikes - 1,
           });
           return true;
-        } else if (postDoc.data().isDisliked && isDislikedLocal) {
-          console.warn("Already disliked, removing dislike adding like");
+        } else if (postDoc.data().isDisliked) {
+          console.log("onLikePost, is disliked");
+          // if User's post snippet document is also disliked
           await setDoc(userPostSnippetRef, {
             isLiked: true,
             isDisliked: false,
@@ -248,30 +263,18 @@ const useMainPosts = () => {
             numberOfDislikes: postDoc.data().numberOfDislikes - 1,
           });
           return true;
-        } else if (
-          postDoc.data().isDisliked &&
-          postDoc.data().isLiked &&
-          !isLikedLocal &&
-          !isDislikedLocal
-        ) {
-          await setDoc(userPostSnippetRef, {
-            isLiked: true,
-            isDisliked: false,
-          });
-          console.warn("Nothing selected, just liking");
-          setIsLiked(true);
-          setIsDisliked(false);
-          await updateDoc(postDocRef, {
-            numberOfLikes: postDoc.data().numberOfLikes + 1,
-          });
+        }
+      } else if (userPostSnippetDoc.data().isLiked) {
+        console.log("onLikePost, is liked");
+        // if User's post snippet document is liked
+        if (userPostSnippetDoc.data().isLiked === isLikedLocal) {
+          console.log("onLikePost, is liked equals to local so returning true");
           return true;
         }
-      } else if (userPostSnippetDoc.data().isLiked && isLikedLocal) {
         await setDoc(userPostSnippetRef, {
           isLiked: false,
           isDisliked: false,
         });
-        console.warn("Already liked, removing like");
         setIsLiked(false);
         setIsDisliked(false);
         await updateDoc(postDocRef, {
@@ -286,6 +289,7 @@ const useMainPosts = () => {
   };
 
   const onDislikePost = async (post) => {
+    console.log("disliking post");
     try {
       const userPostSnippetRef = doc(
         firestore,
@@ -298,7 +302,6 @@ const useMainPosts = () => {
       const userPostSnippetDoc = await getDoc(userPostSnippetRef);
       const postDoc = await getDoc(postDocRef);
       if (!userPostSnippetDoc.exists()) {
-        console.warn("Dislike document doesn't exist, adding dislike");
         await setDoc(userPostSnippetRef, {
           isLiked: false,
           isDisliked: true,
@@ -311,9 +314,7 @@ const useMainPosts = () => {
         return true;
       }
       if (!userPostSnippetDoc.data().isLiked) {
-        console.warn("Not liked, adding dislike");
         if (!userPostSnippetDoc.data().isDisliked) {
-          console.warn("Not disliked and not liked, adding dislike");
           await setDoc(userPostSnippetRef, {
             isLiked: false,
             isDisliked: true,
@@ -325,7 +326,6 @@ const useMainPosts = () => {
           });
           return true;
         } else if (userPostSnippetDoc.data().isDisliked) {
-          console.warn("Disliked but not liked, removing dislike");
           await setDoc(userPostSnippetRef, {
             isLiked: false,
             isDisliked: false,
@@ -338,7 +338,6 @@ const useMainPosts = () => {
           return true;
         }
       } else if (userPostSnippetDoc.data().isLiked) {
-        console.warn("Already liked, removing like adding dislke");
         await setDoc(userPostSnippetRef, {
           isLiked: false,
           isDisliked: true,

@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Button, Text, Box, Center } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../atoms/modalAtoms";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -13,6 +13,7 @@ import CommunityLoadingCard from "../Community/CommunityBody/CommunityLoadingCar
 import useCommunityData from "../../hooks/useCommunityData";
 import MainSorter from "./MainView/MainSorter";
 import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
+import PostModal from "../Modal/Posts/PostModal";
 
 const MainViewPage = () => {
   const [user] = useAuthState(auth);
@@ -73,7 +74,10 @@ const MainViewPage = () => {
   }; // scroll to top button action
 
   return (
-    <Box>
+    <Box
+      bgColor="colors.brand.secondary"
+      _dark={{ bgColor: "colors.customGray" }}
+    >
       <Flex justify="center">
         <Text fontSize="4xl" my="2">
           Unleash Your Passions, Ignite Discussions
@@ -137,6 +141,7 @@ const MainViewPage = () => {
           <MainViewCommunityCard />
           <MainViewCommunityCard />
         </Flex>
+        <PostModal />
       </Flex>
     </Box>
   );

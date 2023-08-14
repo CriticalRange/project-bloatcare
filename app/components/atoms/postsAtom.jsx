@@ -40,3 +40,8 @@ export const postsLoadingAtom = atom({
     postsLoadingMore: false,
   },
 });
+
+export const commentsAtom = atom({
+  key: "commentsAtom",
+  default: [],
+});
