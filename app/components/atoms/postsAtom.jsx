@@ -43,5 +43,8 @@ export const postsLoadingAtom = atom({
 
 export const commentsAtom = atom({
   key: "commentsAtom",
-  default: [],
+  default: {
+    comments: [],
+    isEmpty: true,
+  },
 });

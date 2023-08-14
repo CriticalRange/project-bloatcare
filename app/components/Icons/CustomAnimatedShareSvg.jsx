@@ -1,28 +1,9 @@
 const CustomAnimatedShareSvg = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
-    <g fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth={2}>
-      <path
-        strokeDasharray={14}
-        strokeDashoffset={14}
-        d="M12 6a6 6 0 0 1 6 6v2.5"
-      >
-        <animate
-          fill="freeze"
-          attributeName="stroke-dashoffset"
-          dur="0.2s"
-          values="14;0"
-        />
-      </path>
-      <path strokeDasharray={6} strokeDashoffset={6} d="m18 15 3-3m-3 3-3-3">
-        <animate
-          fill="freeze"
-          attributeName="stroke-dashoffset"
-          begin="0.2s"
-          dur="0.2s"
-          values="6;0"
-        />
-      </path>
-    </g>
+    <path
+      fill="currentColor"
+      d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
+    />
   </svg>
 );
 export default CustomAnimatedShareSvg;

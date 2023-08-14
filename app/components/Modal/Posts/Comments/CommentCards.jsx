@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Card,
   CardBody,
   CardFooter,
@@ -25,6 +26,7 @@ import { postModalAtom } from "../../../atoms/postModalAtom";
 import useMainPosts from "../../../../hooks/useMainPosts";
 import { authModalAtom } from "../../../atoms/modalAtoms";
 import { useAuthState } from "react-firebase-hooks/auth";
+import moment from "moment";
 
 const CommentCards = ({ commentInfo }) => {
   const {
@@ -207,21 +209,32 @@ const CommentCards = ({ commentInfo }) => {
   useEffect(() => {
     getCurrentLikeStatus();
   }, []);
+
   return (
     <Flex w="full" boxShadow="0px 1px" my="1">
       <Card w="full">
         <CardHeader>
-          <Flex align="center" direction="row" justify="flex-start">
-            <Flex>
+          <Flex>
+            <Flex flex="1" justify="flex-start" align="center">
               <Avatar src={commentInfo.commenterImageURL} h="8" w="8" />
               <Text ml="3">{commentInfo.commenter}</Text>
             </Flex>
-            <Flex>
-              <CustomAnimatedShareIcon w="8" h="8" />
+            <Flex justify="flex-end" mr="3" align="center">
+              <Text mr="3">
+                {moment(
+                  new Date(commentInfo.createdAt?.seconds * 1000)
+                ).fromNow()}
+              </Text>
+              <IconButton
+                aria-label="replyTo"
+                icon={<CustomAnimatedShareIcon cursor="pointer" w="8" h="8" />}
+              />
             </Flex>
           </Flex>
         </CardHeader>
-        <CardBody>{commentInfo.comment}</CardBody>
+        <CardBody>
+          <Text fontSize="xl">{commentInfo.comment}</Text>
+        </CardBody>
         <CardFooter>
           <Flex align="center" justify="space-around">
             <IconButton

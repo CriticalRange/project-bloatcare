@@ -10,6 +10,7 @@ import { auth, firestore } from "../../../firebase/clientApp";
 import {
   collection,
   doc,
+  getDoc,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -22,7 +23,7 @@ import CommentCards from "./CommentCards";
 const CommentsSection = () => {
   const [postModal, setPostModal] = useRecoilState(postModalAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const [comments, setComments] = useRecoilState(commentsAtom);
+  const [commentState, setCommentState] = useRecoilState(commentsAtom);
   const [user] = useAuthState(auth);
   const toast = useToast();
   const { getPostComments } = usePostComments();
@@ -53,6 +54,20 @@ const CommentsSection = () => {
       "comments",
       postModal.postInfo.id
     );
+    const postCommentsDoc = await getDoc(postCommentsDocRef);
+    if (!postCommentsDoc.exists()) {
+      await setDoc(postCommentsDocRef, {
+        [randomUUID]: {
+          comment: commentForm,
+          createdAt: serverTimestamp(),
+          commenter: user?.displayName,
+          commenterImageURL: user?.photoURL,
+          replyingTo: "none",
+        },
+      });
+      getPostComments();
+      return;
+    }
     await updateDoc(postCommentsDocRef, {
       [randomUUID]: {
         comment: commentForm,
@@ -86,24 +101,39 @@ const CommentsSection = () => {
         </form>
       </Flex>
       <Flex direction="column">
-        <Text fontSize="xl">Comments</Text>
+        <Text fontSize="xl" my="1">
+          Comments
+        </Text>
         <Flex
           w="full"
           my="1"
-          h={Object.keys(comments || {}).length === 0 ? "md" : "auto"}
+          h={
+            Object.keys(commentState.comments || {}).length === 0
+              ? "md"
+              : "auto"
+          }
           borderRadius="md"
           boxShadow="0px 2px 1px"
           align="center"
           direction="column"
         >
-          {Object.keys(comments || {})?.length === 0 ? (
+          {Object.keys(commentState.comments || {})?.length === 0 ||
+          commentState.isEmpty ? (
             <Text mt="5" fontSize="2xl">
               No comments yet
             </Text>
           ) : (
-            Object.values(comments?.[0] || {}).map((value) => (
-              <CommentCards key={value.createdAt} commentInfo={value} />
-            ))
+            Object.values(commentState.comments?.[0] || {}).map(
+              (value) => (
+                console.log("mappedValues:", value),
+                (
+                  <CommentCards
+                    key={`${value.createdAt}-${value.commenter}`}
+                    commentInfo={value}
+                  />
+                )
+              )
+            )
           )}
         </Flex>
       </Flex>
