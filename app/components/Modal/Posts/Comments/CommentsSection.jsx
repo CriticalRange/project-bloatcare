@@ -97,7 +97,9 @@ const CommentsSection = () => {
             resize="none"
             w="full"
           ></Textarea>
-          <Button type="submit">Post</Button>
+          <Button aria-label="post button" type="submit">
+            Post
+          </Button>
         </form>
       </Flex>
       <Flex direction="column">

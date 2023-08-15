@@ -403,6 +403,7 @@ const CreateCommunityForm = () => {
         </label>
       </Box>
       <Button
+        aria-label="create Community button"
         isDisabled={
           titleChecker.titleStatus === "taken" ||
           titleChecker.titleInvalid ||

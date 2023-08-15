@@ -103,7 +103,9 @@ const MainViewPage = () => {
                   <Text fontSize="3xl" my="2">
                     Looks like no more post left.
                   </Text>
-                  <Button onClick={scrollToTop}>Go up</Button>
+                  <Button aria-label="go up button" onClick={scrollToTop}>
+                    Go up
+                  </Button>
                 </Flex>
               )
             }
@@ -113,7 +115,7 @@ const MainViewPage = () => {
                 <Text fontSize="3xl" my="2">
                   Looks like there are no posts yet.
                 </Text>
-                <Button>Create one</Button>
+                <Button aria-label="create one button">Create one</Button>
               </Flex>
             )}
 

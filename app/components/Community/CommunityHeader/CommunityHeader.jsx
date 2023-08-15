@@ -73,6 +73,7 @@ const Header = () => {
               ) : null}
 
               <Button
+                aria-label={user && communityData.isJoined ? "Joined" : "Join"}
                 bg="brand.primary"
                 _dark={{ bg: "black" }}
                 _hover={{

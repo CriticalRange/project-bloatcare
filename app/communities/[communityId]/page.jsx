@@ -66,6 +66,7 @@ const CommunityPage = () => {
           </Text>
 
           <Button
+            aria-label="Create One button"
             onClick={() =>
               user
                 ? setCreateCommunityModal((prev) => ({

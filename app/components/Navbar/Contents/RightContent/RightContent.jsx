@@ -29,6 +29,7 @@ const RightContent = () => {
         <NavbarProfile />
       ) : (
         <Button
+          aria-label="Login button"
           marginRight="3"
           color="white"
           bg="#1e40af"

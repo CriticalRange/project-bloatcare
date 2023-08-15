@@ -109,12 +109,16 @@ export default function SigninForm({ InitialFocusRef }) {
                 isChecked={rememberDisplay}
                 onChange={() => setRememberDisplay(!rememberDisplay)}
               />
-              <Button onClick={() => setRememberDisplay(!rememberDisplay)}>
+              <Button
+                aria-label="remember me button"
+                onClick={() => setRememberDisplay(!rememberDisplay)}
+              >
                 <Text fontSize="sm">Remember me?</Text>
               </Button>
             </Flex>
           </Flex>
           <Button
+            aria-label="forgot password button"
             onClick={() =>
               setAuthModalState((prev) => ({
                 ...prev,
@@ -148,6 +152,7 @@ export default function SigninForm({ InitialFocusRef }) {
           </Alert>
         ) : null}
         <Button
+          aria-label="login button"
           type="submit"
           margin="auto"
           w="full"

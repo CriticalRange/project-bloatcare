@@ -25,7 +25,7 @@ const MainSorter = () => {
       alignItems="center"
       justify="flex-end"
     >
-      <Button mr="2">
+      <Button mr="2" aria-label="refresh button">
         {" "}
         {/* Refresh function */}
         <Icon as={CustomRefreshIcon} w="8" h="10" />

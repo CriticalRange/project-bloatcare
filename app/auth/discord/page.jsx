@@ -271,7 +271,12 @@ const DiscordAuth = ({ searchParams }) => {
           </Alert>
         ) : null}
         <PasswordChecker />
-        <Button isLoading={authHandlerLoading} type="submit" mt="4">
+        <Button
+          aria-label={accountCreatedBefore ? "Login button" : "Signup button"}
+          isLoading={authHandlerLoading}
+          type="submit"
+          mt="4"
+        >
           {accountCreatedBefore ? "Login" : "Signup"}
         </Button>
       </form>

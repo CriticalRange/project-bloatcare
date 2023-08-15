@@ -433,6 +433,7 @@ export default function SignupForm() {
           </Alert>
         )}
         <Button
+          aria-label="Signup button"
           type="submit"
           w="full"
           margin="auto"

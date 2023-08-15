@@ -121,7 +121,11 @@ function Account() {
                   <AlertTitle noOfLines={2}>
                     There are some unsaved changes!
                   </AlertTitle>
-                  <Button size="md" type="submit">
+                  <Button
+                    size="md"
+                    aria-label="Aply changes button"
+                    type="submit"
+                  >
                     Apply changes
                   </Button>
                 </Alert>

@@ -69,6 +69,7 @@ export default function SigninForm() {
           </Alert>
         ) : null}
         <Button
+          aria-label="reset password button"
           type="submit"
           margin="auto"
           w="full"

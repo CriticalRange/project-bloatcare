@@ -85,6 +85,13 @@ export default function AuthModal() {
           />
           <Flex justify="space-around" direction="column" my="2">
             <Button
+              aria-label={`${
+                authModalState.authModalView === "signin"
+                  ? "Sign in"
+                  : authModalState.authModalView === "signin"
+                  ? "Sign up"
+                  : "Sign in Button"
+              }`}
               textColor="white"
               mb="3"
               bg="colors.brand.primary"

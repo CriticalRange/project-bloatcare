@@ -168,7 +168,12 @@ const TwitchAuth = ({ searchParams }) => {
           key="twitchOauthPasswordAgain"
           placeholder="Password Again"
         />
-        <Button isLoading={authHandlerLoading} type="submit" mt="4">
+        <Button
+          isLoading={authHandlerLoading}
+          aria-label="Apply"
+          type="submit"
+          mt="4"
+        >
           Apply
         </Button>
       </form>

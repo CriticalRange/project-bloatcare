@@ -81,7 +81,9 @@ const Posts = () => {
               <Text fontSize="3xl" my="2">
                 Looks like no more post left.
               </Text>
-              <Button onClick={scrollToTop}>Go up</Button>
+              <Button aria-label="Go up" onClick={scrollToTop}>
+                Go up
+              </Button>
             </Flex>
           )
         }
@@ -92,6 +94,7 @@ const Posts = () => {
               Looks like there are no posts yet.
             </Text>
             <Button
+              aria-label="Create one button"
               onClick={() =>
                 !user
                   ? (setAuthModal((prev) => ({

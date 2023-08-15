@@ -131,7 +131,7 @@ const NewPostsForm = () => {
         </label>
         {/* <label><TagsSystem /></label> */}
         <Center my="3">
-          <Button type="submit" isLoading={loading}>
+          <Button aria-label="Create" type="submit" isLoading={loading}>
             Create
           </Button>
         </Center>

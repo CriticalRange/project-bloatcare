@@ -61,6 +61,7 @@ const ConfirmationModal = ({ inputRef }) => {
         <ModalFooter>
           <Box>
             <Button
+              aria-label="cancel button"
               variant="ghost"
               onClick={() =>
                 setConfirmationModalState((prev) => ({
@@ -72,6 +73,7 @@ const ConfirmationModal = ({ inputRef }) => {
               Cancel
             </Button>
             <Button
+              aria-label="delete button"
               colorScheme="red"
               mr={3}
               onClick={() => {

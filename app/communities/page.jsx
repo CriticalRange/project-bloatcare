@@ -85,7 +85,7 @@ const Communities = () => {
               <Flex>
                 You haven&apos;t joined any communities
                 <Link href="/communities/Dummy">
-                  <Button>Go to Dummy</Button>
+                  <Button aria-label="Go to Dummy">Go to Dummy</Button>
                 </Link>
               </Flex>
             )}
