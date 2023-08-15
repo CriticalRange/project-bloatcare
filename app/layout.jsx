@@ -5,12 +5,16 @@ const Providers = dynamic(() => import("./providers"), { ssr: false });
 
 export const metadata = {
   metadataBase: new URL("https://project-bloatcare.vercel.app/"),
+  manifest: "/manifest.json",
+  ServiceWorker: "/register-sw.js",
   alternates: {
     manifest: "/manifest.json",
   },
   title: {
     default: "BloatCare",
   },
+  themeColor: "#60a5fa",
+  display: "standalone",
   applicationName: "BloatCare",
   referrer: "no-referrer",
   keywords: ["Next.js", "React", "JavaScript", "BloatCare"],
