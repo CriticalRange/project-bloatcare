@@ -2,7 +2,6 @@
 
 import {
   Avatar,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -16,25 +15,24 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import { doc, getDoc } from "firebase/firestore";
 import moment from "moment";
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilState } from "recoil";
+import { useDebouncedCallback } from "use-debounce";
+import useMainPosts from "../../../hooks/useMainPosts";
 import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
 import {
   CustomCommentDotsIcon,
-  CustomThumbsUpIcon,
-  CustomThumbsUpOutlineIcon,
+  CustomCommentDotsVerticalIcon,
   CustomThumbsDownIcon,
   CustomThumbsDownOutlineIcon,
-  CustomCommentsIcon,
-  CustomCommentDotsVerticalIcon,
+  CustomThumbsUpIcon,
+  CustomThumbsUpOutlineIcon,
 } from "../../Icons/IconComponents/IconComponents";
-import { doc, getDoc } from "firebase/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useDebouncedCallback } from "use-debounce";
-import useMainPosts from "../../../hooks/useMainPosts";
 import { authModalAtom } from "../../atoms/modalAtoms";
+import { postModalAtom } from "../../atoms/postModalAtom";
 import { auth, firestore } from "../../firebase/clientApp";
 
 const PostModalBody = () => {

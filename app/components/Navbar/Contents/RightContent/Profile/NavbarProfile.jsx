@@ -26,7 +26,7 @@ export default function NavbarProfile() {
 
   return (
     <Flex mr="2">
-      <Menu preventOverflow>
+      <Menu preventOverflow isLazy>
         <MenuButton
           as={Button}
           textColor="black"

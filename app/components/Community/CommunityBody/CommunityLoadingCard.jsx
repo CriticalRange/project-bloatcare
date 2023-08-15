@@ -20,6 +20,8 @@ import {
   CustomThumbsUpIcon,
   CustomThumbsDownIcon,
   CustomCommentDotsIcon,
+  CustomThumbsUpOutlineIcon,
+  CustomThumbsDownOutlineIcon,
 } from "../../Icons/IconComponents/IconComponents";
 
 const CommunityLoadingCard = () => {
@@ -79,8 +81,8 @@ const CommunityLoadingCard = () => {
               variant="ghost"
               colorScheme="gray"
               aria-label="Likes & Dislikes"
-              leftIcon={<CustomThumbsUpIcon />}
-              rightIcon={<CustomThumbsDownIcon />}
+              leftIcon={<CustomThumbsUpOutlineIcon />}
+              rightIcon={<CustomThumbsDownOutlineIcon />}
             >
               {" "}
               •

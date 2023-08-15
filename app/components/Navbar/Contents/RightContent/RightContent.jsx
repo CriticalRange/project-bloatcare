@@ -7,13 +7,19 @@ import { authModalAtom } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 import NavbarProfile from "./Profile/NavbarProfile";
 import LightSwitch from "./LightSwitch";
-import CommunitiesDropdown from "./CommunitiesDropdown";
 import { Suspense, useEffect, useState } from "react";
 import AuthModal from "../../../Modal/Auth/AuthModal";
+import dynamic from "next/dynamic";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [user, loading, error] = useAuthState(auth);
+  const DynamicCommunitiesDropdown = dynamic(
+    () => import("./CommunitiesDropdown"),
+    {
+      suspense: true,
+    }
+  );
 
   const [userIsLoaded, setUserLoaded] = useState(false);
 
@@ -24,7 +30,7 @@ const RightContent = () => {
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
-      <CommunitiesDropdown />
+      <DynamicCommunitiesDropdown />
       {userIsLoaded && user ? (
         <NavbarProfile />
       ) : (

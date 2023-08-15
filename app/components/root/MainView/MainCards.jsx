@@ -36,7 +36,6 @@ import { auth, firestore } from "../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDebouncedCallback } from "use-debounce";
 import { authModalAtom } from "../../atoms/modalAtoms";
-import PostModal from "../../Modal/Posts/PostModal";
 import { postModalAtom } from "../../atoms/postModalAtom";
 
 const MainCards = ({ post }) => {
@@ -216,7 +215,8 @@ const MainCards = ({ post }) => {
     );
     const userPostDoc = await getDoc(userPostDocRef);
     if (!userPostDoc.exists()) {
-      console.warn("User post document on getCurrentLikeStatus doesn't exist");
+      setIsLikedLocal(false);
+      setIsDislikedLocal(false);
       return;
     }
     setIsLikedLocal(userPostDoc.data().isLiked);

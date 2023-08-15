@@ -1,5 +1,5 @@
 import { getDocs, collection } from "firebase/firestore";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { auth, firestore } from "../components/firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";

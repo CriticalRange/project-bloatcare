@@ -7,11 +7,10 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import React from "react";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import dynamic from "next/dynamic";
 import { useRecoilState } from "recoil";
+import { postModalAtom } from "../../atoms/postModalAtom";
 import PostModalBody from "./PostModalBody";
-import CommentsSection from "./Comments/CommentsSection";
 
 const PostModal = () => {
   const [postModal, setPostModal] = useRecoilState(postModalAtom);
@@ -19,6 +18,9 @@ const PostModal = () => {
   const handlePostModalClose = () => {
     setPostModal((prev) => ({ ...prev, openPostModal: false }));
   };
+  const DynamicCommentsSection = dynamic(() =>
+    import("./Comments/CommentsSection/CommentsSection")
+  );
   return (
     <Flex>
       <Modal
@@ -33,7 +35,7 @@ const PostModal = () => {
           <ModalCloseButton />
           <ModalBody>
             <PostModalBody />
-            <CommentsSection />
+            <DynamicCommentsSection />
           </ModalBody>
         </ModalContent>
       </Modal>

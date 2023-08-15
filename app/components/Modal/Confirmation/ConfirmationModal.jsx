@@ -1,6 +1,3 @@
-import React, { forwardRef, useRef } from "react";
-import { useRecoilState } from "recoil";
-import { confirmationModalAtom } from "../../atoms/modalAtoms";
 import {
   Box,
   Button,
@@ -14,6 +11,8 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { confirmationModalAtom } from "../../atoms/modalAtoms";
 import { selectedFileAtom } from "../../atoms/postsAtom";
 
 const ConfirmationModal = ({ inputRef }) => {

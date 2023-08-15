@@ -2,11 +2,11 @@
 
 import { Box, Button, Flex, Text, Textarea, useToast } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { postModalAtom } from "../../../atoms/postModalAtom";
-import usePostComments from "../../../../hooks/usePostComments";
+import { postModalAtom } from "../../../../atoms/postModalAtom";
+import usePostComments from "../../../../../hooks/usePostComments";
 import { useEffect, useState } from "react";
-import { commentsAtom } from "../../../atoms/postsAtom";
-import { auth, firestore } from "../../../firebase/clientApp";
+import { commentsAtom } from "../../../../atoms/postsAtom";
+import { auth, firestore } from "../../../../firebase/clientApp";
 import {
   collection,
   doc,
@@ -16,20 +16,24 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { authModalAtom } from "../../../atoms/modalAtoms";
+import { authModalAtom } from "../../../../atoms/modalAtoms";
 import { v4 as uuidv4 } from "uuid";
-import CommentCards from "./CommentCards";
+import CommentCards from "../CommentCards";
+import dynamic from "next/dynamic";
+import CommentCardsLoading from "./CommentCardsLoading";
 
 const CommentsSection = () => {
   const [postModal, setPostModal] = useRecoilState(postModalAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const [commentState, setCommentState] = useRecoilState(commentsAtom);
   const [user] = useAuthState(auth);
   const toast = useToast();
   const { getPostComments } = usePostComments();
-  const randomUUID = uuidv4();
 
   const [commentForm, setCommentForm] = useState("");
+
+  const DynamicComments = dynamic(() => import("./Comments"), {
+    loading: () => <CommentCardsLoading />,
+  });
 
   const onCreateComment = async (event) => {
     event.preventDefault();
@@ -55,6 +59,7 @@ const CommentsSection = () => {
       postModal.postInfo.id
     );
     const postCommentsDoc = await getDoc(postCommentsDocRef);
+    const randomUUID = uuidv4();
     if (!postCommentsDoc.exists()) {
       await setDoc(postCommentsDocRef, {
         [randomUUID]: {
@@ -106,38 +111,7 @@ const CommentsSection = () => {
         <Text fontSize="xl" my="1">
           Comments
         </Text>
-        <Flex
-          w="full"
-          my="1"
-          h={
-            Object.keys(commentState.comments || {}).length === 0
-              ? "md"
-              : "auto"
-          }
-          borderRadius="md"
-          boxShadow="0px 2px 1px"
-          align="center"
-          direction="column"
-        >
-          {Object.keys(commentState.comments || {})?.length === 0 ||
-          commentState.isEmpty ? (
-            <Text mt="5" fontSize="2xl">
-              No comments yet
-            </Text>
-          ) : (
-            Object.values(commentState.comments?.[0] || {}).map(
-              (value) => (
-                console.log("mappedValues:", value),
-                (
-                  <CommentCards
-                    key={`${value.createdAt}-${value.commenter}`}
-                    commentInfo={value}
-                  />
-                )
-              )
-            )
-          )}
-        </Flex>
+        <DynamicComments />
       </Flex>
     </Flex>
   );
