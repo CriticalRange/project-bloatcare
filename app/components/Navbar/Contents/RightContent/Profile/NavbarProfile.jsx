@@ -32,6 +32,7 @@ export default function NavbarProfile() {
       <Menu preventOverflow isLazy>
         <MenuButton
           as={IconButton}
+          aria-label="Profile"
           textColor="black"
           _dark={{
             textColor: "white",

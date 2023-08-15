@@ -2,6 +2,9 @@
 
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   ButtonGroup,
@@ -11,23 +14,15 @@ import {
   Flex,
   IconButton,
   Input,
-  Skeleton,
-  SkeletonText,
   Stack,
   Text,
   Tooltip,
   useEditableControls,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../components/firebase/clientApp";
-import { useToast } from "@chakra-ui/react";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from "@chakra-ui/react";
 
 function Account() {
   const toast = useToast();
