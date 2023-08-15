@@ -21,13 +21,15 @@ export const metadata = {
   authors: [{ name: "CriticalRange" }],
   creator: "CriticalRange",
   publisher: "Vercel",
-
   description: "Unleash Your Passions, Ignite Discussions",
 };
 
 const RootLayout = ({ children }) => {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body>
         <NextTopLoader showSpinner={false} color="#1e40af" shadow={false} />
         <Providers>

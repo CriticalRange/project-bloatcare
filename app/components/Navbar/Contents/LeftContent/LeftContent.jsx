@@ -3,9 +3,10 @@
 import { Link } from "@chakra-ui/next-js";
 import { Box, Flex } from "@chakra-ui/react";
 import { BloatcareIcon } from "../../../Icons/IconComponents/IconComponents";
-import SearchInput from "./SearchInput";
+import dynamic from "next/dynamic";
 
 const LeftContent = () => {
+  const DynamicSearchInput = dynamic(() => import("./SearchInput"));
   return (
     <Flex align="center">
       <Box mx="5">
@@ -13,7 +14,7 @@ const LeftContent = () => {
           <BloatcareIcon w="10" h="10" fill="#107cf1" cursor="pointer" />
         </Link>
       </Box>
-      <SearchInput />
+      <DynamicSearchInput />
     </Flex>
   );
 };

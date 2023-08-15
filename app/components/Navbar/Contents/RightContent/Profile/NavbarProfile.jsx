@@ -1,22 +1,25 @@
 "use client";
 
+import { Link } from "@chakra-ui/next-js";
 import {
-  Button,
+  Avatar,
   Flex,
+  Hide,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  SkeletonText,
+  Show,
+  Stack,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { Link } from "@chakra-ui/next-js";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { auth } from "../../../../firebase/clientApp";
-import ProfileIcon from "./ProfileIcon";
 import { useResetRecoilState } from "recoil";
+import { CustomUserEmptyIcon } from "../../../../Icons/IconComponents/IconComponents";
 import { communitiesAtom } from "../../../../atoms/communitiesAtom";
+import { auth } from "../../../../firebase/clientApp";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
@@ -28,22 +31,24 @@ export default function NavbarProfile() {
     <Flex mr="2">
       <Menu preventOverflow isLazy>
         <MenuButton
-          as={Button}
+          as={IconButton}
           textColor="black"
           _dark={{
             textColor: "white",
           }}
-          rightIcon={<ProfileIcon />}
+          icon={
+            user?.photoURL === null ? <CustomUserEmptyIcon w="8" h="8" /> : null
+          }
           textOverflow="ellipsis"
         >
-          <Text
-            textOverflow="ellipsis"
-            overflow="hidden"
-            maxWidth="30"
-            display={{ base: "none", md: "unset" }}
-          >
-            {user?.displayName ? user?.displayName : user?.email}
-          </Text>
+          <Stack gap={2} align="center" direction="row" mx="3">
+            <Hide below="sm">
+              <Text textOverflow="ellipsis" overflow="hidden" maxWidth="100">
+                {user?.displayName}
+              </Text>
+            </Hide>
+            <Avatar src={user?.photoURL !== null ? user.photoURL : ""} />
+          </Stack>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
           <Link href="/account">
