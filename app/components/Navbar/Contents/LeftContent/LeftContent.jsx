@@ -9,7 +9,7 @@ const LeftContent = () => {
   return (
     <Flex align="center">
       <Box mx="5">
-        <Link href="/">
+        <Link href="/" aria-label="BloatCare icon">
           <BloatcareIcon w="10" h="10" fill="#107cf1" cursor="pointer" />
         </Link>
       </Box>

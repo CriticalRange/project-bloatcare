@@ -10,15 +10,18 @@ export default function ProfileIcon() {
 
   return (
     <Flex>
-      <WrapItem>
-        <Avatar
-          size="md"
-          name="User"
-          referrerPolicy="no-referrer"
-          src={user?.photoURL !== null ? `${user?.photoURL}` : ""}
-          icon={user?.photoURL === null ? <CustomUserEmptyIcon /> : null}
-        />
-      </WrapItem>
+      <menu>
+        <WrapItem>
+          <Avatar
+            size="md"
+            name="User"
+            aria-label="User"
+            referrerPolicy="no-referrer"
+            src={user?.photoURL !== null ? `${user?.photoURL}` : ""}
+            icon={user?.photoURL === null ? <CustomUserEmptyIcon /> : null}
+          />
+        </WrapItem>
+      </menu>
     </Flex>
   );
 }

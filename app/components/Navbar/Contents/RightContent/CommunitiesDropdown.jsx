@@ -61,7 +61,7 @@ const CommunityDropdown = () => {
   return (
     <Flex mr="2">
       <Menu isLazy preventOverflow size="lg">
-        <MenuButton as={Button}>
+        <MenuButton as={Button} aria-label="Communities Dropdown">
           <Flex direction="row" align="center">
             <Text display={{ base: "none", sm: "block" }}>Communities</Text>
             <CustomPLusIcon w="6" h="6" ml="2" />
