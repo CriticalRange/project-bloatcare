@@ -6,7 +6,7 @@ import {
   CustomFormIcon,
   CustomMediaIcon,
 } from "../../../Icons/Components/IconComponents";
-import { createPostTabAtom } from "../../../atoms/createPostTabAtom";
+import { createPostTabAtom } from "../../../atoms/postsAtom";
 
 const NewPostTabs = () => {
   const [selectedTab, setSelectedTab] = useRecoilState(createPostTabAtom);

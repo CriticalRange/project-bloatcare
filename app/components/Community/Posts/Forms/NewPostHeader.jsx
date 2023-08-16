@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
-import useCommunityData from "../../../../hooks/useCommunityData";
+import useCommunityData from "../../../../hooks/Communities/useCommunityData";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
 

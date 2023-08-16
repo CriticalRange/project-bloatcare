@@ -5,7 +5,7 @@ import NewPostsForm from "../../../components/Community/Posts/Forms/NewPostsForm
 import NewPostHeader from "../../../components/Community/Posts/Forms/NewPostHeader";
 import NewPostTabs from "../../../components/Community/Posts/Forms/NewPostTabs";
 import { useRecoilState } from "recoil";
-import { createPostTabAtom } from "../../../components/atoms/createPostTabAtom";
+import { createPostTabAtom } from "../../../components/atoms/postsAtom.jsx";
 import NewPostsMedia from "../../../components/Community/Posts/Forms/NewPostsMedia";
 
 const NewCommunityPost = () => {

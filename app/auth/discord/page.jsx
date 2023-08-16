@@ -23,7 +23,7 @@ import { auth } from "../../components/firebase/clientApp";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "../../components/Modal/Auth/Forms/Checkers/PasswordChecker";
-import { passwordCheckerAtom } from "../../components/atoms/checkers/passwordCheckerAtom";
+import { passwordCheckerAtom } from "../../components/atoms/passwordsAtom";
 import { useRecoilState } from "recoil";
 
 const DiscordAuth = ({ searchParams }) => {
