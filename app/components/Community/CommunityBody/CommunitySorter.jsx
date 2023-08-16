@@ -10,8 +10,8 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/react";
-import CustomSortAzSvg from "../../Icons/CustomSortAzSvg";
-import CustomSortZaSvg from "../../Icons/CustomSortZaSvg";
+import CustomSortAzSvg from "../../Icons/Custom/CustomIcons/CustomSortAzSvg";
+import CustomSortZaSvg from "../../Icons/Custom/CustomIcons/CustomSortZaSvg";
 import { CustomRefreshIcon } from "../../Icons/Components/IconComponents";
 
 const CommunitySorter = () => {

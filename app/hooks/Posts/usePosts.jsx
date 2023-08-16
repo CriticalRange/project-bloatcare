@@ -15,8 +15,8 @@ import { deleteObject, getDownloadURL, ref } from "firebase/storage";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { postsState } from "../components/atoms/postsAtom";
-import { firestore, storage } from "../components/firebase/clientApp";
+import { postsState } from "../../components/atoms/postsAtom";
+import { firestore, storage } from "../../components/firebase/clientApp";
 
 const usePosts = () => {
   const params = useParams();

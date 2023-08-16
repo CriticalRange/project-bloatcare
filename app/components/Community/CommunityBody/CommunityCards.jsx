@@ -19,7 +19,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import usePosts from "../../../hooks/usePosts";
+import usePosts from "../../../hooks/Posts/usePosts";
 import { MotionFadingImage } from "./MotionFadingImage";
 import {
   CustomCommentDotsIcon,
