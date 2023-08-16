@@ -26,10 +26,9 @@ import {
 
 const CommunityLoadingCard = () => {
   return (
-    <Card w="full" bg="transparent" border="4px solid gray">
+    <Card w="full" bg="transparent" boxShadow="0px 2px">
       <CardHeader>
         <Flex
-          mx="8"
           mt="2"
           mb="3"
           direction="row"
@@ -42,9 +41,9 @@ const CommunityLoadingCard = () => {
           <Flex direction="column">
             <SkeletonText
               mt="2"
-              w="sm"
+              w="base"
               noOfLines={1}
-              skeletonHeight="8"
+              skeletonHeight="6"
               color="black"
               _dark={{ color: "white" }}
             ></SkeletonText>

@@ -102,7 +102,7 @@ const MainPostPage = () => {
           loading: () => <CommunityLoadingCard />,
         });
         // Generate a unique key for each post using post.id and communityData.communityId
-        const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
+        const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt.seconds}-${index}`;
         return <DynamicMainCards key={uniqueKey} post={post} />;
       })}
     </InfiniteScroll>

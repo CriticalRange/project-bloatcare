@@ -242,38 +242,49 @@ const MainCards = ({ post }) => {
       >
         <Card mb="2" w="full" bg="transparent" boxShadow="0px 2px">
           <CardHeader>
-            <Flex
-              direction="row"
-              flex="1"
-              gap={2}
-              alignItems="center"
-              flexWrap="wrap"
-            >
-              <Avatar name={post.creatorDisplayName} src={post.creatorImage} />
-              <Flex direction="column">
-                <Text
-                  fontSize="3xl"
-                  color="black"
-                  cursor="pointer"
-                  _dark={{ color: "white" }}
-                  noOfLines={3}
-                  onClick={handleSelectPost}
-                >
-                  {post.title}
-                </Text>
-                <Text size="sm">
-                  By {post.creatorDisplayName}
-                  {" • "}
-                  {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
-                </Text>
-              </Flex>
-              <Flex flex="1" direction="row" justify="flex-end">
-                <IconButton
-                  variant="ghost"
-                  colorScheme="gray"
-                  aria-label="See menu"
-                  icon={<CustomCommentDotsIcon w="6" h="6" />}
+            <Flex direction="column">
+              <Flex
+                direction="row"
+                flex="1"
+                gap={2}
+                alignItems="center"
+                flexWrap="wrap"
+              >
+                <Avatar
+                  name={post.creatorDisplayName}
+                  src={post.creatorImage}
+                  w="10"
+                  h="10"
                 />
+                <Text size="md">{post.creatorDisplayName}</Text>
+                <Flex
+                  flex="1"
+                  direction="row"
+                  justify="flex-end"
+                  align="center"
+                >
+                  <Text size="sm">
+                    {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
+                  </Text>
+                  <IconButton
+                    variant="ghost"
+                    colorScheme="gray"
+                    aria-label="See menu"
+                    icon={<CustomCommentDotsIcon w="6" h="6" />}
+                  />
+                </Flex>
+                <Flex>
+                  <Text
+                    fontSize="2xl"
+                    color="black"
+                    cursor="pointer"
+                    _dark={{ color: "white" }}
+                    noOfLines={3}
+                    onClick={handleSelectPost}
+                  >
+                    {post.title}
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
           </CardHeader>
