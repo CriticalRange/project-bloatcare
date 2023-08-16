@@ -257,12 +257,7 @@ const MainCards = ({ post }) => {
                   h="10"
                 />
                 <Text size="md">{post.creatorDisplayName}</Text>
-                <Flex
-                  flex="1"
-                  direction="row"
-                  justify="flex-end"
-                  align="center"
-                >
+                <Flex flex="1" justify="flex-end" align="center">
                   <Text size="sm">
                     {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
                   </Text>
@@ -273,22 +268,21 @@ const MainCards = ({ post }) => {
                     icon={<CustomCommentDotsIcon w="6" h="6" />}
                   />
                 </Flex>
-                <Flex>
-                  <Text
-                    fontSize="2xl"
-                    color="black"
-                    cursor="pointer"
-                    _dark={{ color: "white" }}
-                    noOfLines={3}
-                    onClick={handleSelectPost}
-                  >
-                    {post.title}
-                  </Text>
-                </Flex>
               </Flex>
             </Flex>
           </CardHeader>
           <CardBody>
+            <Text
+              mb="5"
+              fontSize="2xl"
+              color="black"
+              cursor="pointer"
+              _dark={{ color: "white" }}
+              noOfLines={3}
+              onClick={handleSelectPost}
+            >
+              {post.title}
+            </Text>
             <Text>{post.description}</Text>
             <MotionFadingImage key={post.id} post={post} />
           </CardBody>
