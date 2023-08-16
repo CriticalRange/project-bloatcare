@@ -12,9 +12,9 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import CommunityImage from "../components/Community/CommunityHeader/CommunityImage";
-import { CustomUserSettingsIcon } from "../components/Icons/IconComponents/IconComponents";
+import { CustomUserSettingsIcon } from "../components/Icons/Components/IconComponents";
 import { auth } from "../components/firebase/clientApp";
-import useCommunities from "../hooks/useCommunities";
+import useCommunities from "../hooks/Communities/useCommunities";
 
 const Communities = () => {
   const [user] = useAuthState(auth);

@@ -8,7 +8,7 @@ import CommunitySorter from "./CommunitySorter";
 import { postsState } from "../../atoms/postsAtom";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
-import { CustomAnimatedArrowRightIcon } from "../../Icons/IconComponents/IconComponents";
+import { CustomAnimatedArrowRightIcon } from "../../Icons/Components/IconComponents";
 
 const CommunityBody = () => {
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);

@@ -18,13 +18,13 @@ import {
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import useCommunities from "../../../../hooks/useCommunities";
-import CustomAnimatedUserSvg from "../../../Icons/CustomAnimatedUserSvg";
+import useCommunities from "../../../../hooks/Communities/useCommunities";
+import CustomAnimatedUserSvg from "../../../Icons/Custom/CustomAnimatedIcons/CustomAnimatedUserSvg";
 import {
   CustomAddCommunityIcon,
   CustomAnimatedDescriptionIcon,
   CustomPLusIcon,
-} from "../../../Icons/IconComponents/IconComponents";
+} from "../../../Icons/Components/IconComponents";
 import CreateCommunityModal from "../../../Modal/Community/Create/CommunityCreateModal";
 import {
   authModalAtom,

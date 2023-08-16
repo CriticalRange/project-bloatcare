@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { communityNameCheckerAtom } from "../../../../atoms/checkers/communityNameCheckerAtom";
+import { communityNameCheckerAtom } from "../../../../atoms/communitiesAtom";
 import { createCommunityModalAtom } from "../../../../atoms/modalAtoms";
 import { auth, firestore } from "../../../../firebase/clientApp";
 import {
@@ -39,7 +39,7 @@ import {
   CustomEyeOpen,
   CustomLockIcon,
   CustomUserEmptyIcon,
-} from "../../../../Icons/IconComponents/IconComponents";
+} from "../../../../Icons/Components/IconComponents";
 import { useDebouncedCallback } from "use-debounce";
 
 const CreateCommunityForm = () => {

@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import CustomSortAzSvg from "../../Icons/CustomSortAzSvg";
 import CustomSortZaSvg from "../../Icons/CustomSortZaSvg";
-import { CustomRefreshIcon } from "../../Icons/IconComponents/IconComponents";
+import { CustomRefreshIcon } from "../../Icons/Components/IconComponents";
 
 const CommunitySorter = () => {
   return (

@@ -4,7 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import {
   BloatcareIcon,
   CustomAnimatedLoadingSpinnerIcon,
-} from "../Icons/IconComponents/IconComponents";
+} from "../../Icons/Components/IconComponents";
 
 const SplashScreen = () => {
   const controls = useAnimation();

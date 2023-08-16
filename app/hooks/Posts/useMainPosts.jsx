@@ -18,8 +18,8 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { postsState } from "../components/atoms/postsAtom";
-import { auth, firestore, storage } from "../components/firebase/clientApp";
+import { postsState } from "../../components/atoms/postsAtom";
+import { auth, firestore, storage } from "../../components/firebase/clientApp";
 
 const useMainPosts = () => {
   const params = useParams();

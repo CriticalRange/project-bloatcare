@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import {
   CustomFormIcon,
   CustomMediaIcon,
-} from "../../../Icons/IconComponents/IconComponents";
+} from "../../../Icons/Components/IconComponents";
 import { createPostTabAtom } from "../../../atoms/createPostTabAtom";
 
 const NewPostTabs = () => {

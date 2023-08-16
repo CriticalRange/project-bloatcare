@@ -8,7 +8,7 @@ import {
   SkeletonText,
   Text,
 } from "@chakra-ui/react";
-import SplashScreen from "../../components/splash/SplashScreen";
+import SplashScreen from "../../components/root/splash/SplashScreen";
 
 const Loading = () => {
   return <SplashScreen />;

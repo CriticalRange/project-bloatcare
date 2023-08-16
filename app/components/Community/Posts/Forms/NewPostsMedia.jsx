@@ -16,7 +16,7 @@ import { useRecoilState } from "recoil";
 import {
   CustomAnimatedRemoveIcon,
   CustomExternalLinkIcon,
-} from "../../../Icons/IconComponents/IconComponents";
+} from "../../../Icons/Components/IconComponents";
 import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { Link } from "@chakra-ui/next-js";
 import { confirmationModalAtom } from "../../../atoms/modalAtoms";

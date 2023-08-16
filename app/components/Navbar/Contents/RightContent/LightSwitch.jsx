@@ -4,7 +4,7 @@ import { Box, Flex, IconButton, useColorMode } from "@chakra-ui/react";
 import {
   CustomMoonIcon,
   CustomSunIcon,
-} from "../../../Icons/IconComponents/IconComponents";
+} from "../../../Icons/Components/IconComponents";
 import { Icon } from "@iconify/react";
 
 const LightSwitch = () => {

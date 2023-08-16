@@ -21,7 +21,7 @@ import moment from "moment/moment";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
-import useMainPosts from "../../../hooks/useMainPosts";
+import useMainPosts from "../../../hooks/Posts/useMainPosts";
 import {
   CustomCommentDotsIcon,
   CustomThumbsUpIcon,
@@ -30,13 +30,13 @@ import {
   CustomCommentDotsVerticalIcon,
   CustomThumbsDownOutlineIcon,
   CustomThumbsUpOutlineIcon,
-} from "../../Icons/IconComponents/IconComponents";
+} from "../../Icons/Components/IconComponents";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDebouncedCallback } from "use-debounce";
 import { authModalAtom } from "../../atoms/modalAtoms";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import { postModalAtom } from "../../atoms/postsAtom";
 
 const MainCards = ({ post }) => {
   const {

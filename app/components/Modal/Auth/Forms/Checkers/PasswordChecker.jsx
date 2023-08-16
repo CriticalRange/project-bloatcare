@@ -5,8 +5,8 @@ import { useRecoilState } from "recoil";
 import {
   CustomCheckmark,
   CustomRemoveIcon,
-} from "../../../../Icons/IconComponents/IconComponents";
-import { passwordCheckerAtom } from "../../../../atoms/checkers/passwordCheckerAtom";
+} from "../../../../Icons/Components/IconComponents";
+import { passwordCheckerAtom } from "../../../../atoms/passwordsAtom";
 
 export const passwordValidateRegex = ["[A-Z]", "[a-z]", "[0-9]", "\\W"];
 

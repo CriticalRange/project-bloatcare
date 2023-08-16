@@ -11,10 +11,10 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { CustomRefreshIcon } from "../../Icons/IconComponents/IconComponents";
-import CustomSortAzSvg from "../../Icons/CustomSortAzSvg";
-import CustomSortZaSvg from "../../Icons/CustomSortZaSvg";
-import useMainPosts from "../../../hooks/useMainPosts";
+import { CustomRefreshIcon } from "../../Icons/Components/IconComponents";
+import CustomSortAzSvg from "../../Icons/Custom/CustomIcons/CustomSortAzSvg";
+import CustomSortZaSvg from "../../Icons/Custom/CustomIcons/CustomSortZaSvg";
+import useMainPosts from "../../../hooks/Posts/useMainPosts";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 

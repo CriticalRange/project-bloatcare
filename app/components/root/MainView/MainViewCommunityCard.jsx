@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { CustomExternalLinkIcon } from "../../Icons/IconComponents/IconComponents";
+import { CustomExternalLinkIcon } from "../../Icons/Components/IconComponents";
 
 const MainViewCommunityCard = () => {
   const [hasEnteredView, setHasEnteredView] = useState(false);

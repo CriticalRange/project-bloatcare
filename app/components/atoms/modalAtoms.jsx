@@ -21,7 +21,7 @@ export const createCommunityModalAtom = atom({
   },
 });
 
-// Atom that controls auth modal opening
+// Atom that controls confirmations across website, confirmationModalView changes the view of the modal
 export const confirmationModalAtom = atom({
   key: "confirmationModalAtom",
   default: {
@@ -31,6 +31,7 @@ export const confirmationModalAtom = atom({
   dangerouslyAllowMutability: true,
 });
 
+// Atom that controls community settings modal
 export const communitySettingsModalAtom = atom({
   key: "communitySettingsModalAtom",
   default: {

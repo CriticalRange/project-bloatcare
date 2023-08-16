@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { useResetRecoilState } from "recoil";
-import { CustomUserEmptyIcon } from "../../../../Icons/IconComponents/IconComponents";
+import { CustomUserEmptyIcon } from "../../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../../atoms/communitiesAtom";
 import { auth } from "../../../../firebase/clientApp";
 

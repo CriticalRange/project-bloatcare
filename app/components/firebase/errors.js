@@ -1,5 +1,6 @@
 "use client";
-// common errors when signing in/up https://firebase.google.com/docs/auth/admin/errors?hl=en
+
+// common errors when signing in/up (Documentation: https://firebase.google.com/docs/auth/admin/errors?hl=en)
 export const FIREBASE_ERRORS = {
   "Firebase: Error (auth/email-already-in-use).":
     "A user with that email is already in use.",

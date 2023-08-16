@@ -27,7 +27,7 @@ import {
   CustomThumbsDownIcon,
   CustomCommentsIcon,
   CustomCommentDotsVerticalIcon,
-} from "../../Icons/IconComponents/IconComponents";
+} from "../../Icons/Components/IconComponents";
 
 const CommunityCards = ({ post }) => {
   const {

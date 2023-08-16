@@ -3,6 +3,7 @@
 import { Timestamp } from "firebase/firestore";
 import { atom } from "recoil";
 
+// Posts Atom
 export const postsAtom = atom({
   key: "postsAtom",
   default: {
@@ -19,11 +20,13 @@ export const postsAtom = atom({
   },
 });
 
+// Selected File of the post creation held here
 export const selectedFileAtom = atom({
   key: "selectedFileAtom",
   default: "",
 });
 
+// All the posts held here
 export const postsState = atom({
   key: "postsState",
   default: {
@@ -33,6 +36,7 @@ export const postsState = atom({
   },
 });
 
+// Posts loading atom
 export const postsLoadingAtom = atom({
   key: "postsLoadingAtom",
   default: {
@@ -41,10 +45,27 @@ export const postsLoadingAtom = atom({
   },
 });
 
+// Atom for comments
 export const commentsAtom = atom({
   key: "commentsAtom",
   default: {
     comments: [],
     isEmpty: true,
+  },
+});
+
+// Atom to create posts
+export const createPostTabAtom = atom({
+  key: "createPostTabAtom",
+  default: "post",
+});
+
+// Atom for post modal
+export const postModalAtom = atom({
+  key: "postModalAtom",
+  default: {
+    openPostModal: false,
+    postModalView: "signin",
+    postInfo: {},
   },
 });

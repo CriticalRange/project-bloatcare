@@ -2,8 +2,8 @@
 
 import { Box, Button, Flex, Text, Textarea, useToast } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { postModalAtom } from "../../../../atoms/postModalAtom";
-import usePostComments from "../../../../../hooks/usePostComments";
+import { postModalAtom } from "../../../../atoms/postsAtom";
+import usePostComments from "../../../../../hooks/Posts/usePostComments";
 import { useEffect, useState } from "react";
 import { commentsAtom } from "../../../../atoms/postsAtom";
 import { auth, firestore } from "../../../../firebase/clientApp";

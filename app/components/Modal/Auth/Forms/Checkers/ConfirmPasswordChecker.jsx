@@ -2,7 +2,7 @@
 
 import { Collapse, Flex, Stack } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { passwordCheckerAtom } from "../../../../atoms/checkers/passwordCheckerAtom";
+import { passwordCheckerAtom } from "../../../../atoms/passwordsAtom";
 
 const ConfirmPasswordChecker = () => {
   const [passwordChecker, setPasswordChecker] =

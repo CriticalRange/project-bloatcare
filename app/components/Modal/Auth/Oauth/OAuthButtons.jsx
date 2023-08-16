@@ -20,9 +20,9 @@ import {
   TwitchIcon,
   TwitterIcon,
   YahooIcon,
-} from "../../../Icons/IconComponents/IconComponents";
-import { discordButtonLoading } from "../../../atoms/discordButtonLoading";
-import { twitchButtonLoading } from "../../../atoms/twitchButtonLoading";
+} from "../../../Icons/Components/IconComponents";
+import { discordButtonLoading } from "../../../atoms/authAtom";
+import { twitchButtonLoading } from "../../../atoms/authAtom";
 import { auth } from "../../../firebase/clientApp";
 
 function OAuthButtons() {

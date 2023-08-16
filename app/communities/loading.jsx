@@ -11,7 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CommunityImage from "../components/Community/CommunityHeader/CommunityImage";
-import { CustomUserSettingsIcon } from "../components/Icons/IconComponents/IconComponents";
+import { CustomUserSettingsIcon } from "../components/Icons/Components/IconComponents";
 
 const loading = () => {
   return (

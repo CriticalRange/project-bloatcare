@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { useDebouncedCallback } from "use-debounce";
-import useMainPosts from "../../../hooks/useMainPosts";
+import useMainPosts from "../../../hooks/Posts/useMainPosts";
 import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
 import {
   CustomCommentDotsIcon,
@@ -30,9 +30,9 @@ import {
   CustomThumbsDownOutlineIcon,
   CustomThumbsUpIcon,
   CustomThumbsUpOutlineIcon,
-} from "../../Icons/IconComponents/IconComponents";
+} from "../../Icons/Components/IconComponents";
 import { authModalAtom } from "../../atoms/modalAtoms";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import { postModalAtom } from "../../atoms/postsAtom";
 import { auth, firestore } from "../../firebase/clientApp";
 
 const PostModalBody = () => {

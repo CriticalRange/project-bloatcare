@@ -2,7 +2,7 @@
 
 import { Link } from "@chakra-ui/next-js";
 import { Box, Flex } from "@chakra-ui/react";
-import { BloatcareIcon } from "../../../Icons/IconComponents/IconComponents";
+import { BloatcareIcon } from "../../../Icons/Components/IconComponents";
 import dynamic from "next/dynamic";
 
 const LeftContent = () => {

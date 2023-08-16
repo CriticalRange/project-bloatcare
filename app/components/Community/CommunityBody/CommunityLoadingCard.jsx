@@ -22,7 +22,7 @@ import {
   CustomCommentDotsIcon,
   CustomThumbsUpOutlineIcon,
   CustomThumbsDownOutlineIcon,
-} from "../../Icons/IconComponents/IconComponents";
+} from "../../Icons/Components/IconComponents";
 
 const CommunityLoadingCard = () => {
   return (

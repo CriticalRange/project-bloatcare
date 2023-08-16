@@ -17,13 +17,13 @@ import {
   CustomThumbsDownOutlineIcon,
   CustomThumbsUpIcon,
   CustomThumbsUpOutlineIcon,
-} from "../../../Icons/IconComponents/IconComponents";
+} from "../../../Icons/Components/IconComponents";
 import { doc, getDoc } from "firebase/firestore";
 import { useDebouncedCallback } from "use-debounce";
 import { auth, firestore } from "../../../firebase/clientApp";
 import { useRecoilState } from "recoil";
-import { postModalAtom } from "../../../atoms/postModalAtom";
-import useMainPosts from "../../../../hooks/useMainPosts";
+import { postModalAtom } from "../../../atoms/postsAtom";
+import useMainPosts from "../../../../hooks/Posts/useMainPosts";
 import { authModalAtom } from "../../../atoms/modalAtoms";
 import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment";

@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useRecoilState } from "recoil";
-import { postModalAtom } from "../../atoms/postModalAtom";
+import { postModalAtom } from "../../atoms/postsAtom";
 import PostModalBody from "./PostModalBody";
 
 const PostModal = () => {

@@ -17,7 +17,7 @@ import {
   CustomThumbsUpOutlineIcon,
   CustomThumbsDownIcon,
   CustomThumbsDownOutlineIcon,
-} from "../../../../Icons/IconComponents/IconComponents";
+} from "../../../../Icons/Components/IconComponents";
 
 const CommentCardsLoading = () => {
   return (

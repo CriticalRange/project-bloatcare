@@ -4,7 +4,7 @@ import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import useCommunityData from "../../../hooks/useCommunityData";
-import { CustomCommunitySettingsIcon } from "../../Icons/IconComponents/IconComponents";
+import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
 import {
   authModalAtom,
   communitySettingsModalAtom,

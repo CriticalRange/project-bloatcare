@@ -17,7 +17,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { updateProfile } from "firebase/auth";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
@@ -26,15 +25,16 @@ import {
   CustomAnimatedLoadingSpinnerIcon,
   CustomEyeClosed,
   CustomEyeOpen,
-} from "../../../Icons/IconComponents/IconComponents";
-import { passwordCheckerAtom } from "../../../atoms/checkers/passwordCheckerAtom";
-import { showPasswordAtom } from "../../../atoms/showPasswordAtom";
+} from "../../../Icons/Components/IconComponents";
+import { passwordCheckerAtom } from "../../../atoms/passwordsAtom";
+import { showPasswordAtom } from "../../../atoms/passwordsAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
+import dynamic from "next/dynamic";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -57,6 +57,9 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
 
   const debouncedUsername = useDebouncedCallback(async (value) => {
+    const { doc, getDoc, setDoc, updateDoc } = await import(
+      "firebase/firestore"
+    );
     if (value.length != 0) {
       const usernameDocRef = doc(firestore, "usernames", value);
       setFormChecker((prev) => ({
@@ -120,6 +123,9 @@ export default function SignupForm() {
 
     if (isFormValid) {
       // Create user (firebase)
+      const { doc, getDoc, setDoc, updateDoc } = await import(
+        "firebase/firestore"
+      );
       try {
         await createUserWithEmailAndPassword(
           signupForm.email,
@@ -173,6 +179,9 @@ export default function SignupForm() {
   };
 
   const onFormInfoChange = async (event) => {
+    const { doc, getDoc, setDoc, updateDoc } = await import(
+      "firebase/firestore"
+    );
     const { name, value } = event.target;
     if (name === "username") {
       const truncatedValue = value.slice(0, 21);

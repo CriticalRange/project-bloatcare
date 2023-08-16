@@ -6,7 +6,7 @@ import CommunityLoadingCard from "../Community/CommunityBody/CommunityLoadingCar
 import MainSorter from "./MainView/MainSorter";
 import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
 import { useEffect, useState } from "react";
-import SplashScreen from "../splash/SplashScreen";
+import SplashScreen from "./splash/SplashScreen";
 
 const MainViewPage = () => {
   const DynamicPostModal = dynamic(() => import("../Modal/Posts/PostModal"));

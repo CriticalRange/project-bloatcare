@@ -1,9 +1,9 @@
 "use client";
 
 import { useRecoilState } from "recoil";
-import { communitiesAtom } from "../components/atoms/communitiesAtom";
+import { communitiesAtom } from "../../components/atoms/communitiesAtom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, firestore } from "../components/firebase/clientApp";
+import { auth, firestore } from "../../components/firebase/clientApp";
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -13,8 +13,8 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { authModalAtom } from "../components/atoms/modalAtoms";
-import { communityLoading } from "../components/atoms/communityLoading";
+import { authModalAtom } from "../../components/atoms/modalAtoms";
+import { communityLoading } from "../../components/atoms/communitiesAtom";
 import { useParams, useRouter } from "next/navigation";
 
 const useCommunityData = () => {

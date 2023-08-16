@@ -1,9 +1,11 @@
+"use client";
+
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { auth, firestore } from "../components/firebase/clientApp";
+import { auth, firestore } from "../../components/firebase/clientApp";
 import { useRecoilState } from "recoil";
-import { postModalAtom } from "../components/atoms/postModalAtom";
+import { postModalAtom } from "../../components/atoms/postsAtom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { commentsAtom } from "../components/atoms/postsAtom";
+import { commentsAtom } from "../../components/atoms/postsAtom";
 
 const usePostComments = () => {
   const [user] = useAuthState(auth);
