@@ -16,18 +16,8 @@ const themeConfig = {
   },
   colors: {
     colors: {
-      transparent: "transparent",
-      customYellow: "#d19900",
       customGray: "#1c212e",
-      customWhite: "#e3ded1",
-      black: "#000",
-      white: "#fff",
-      softCyan: "#32daf0",
-      hardCyan: "#1e40af",
-      shadow: "#191e29",
-      navbarLight: "#274aa3",
       brand: {
-        bg: "#6576c7",
         primary: "#1e40af",
         secondary: "#60a5fa",
       },

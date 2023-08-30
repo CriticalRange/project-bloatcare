@@ -38,6 +38,8 @@ import CustomThumbsDownOutlineSvg from "../Custom/CustomIcons/CustomThumbsDownOu
 import CustomThumbsUpOutlineSvg from "../Custom/CustomIcons/CustomThumbsUpOutlineSvg";
 import CustomAnimatedSearchSvg from "../Custom/CustomAnimatedIcons/CustomAnimatedSearchSvg";
 import CustomAnimatedShareSvg from "../Custom/CustomAnimatedIcons/CustomAnimatedShareSvg";
+import CustomDeleteSvg from "../Custom/CustomIcons/CustomDeleteSvg";
+import CustomShareSvg from "../Custom/CustomIcons/CustomShareSvg";
 
 export const CustomAnimatedLoadingSpinnerIcon = createIcon({
   displayName: "CustomAnimatedLoadingSpinnerIcon",
@@ -90,7 +92,7 @@ export const CustomRefreshIcon = createIcon({
 export const CustomExternalLinkIcon = createIcon({
   displayName: "CustomExternalLinkIcon",
   viewBox: "0 0 24 24",
-  path: <CustomAnimatedExternalLinkSvg color="white" />,
+  path: <CustomAnimatedExternalLinkSvg />,
 });
 
 export const CustomAnimatedRemoveIcon = createIcon({
@@ -267,4 +269,16 @@ export const CustomAnimatedShareIcon = createIcon({
   displayName: "CustomAnimatedShareIcon",
   viewBox: "0 0 24 24",
   path: <CustomAnimatedShareSvg />,
+});
+
+export const CustomDeleteIcon = createIcon({
+  displayName: "CustomDeleteIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomDeleteSvg />,
+});
+
+export const CustomShareIcon = createIcon({
+  displayName: "CustomShareIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomShareSvg />,
 });

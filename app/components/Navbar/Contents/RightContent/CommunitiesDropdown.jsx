@@ -32,7 +32,7 @@ import {
 } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 
-const CommunityDropdown = () => {
+const CommunitiesDropdown = () => {
   const toast = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -133,7 +133,7 @@ const CommunityDropdown = () => {
                     h="10"
                     align="center"
                     borderRadius="md"
-                    bg="colors.brand.primary"
+                    bg="gray.300"
                   >
                     <Text
                       fontSize="md"
@@ -219,4 +219,4 @@ const CommunityDropdown = () => {
   );
 };
 
-export default CommunityDropdown;
+export default CommunitiesDropdown;

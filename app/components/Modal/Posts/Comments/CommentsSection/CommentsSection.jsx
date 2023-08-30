@@ -37,6 +37,9 @@ const CommentsSection = () => {
 
   const onCreateComment = async (event) => {
     event.preventDefault();
+    if (commentForm === "") {
+      return;
+    }
     if (!user) {
       setAuthModal((prev) => ({
         ...prev,

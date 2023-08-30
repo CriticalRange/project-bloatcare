@@ -58,7 +58,7 @@ const Community = () => {
   }, []);
 
   return (
-    <Box>
+    <Box bgColor="gray.300">
       {pageLoaded && communityDataExists === "no" ? (
         <Flex my="10" direction="column">
           <Text fontSize="3xl" fontWeight="semibold">

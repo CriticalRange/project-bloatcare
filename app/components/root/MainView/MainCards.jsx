@@ -13,6 +13,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Stack,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -30,6 +31,8 @@ import {
   CustomCommentDotsVerticalIcon,
   CustomThumbsDownOutlineIcon,
   CustomThumbsUpOutlineIcon,
+  CustomDeleteIcon,
+  CustomAnimatedShareIcon,
 } from "../../Icons/Components/IconComponents";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/clientApp";
@@ -261,12 +264,6 @@ const MainCards = ({ post }) => {
                   <Text size="sm">
                     {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
                   </Text>
-                  <IconButton
-                    variant="ghost"
-                    colorScheme="gray"
-                    aria-label="See menu"
-                    icon={<CustomCommentDotsIcon w="6" h="6" />}
-                  />
                 </Flex>
               </Flex>
             </Flex>
@@ -349,7 +346,7 @@ const MainCards = ({ post }) => {
                 justify="center"
                 cursor="pointer"
               >
-                <Menu flip isLazy>
+                <Menu size="sm" flip isLazy>
                   <MenuButton
                     as={IconButton}
                     variant="ghost"
@@ -360,9 +357,19 @@ const MainCards = ({ post }) => {
                   <MenuList
                     onClick={() => handleDelete()}
                     border="1px solid gray"
-                    bg="#a60a0a"
                   >
-                    <MenuItem bg="#a60a0a">Delete</MenuItem>
+                    <MenuItem>
+                      <Stack direction="row" gap={2}>
+                        <CustomDeleteIcon w="6" h="6" fill="red" />
+                        <Text fontWeight="semibold">Delete</Text>
+                      </Stack>
+                    </MenuItem>
+                    <MenuItem>
+                      <Stack direction="row" gap={2}>
+                        <CustomAnimatedShareIcon w="6" h="6" fill="red" />
+                        <Text fontWeight="semibold">Share</Text>
+                      </Stack>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </Flex>

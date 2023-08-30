@@ -17,9 +17,9 @@ import {
 } from "@chakra-ui/react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { useResetRecoilState } from "recoil";
-import { CustomUserEmptyIcon } from "../../../../Icons/Components/IconComponents";
-import { communitiesAtom } from "../../../../atoms/communitiesAtom";
-import { auth } from "../../../../firebase/clientApp";
+import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
+import { communitiesAtom } from "../../../atoms/communitiesAtom";
+import { auth } from "../../../firebase/clientApp";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
@@ -44,7 +44,12 @@ export default function NavbarProfile() {
         >
           <Stack gap={2} align="center" direction="row" mx="3">
             <Hide below="sm">
-              <Text textOverflow="ellipsis" overflow="hidden" maxWidth="100">
+              <Text
+                textOverflow="ellipsis"
+                overflow="hidden"
+                maxWidth="100"
+                className="notranslate"
+              >
                 {user?.displayName}
               </Text>
             </Hide>

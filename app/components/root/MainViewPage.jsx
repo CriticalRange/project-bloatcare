@@ -9,15 +9,18 @@ import { useEffect, useState } from "react";
 import SplashScreen from "./splash/SplashScreen";
 
 const MainViewPage = () => {
+  // Dynamically loading post modal and post page to decrease initial page load time
   const DynamicPostModal = dynamic(() => import("../Modal/Posts/PostModal"));
   const DynamicMainPostPage = dynamic(() => import("./MainView/MainPostPage"), {
     loading: () => <CommunityLoadingCard />,
   });
 
+  // Gets the local storage splash shown as initial value
   const [showSplash, setShowSplash] = useState(
     localStorage.getItem("splashShown") !== "true"
   );
 
+  // Sets the local storage splash shown as initial value when page loads
   useEffect(() => {
     if (showSplash) {
       const timer = setTimeout(() => {
@@ -34,15 +37,7 @@ const MainViewPage = () => {
       {showSplash ? (
         <SplashScreen />
       ) : (
-        <Box
-          bgColor="colors.brand.secondary"
-          _dark={{ bgColor: "colors.customGray" }}
-        >
-          <Flex justify="center">
-            <Text fontSize="4xl" my="2">
-              Unleash Your Passions, Ignite Discussions
-            </Text>
-          </Flex>
+        <Box bgColor="gray.300" _dark={{ bgColor: "colors.customGray" }}>
           <Flex direction="row">
             <Flex
               w={{ base: "100%", md: "60%" }}
@@ -54,6 +49,7 @@ const MainViewPage = () => {
             </Flex>{" "}
             <Flex
               w={{ base: "0%", md: "35%" }}
+              mt="1"
               mx="2%"
               direction="column"
               align="center"

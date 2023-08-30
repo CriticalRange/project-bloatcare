@@ -16,7 +16,7 @@ import { CustomUserSettingsIcon } from "../components/Icons/Components/IconCompo
 const loading = () => {
   return (
     <Flex
-      bg="white"
+      bg="gray.300"
       _dark={{ bg: "black" }}
       w="full"
       borderBottomLeftRadius="85"

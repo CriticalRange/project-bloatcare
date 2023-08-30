@@ -13,7 +13,11 @@ import {
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { CustomExternalLinkIcon } from "../../Icons/Components/IconComponents";
+import {
+  CustomAnimatedArrowRightIcon,
+  CustomExternalLinkIcon,
+} from "../../Icons/Components/IconComponents";
+import { Link } from "@chakra-ui/next-js";
 
 const MainViewCommunityCard = () => {
   const [hasEnteredView, setHasEnteredView] = useState(false);
@@ -32,7 +36,8 @@ const MainViewCommunityCard = () => {
         onViewportEnter={() => setHasEnteredView(true)}
       >
         <Card
-          border="4px solid gray"
+          size="lg"
+          boxShadow="0px 3px"
           mx="3"
           my="3"
           h="250"
@@ -46,6 +51,7 @@ const MainViewCommunityCard = () => {
             src="https://firebasestorage.googleapis.com/v0/b/bloatcare.appspot.com/o/posts%2Fi5SnM3RXlHmrp72SKfaA%2Fimage?alt=media&token=a3e8901b-2780-4090-92ff-bd67c4890945"
             alt="My Image"
             objectFit="cover"
+            bgColor="gray.300"
             w="100%"
             h="100%"
             position="absolute"
@@ -67,18 +73,25 @@ const MainViewCommunityCard = () => {
           />
           <Stack>
             <CardBody zIndex="0">
-              <Heading size="md">BloatCare Communities</Heading>
+              <Heading size="md" color="white">
+                BloatCare Communities
+              </Heading>
 
-              <Text py="2">
+              <Text py="2" color="white">
                 Unleash your passions, ignite discussions, and some slogan text
               </Text>
             </CardBody>
 
             <CardFooter>
-              <IconButton
-                aria-label="Go to community page"
-                icon={<CustomExternalLinkIcon />}
-              />
+              <Flex justify="flex-end" align="flex-end">
+                <Link href="/communities/Dummy">
+                  <IconButton
+                    bgColor="transparent"
+                    aria-label="Go to community page"
+                    icon={<CustomAnimatedArrowRightIcon />}
+                  />
+                </Link>
+              </Flex>
             </CardFooter>
           </Stack>
         </Card>

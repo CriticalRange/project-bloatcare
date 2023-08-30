@@ -9,10 +9,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useCommunityData from "../../../hooks/Communities/useCommunityData";
 import usePosts from "../../../hooks/Posts/usePosts";
 import { auth } from "../../firebase/clientApp";
-import CommunityCards from "../CommunityBody/CommunityCards";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
+import dynamic from "next/dynamic";
 
 const Posts = () => {
   const {
@@ -118,9 +118,15 @@ const Posts = () => {
           </Flex>
         )}
         {postState.posts?.map((post, index) => {
+          const DynamicCommunityCards = dynamic(
+            () => import("../CommunityBody/CommunityCards"),
+            {
+              loading: () => <CommunityLoadingCard />,
+            }
+          );
           // Generate a unique key for each post using post.id and communityData.communityId
           const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
-          return <CommunityCards key={uniqueKey} post={post} />;
+          return <DynamicCommunityCards key={uniqueKey} post={post} />;
         })}
       </InfiniteScroll>
     </Box>

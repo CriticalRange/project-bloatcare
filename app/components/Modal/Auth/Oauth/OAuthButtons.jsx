@@ -123,7 +123,6 @@ function OAuthButtons() {
       w="full"
       justify="space-evenly"
       align="center"
-      bg="customWhite"
       _dark={{ bg: "customGray" }}
     >
       <Flex
@@ -131,7 +130,6 @@ function OAuthButtons() {
         w="full"
         justify="space-evenly"
         align="center"
-        bg="customWhite"
         _dark={{ bg: "customGray" }}
       >
         <Box>
@@ -185,7 +183,6 @@ function OAuthButtons() {
         w="full"
         justify="space-evenly"
         align="center"
-        bg="customWhite"
         _dark={{ bg: "customGray" }}
       >
         <Box>
