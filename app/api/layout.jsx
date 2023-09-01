@@ -3,6 +3,7 @@ export const sqlConfig = {
   password: process.env.DB_PASSWORD,
   server: process.env.DB_NAME,
   database: "bloatcare",
+  port: 1433,
   pool: {
     max: 10,
     min: 0,
