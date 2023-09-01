@@ -16,5 +16,5 @@ export async function GET(req, res) {
     console.warn(err);
     return new NextResponse(err);
   }
-  return new NextResponse("API is running");
+  return new NextResponse("API is running without errors");
 }
