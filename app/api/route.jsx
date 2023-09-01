@@ -13,7 +13,7 @@ export async function GET(req, res) {
     return new NextResponse(JSON.stringify(result));
     sql.close();
   } catch (err) {
-    console.log(err);
+    console.warn(err);
   }
   return new NextResponse("Hey this is my API running 🥳");
 }
