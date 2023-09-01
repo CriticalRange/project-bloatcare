@@ -10,7 +10,7 @@ export const sqlConfig = {
   },
   options: {
     port: 1433,
-    encrypt: false, // for azure
+    encrypt: true, // for azure
     trustServerCertificate: true, // change to true for local dev / self-signed certs
   },
 };
