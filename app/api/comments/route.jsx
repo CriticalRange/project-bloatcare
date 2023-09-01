@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "../layout";
-const sql = require("mssql");
 
-export async function POST(request) {
-  const formData = await request.formData();
-  const name = formData.get("name");
-  const email = formData.get("email");
-  return NextResponse.json({ name, email });
+export async function GET(req, res) {
+  return NextResponse.json({
+    required: {
+      authorized: false,
+      name: "John Doe",
+    },
+  });
+}
+
+export async function POST(req) {
+  console.log("Post working");
+  const res = await req.json();
+  console.log(res);
+  return NextResponse.json({ res });
 }
