@@ -1,7 +1,3 @@
-console.log(process.env.DB_USER);
-console.log(process.env.DB_PASSWORD);
-console.log(process.env.DB_NAME);
-
 export const sqlConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -14,7 +10,7 @@ export const sqlConfig = {
   },
   options: {
     port: 1433,
-    encrypt: true, // for azure
+    encrypt: false, // for azure
     trustServerCertificate: true, // change to true for local dev / self-signed certs
   },
 };
