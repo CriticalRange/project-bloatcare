@@ -15,11 +15,6 @@ export const sqlConfig = {
   },
 };
 
-// make sure that any items are correctly URL encoded in the connection string
-console.log("- Connecting to Azure SQL Database...");
-await sql.connect(sqlConfig);
-console.log("- Successfully connected to Azure SQL Database!");
-
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }) {
