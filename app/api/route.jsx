@@ -14,6 +14,7 @@ export async function GET(req, res) {
     sql.close();
   } catch (err) {
     console.warn(err);
+    return new NextResponse(err);
   }
   return new NextResponse("Hey this is my API running 🥳");
 }
