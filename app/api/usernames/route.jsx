@@ -4,9 +4,9 @@ export async function GET(req, res) {
   return NextResponse.json(
     {
       warning: {
-        code: "requires_user_uid",
+        code: "requires_username",
         message:
-          "Please provide the User's Uid to get the information from. Example: /api/users/T1prvvDyk9I4ReemL6RI",
+          "Please provide the Username to get the information. Example: /api/usernames/cooly",
       },
     },
     {

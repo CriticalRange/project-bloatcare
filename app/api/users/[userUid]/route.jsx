@@ -40,14 +40,12 @@ export async function GET(req, { params }) {
         Tokens_Valid_After_Time:
           userSearchResult.recordset[0].Tokens_Valid_After_Time,
         Uid: userSearchResult.recordset[0].Uid,
-        hopefully: userSearchResult.recordset[0].Metadata.creationTime,
       },
       {
         status: 200,
       }
     );
   } catch (err) {
-    console.log("Error found: ", err);
     return NextResponse.json(
       { error: { message: `${err}` } },
       {

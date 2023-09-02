@@ -5,6 +5,7 @@ export async function GET(req, res) {
     {
       comments: "/api/comments/",
       list: "/api/list",
+      getPstData: "/api/getPostData",
     },
     {
       status: 200,
