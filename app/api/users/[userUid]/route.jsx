@@ -4,12 +4,10 @@ const sql = require("mssql");
 
 export async function GET(req, { params }) {
   const userUid = params.userUid;
-  // make sure that any items are correctly URL encoded in the connection string
-  console.log("- Connecting to Azure SQL Database...");
-  await sql.connect(sqlConfig);
-  console.log("- Successfully connected to Azure SQL Database!");
+
   try {
-    const userSearchResult = await sql.query`SELECT *
+    const pool = await db.connect();
+    const userSearchResult = await pool.request().query`SELECT *
       FROM users
       WHERE Uid = ${userUid}`;
 
@@ -45,6 +43,7 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
+    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+const db = require("../db");
 
 export async function GET(req, res) {
   return NextResponse.json({
@@ -10,10 +11,8 @@ export async function GET(req, res) {
 }
 
 export async function POST(req) {
-  // make sure that any items are correctly URL encoded in the connection string
-  console.log("- Connecting to Azure SQL Database...");
-  await sql.connect(sqlConfig);
-  console.log("- Successfully connected to Azure SQL Database!");
+  /* const pool = await db.connect(); */
+
   console.log("Post working");
   const res = await req.json();
   console.log(res);

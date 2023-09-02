@@ -1,19 +1,14 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "../../layout";
-const sql = require("mssql");
+const db = require("../../db");
 
 export async function GET(req, { params }) {
   const username = params.username;
   try {
-    // make sure that any items are correctly URL encoded in the connection string
-    console.log("- Connecting to Azure SQL Database...");
-    await sql.connect(sqlConfig);
-    console.log("- Successfully connected to Azure SQL Database!");
+    const pool = await db.connect();
 
-    const userSearchResult = await sql.query`SELECT *
+    const userSearchResult = await pool.request().query`SELECT *
       FROM usernames
       WHERE username = ${username}`;
-    console.log(userSearchResult.recordset[0]);
 
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(
@@ -34,6 +29,7 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
+    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

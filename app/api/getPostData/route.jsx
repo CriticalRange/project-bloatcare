@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "../layout";
-const sql = require("mssql");
+const db = require("../db");
 
 export async function POST(request) {
   try {
@@ -25,18 +24,17 @@ export async function POST(request) {
       });
     }
     console.log("Data is: ", data);
-
-    // make sure that any items are correctly URL encoded in the connection string
-    console.log("- Connecting to Azure SQL Database...");
-    await sql.connect(sqlConfig);
-    console.log("- Successfully connected to Azure SQL Database!");
     const { name, hey } = data;
+    /* const pool = await db.connect(); */
+
+    /* await pool.request().query */
     return NextResponse.json(
       { Name: name, Hey: hey },
       {
         status: 200,
       }
     );
+    /* pool.close(); */
   } catch (err) {
     return NextResponse.json({
       error: {

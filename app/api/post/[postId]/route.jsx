@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "../../layout";
-const sql = require("mssql");
+const db = require("../../db");
 
 export async function GET(req, { params }) {
   const postId = params.postId;
   try {
-    // make sure that any items are correctly URL encoded in the connection string
-    console.log("- Connecting to Azure SQL Database...");
-    await sql.connect(sqlConfig);
-    console.log("- Successfully connected to Azure SQL Database!");
+    const pool = await db.connect();
 
-    const userSearchResult = await sql.query`SELECT *
+    const userSearchResult = await await pool.request().query`SELECT *
           FROM posts
           WHERE post_id = ${postId}`;
 
@@ -19,11 +15,11 @@ export async function GET(req, { params }) {
         {
           error: {
             code: "post_not_found",
-            message: `Post with the id ${postId} couldn't be found. Check if you correctly typed the postId. Example: /api/posts/IEYym5oKKimKrKUURsbg`,
+            message: `Post with the post id ${postId} couldn't be found. Check if you correctly typed the postId. Example: /api/posts/IEYym5oKKimKrKUURsbg`,
           },
         },
         {
-          status: 200,
+          status: 400,
         }
       );
     }
@@ -51,6 +47,8 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
+    // Bağlantıyı kapat (işlem tamamlandığında)
+    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },
