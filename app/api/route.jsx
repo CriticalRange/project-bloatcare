@@ -8,8 +8,8 @@ export async function GET(req, res) {
     console.log("- Connecting to Azure SQL Database...");
     await sql.connect(sqlConfig);
     console.log("- Successfully connected to Azure SQL Database!");
-    return new NextResponse("API is operation", {
-      status: 204,
+    return new NextResponse("API is operational", {
+      status: 200,
     });
     sql.close();
   } catch (err) {

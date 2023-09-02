@@ -19,6 +19,7 @@ export async function GET(req, { params }) {
   const userSearchResult = await sql.query`SELECT *
     FROM users
     WHERE Uid = ${userUid}`;
+
   return NextResponse.json(
     {
       Custom_Claims: userSearchResult.recordset[0].Custom_Claims,
@@ -28,8 +29,7 @@ export async function GET(req, { params }) {
       Email_Verified:
         userSearchResult.recordset[0].Email_Verified === 0 ? "false" : "true",
       Metadata: {
-        creationTime: userSearchResult.recordset[0].creationTime,
-        lastSignInTime: userSearchResult.recordset[0].lastSignInTime,
+        creation_Time: userSearchResult.recordset[0].Metadata,
       },
       Password_Hash: userSearchResult.recordset[0].Password_Hash,
       Password_Salt: userSearchResult.recordset[0].Password_Salt,
