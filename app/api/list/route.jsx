@@ -19,7 +19,7 @@ export async function GET(req, res) {
       posts: {
         method: "GET",
         location: "/api/posts",
-        [postId]: {
+        postId: {
           method: "GET",
           location: "/api/posts/[postId]",
         },
@@ -27,7 +27,7 @@ export async function GET(req, res) {
       usernames: {
         method: "GET",
         location: "/api/usernames",
-        [username]: {
+        username: {
           method: "GET",
           location: "/api/usernames/[username]",
         },
@@ -35,7 +35,7 @@ export async function GET(req, res) {
       users: {
         method: "GET",
         location: "/api/users",
-        [userUid]: {
+        userUid: {
           method: "GET",
           location: "/api/users/[userUid]",
         },
