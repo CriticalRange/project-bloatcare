@@ -1,24 +1,17 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "./layout";
-const sql = require("mssql");
+const db = require("./db");
 
 export async function GET(req, res) {
   try {
-    // make sure that any items are correctly URL encoded in the connection string
-    console.log("- Connecting to Azure SQL Database...");
-    await sql.connect(sqlConfig);
-    console.log("- Successfully connected to Azure SQL Database!");
+    const pool = await db.connect();
     return new NextResponse("API is operational", {
       status: 200,
     });
-    sql.close();
+    pool.close();
   } catch (err) {
     console.warn(err);
     return new NextResponse(err, {
       status: 500,
     });
   }
-  return new NextResponse("API is running without errors", {
-    status: 200,
-  });
 }
