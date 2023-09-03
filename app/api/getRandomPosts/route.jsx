@@ -3,29 +3,46 @@ const db = require("../db");
 
 export async function GET(req) {
   const url = new URL(req.url);
-
+  const communityId = url.searchParams.get("communityId");
+  const isAuthenticated = url.searchParams.get("isAuthenticated");
   const count = Number(url.searchParams.get("count"));
+
+  if (count === null || communityId === null || isAuthenticated === null) {
+    return NextResponse.json(
+      {
+        error: {
+          requires: "count and isAuthenticated and communityId",
+        },
+      },
+      {
+        status: 400,
+      }
+    );
+  }
   try {
     const pool = await db.connect();
 
-    const userSearchResult = await pool.request()
-      .query`SELECT TOP (${count}) [Custom_Claims]
-    ,[Disabled]
-    ,[Display_Name]
-    ,[Email]
-    ,[Email_Verified]
-    ,[Metadata]
-    ,[Password_Hash]
-    ,[Password_Salt]
-    ,[Phone_Number]
-    ,[Photo_URL]
-    ,[Provider_Data]
-    ,[Tokens_Valid_After_Time]
-    ,[Uid]
-FROM [dbo].[users]
-ORDER BY NEWID()`;
+    console.log(isAuthenticated);
 
-    if (userSearchResult.recordset[0] === undefined) {
+    const postSearchResult = await pool.request()
+      .query`SELECT TOP (${count}) [post_id]
+        ,[createdAt]
+        ,[creatorImage]
+        ,[numberOfLikes]
+        ,[creatorId]
+        ,[description]
+        ,[numberOfDislikes]
+        ,[communityId]
+        ,[title]
+        ,[creatorDisplayName]
+        ,[numberOfComments]
+        ,[createdAt_seconds]
+        ,[createdAt_nanoseconds]
+        FROM [dbo].[posts]
+        WHERE [communityId] = ${communityId}
+        ORDER BY NEWID()`;
+
+    if (postSearchResult.recordset === undefined) {
       return NextResponse.json(
         {
           error: {
@@ -38,36 +55,28 @@ ORDER BY NEWID()`;
         }
       );
     }
-    const mappedRecordset = userSearchResult.recordset.map(
+    const mappedRecordset = postSearchResult.recordset.map(
       (recordset, index) => {
-        const parsedMetadata = JSON.parse(recordset.Metadata);
-        const parsedProviderData = JSON.parse(recordset.Provider_Data);
-
         return {
-          Custom_Claims: recordset.Custom_Claims,
-          Disabled: recordset.Disabled,
-          Display_Name: recordset.Display_Name,
-          Email: recordset.Email,
-          Email_Verified: recordset.Email_Verified,
-          Metadata: {
-            Creation_Time: parsedMetadata.creationTime,
-            Last_Sign_In_Time: parsedMetadata.lastSignInTime,
-          },
-          Password_Hash: recordset.Password_Hash,
-          Password_Salt: recordset.Password_Salt,
-          Phone_Number: recordset.Phone_Number,
-          Photo_URL: recordset.Photo_URL,
-          Provider_Data: {
-            Provider_Id: parsedProviderData.providerId,
-            uid: parsedProviderData.uid,
-            email: parsedProviderData.email,
-          },
-          Tokens_Valid_After_Time: recordset.Tokens_Valid_After_Time,
-          Uid: recordset.Uid,
+          Post_Id: recordset.Post_Id,
+          createdAt: recordset.createdAt,
+          creatorImage: recordset.creatorImage,
+          numberOfLikes: recordset.numberOfLikes,
+          creatorId: recordset.creatorId,
+          description: recordset.description,
+          numberOfDislikes: recordset.numberOfDislikes,
+          communityId: recordset.communityId,
+          title: recordset.title,
+          creatorDisplayName: recordset.creatorDisplayName,
+          numberOfComments: recordset.numberOfComments,
+          createdAt_seconds: recordset.createdAt_seconds,
+          createdAt_nanoseconds: recordset.createdAt_nanoseconds,
         };
       }
     );
-    return NextResponse.json(mappedRecordset);
+    return NextResponse.json(mappedRecordset, {
+      status: 200,
+    });
     pool.close();
   } catch (err) {
     return NextResponse.json(
