@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { sqlConfig } from "../../layout";
-const sql = require("mssql");
+const db = require("../../db");
 
 export async function GET(req, { params }) {
   const userUid = params.userUid;
