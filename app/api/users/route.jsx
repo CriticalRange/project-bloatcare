@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req, res) {
+export async function GET(req) {
   return NextResponse.json(
     {
       warning: {
@@ -13,4 +13,19 @@ export async function GET(req, res) {
       status: 303,
     }
   );
+}
+
+export async function POST(req) {
+  const res = await req.json();
+
+  try {
+    return NextResponse.json(res);
+  } catch (err) {
+    return NextResponse.json(
+      { error: { message: `${err}` } },
+      {
+        status: 400,
+      }
+    );
+  }
 }

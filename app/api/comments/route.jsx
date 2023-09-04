@@ -11,10 +11,20 @@ export async function GET(req, res) {
 }
 
 export async function POST(req) {
-  /* const pool = await db.connect(); */
+  /* const res = await req.json(); */
 
-  console.log("Post working");
-  const res = await req.json();
-  console.log(res);
-  return NextResponse.json({ res });
+  try {
+    const pool = await db.connect();
+
+    return NextResponse.json({
+      comment_id: "comment_id",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: { message: `${err}` } },
+      {
+        status: 400,
+      }
+    );
+  }
 }

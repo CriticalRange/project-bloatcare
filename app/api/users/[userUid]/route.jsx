@@ -14,6 +14,7 @@ export async function GET(req, { params }) {
     const parsedProviderData = JSON.parse(
       userSearchResult.recordset[0].Provider_Data
     );
+    pool.close();
 
     return NextResponse.json(
       {
@@ -42,7 +43,6 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
-    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

@@ -3,15 +3,15 @@ const db = require("../db");
 
 export async function GET(req) {
   const url = new URL(req.url);
-  const communityId = url.searchParams.get("communityId");
+  const communityIds = url.searchParams.get("communityIds");
   const isAuthenticated = url.searchParams.get("isAuthenticated");
   const count = Number(url.searchParams.get("count"));
 
-  if (count === null || communityId === null || isAuthenticated === null) {
+  if (count === null || communityIds === null || isAuthenticated === null) {
     return NextResponse.json(
       {
         error: {
-          requires: "count and isAuthenticated and communityId",
+          requires: "count and isAuthenticated and communityIds",
         },
       },
       {
@@ -22,10 +22,13 @@ export async function GET(req) {
   try {
     const pool = await db.connect();
 
-    console.log(isAuthenticated);
+    const communityIdsArray = communityIds.split(",");
 
-    const postSearchResult = await pool.request()
-      .query`SELECT TOP (${count}) [post_id]
+    console.log(communityIdsArray);
+
+    const postSearchResult =
+      isAuthenticated === "false"
+        ? await pool.request().query`SELECT TOP (${count}) [post_id]
         ,[createdAt]
         ,[creatorImage]
         ,[numberOfLikes]
@@ -36,11 +39,24 @@ export async function GET(req) {
         ,[title]
         ,[creatorDisplayName]
         ,[numberOfComments]
-        ,[createdAt_seconds]
-        ,[createdAt_nanoseconds]
         FROM [dbo].[posts]
-        WHERE [communityId] = ${communityId}
-        ORDER BY NEWID()`;
+        ORDER BY NEWID()`
+        : isAuthenticated === "true"
+        ? await pool.request().query`SELECT TOP (${count}) [post_id]
+          ,[createdAt]
+          ,[creatorImage]
+          ,[numberOfLikes]
+          ,[creatorId]
+          ,[description]
+          ,[numberOfDislikes]
+          ,[communityId]
+          ,[title]
+          ,[creatorDisplayName]
+          ,[numberOfComments]
+          FROM [dbo].[posts]
+          WHERE [communityId] IN (${communityIdsArray})
+          ORDER BY NEWID()`
+        : null;
 
     if (postSearchResult.recordset === undefined) {
       return NextResponse.json(
@@ -69,15 +85,13 @@ export async function GET(req) {
           title: recordset.title,
           creatorDisplayName: recordset.creatorDisplayName,
           numberOfComments: recordset.numberOfComments,
-          createdAt_seconds: recordset.createdAt_seconds,
-          createdAt_nanoseconds: recordset.createdAt_nanoseconds,
         };
       }
     );
+    pool.close();
     return NextResponse.json(mappedRecordset, {
       status: 200,
     });
-    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

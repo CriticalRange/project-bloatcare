@@ -20,7 +20,7 @@ export async function GET(req, { params }) {
         }
       );
     }
-
+    pool.close();
     return NextResponse.json(
       {
         available: false,
@@ -29,7 +29,6 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
-    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

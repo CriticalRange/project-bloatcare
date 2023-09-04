@@ -23,6 +23,7 @@ export async function GET(req, { params }) {
         }
       );
     }
+    pool.close();
 
     return NextResponse.json(
       {
@@ -47,8 +48,6 @@ export async function GET(req, { params }) {
         status: 200,
       }
     );
-    // Bağlantıyı kapat (işlem tamamlandığında)
-    pool.close();
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },
