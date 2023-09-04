@@ -64,7 +64,7 @@ export async function POST(req) {
     const utcMilllisecondsSinceEpoch =
       now.getTime() + now.getTimezoneOffset() * 60 * 1000;
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    const postRequest = [
+    const postCreateRequest = [
       {
         post_id: newPostId,
         createdAt: utcSecondsSinceEpoch,
@@ -81,13 +81,13 @@ export async function POST(req) {
     ];
 
     // JSON dizisindeki her öğeyi tabloya ekleyin
-    postRequest.forEach(async (item) => {
-      const query = `
+    postCreateRequest.forEach(async (item) => {
+      const postCreateQuery = `
         INSERT INTO ${tableName} (post_id, createdAt, creatorImage, numberOfLikes, creatorId, description, numberOfDislikes, communityId, title, creatorDisplayName, numberOfComments)
         VALUES ('${item.post_id}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
       `;
       // Sorguyu çalıştırın
-      await pool.query(query);
+      await pool.query(postCreateQuery);
     });
 
     return NextResponse.json(
