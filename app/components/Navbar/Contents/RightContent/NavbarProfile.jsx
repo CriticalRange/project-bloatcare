@@ -16,15 +16,16 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { useResetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
+import { userAtom } from "../../../atoms/authAtom";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
   const toast = useToast();
-  const [user, userLoading, userError] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [signOut, signOutLoading, signOutError] = useSignOut(auth);
 
   return (
@@ -38,7 +39,9 @@ export default function NavbarProfile() {
             textColor: "white",
           }}
           icon={
-            user?.photoURL === null ? <CustomUserEmptyIcon w="8" h="8" /> : null
+            userInfo.photoURL === null ? (
+              <CustomUserEmptyIcon w="8" h="8" />
+            ) : null
           }
           textOverflow="ellipsis"
         >
@@ -50,10 +53,10 @@ export default function NavbarProfile() {
                 maxWidth="100"
                 className="notranslate"
               >
-                {user?.displayName}
+                {userInfo.Display_Name}
               </Text>
             </Hide>
-            <Avatar src={user?.photoURL !== null ? user.photoURL : ""} />
+            <Avatar src={userInfo.photoURL !== null ? userInfo.photoURL : ""} />
           </Stack>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
@@ -84,6 +87,7 @@ export default function NavbarProfile() {
               await signOut();
               document.cookie = "";
               resetCommunityState;
+              setUserInfo([]);
               toast({
                 title: "Successfully logged out!.",
                 description: "Logged out of your account.",

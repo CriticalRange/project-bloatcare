@@ -7,10 +7,10 @@ export async function POST(req) {
   const res = await req.json();
   const { Email, Password } = res;
 
-  if (Email === null || Password === null) {
+  if (!Email || !Password) {
     return NextResponse.json({
       error: {
-        requires: "Email and Password",
+        code: "email_or_password_is_empty",
         message:
           "This GET Request requires Email and Password on the URL. Example: /api/auth/login?Email=test@gmail.com&password=$2b$10$7KfzslK1/zYXnuYa8H6KR.8t0aw.619eEzatLTjMln1YzrpFh9q1m",
       },
@@ -37,21 +37,19 @@ export async function POST(req) {
 FROM [dbo].[users]
 WHERE [Email] = ${Email}
 `;
+
     if (emailQueryResult.recordset.length === 0) {
-      console.log("Email not found working...");
       return NextResponse.json({
         error: {
-          code: "email_not_found",
-          message: "Email couldn't be found.",
+          code: "user_not_found",
+          message: `User with the email ${Email} was not found.`,
         },
       });
     }
 
-    let usersPasswordHash;
     let userInfo = {};
 
     emailQueryResult.recordset.forEach((item) => {
-      usersPasswordHash = item.Password_Hash;
       userInfo = {
         ...item,
       };
@@ -59,10 +57,25 @@ WHERE [Email] = ${Email}
     const secret = new TextEncoder().encode(
       process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY
     );
-    const decodedPassword = await jose.jwtVerify(Password, secret);
-    const match = await bcrypt.compare(decodedPassword, usersPasswordHash);
 
-    const accessToken = await jose.jwtVerify(userInfo, secret);
+    const decodedPassword = await jose.jwtVerify(Password, secret);
+    const userInputPassword = decodedPassword.payload.Password;
+    console.log(
+      "Password: ",
+      userInputPassword,
+      "DB Hash: ",
+      userInfo.Password_Hash
+    );
+    const match = await bcrypt.compare(
+      userInputPassword,
+      userInfo.Password_Hash
+    );
+    console.log("Matches?", match);
+
+    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+    const accessToken = await new jose.SignJWT(userInfo)
+      .setProtectedHeader({ alg })
+      .sign(secret);
 
     if (match) {
       return NextResponse.json({

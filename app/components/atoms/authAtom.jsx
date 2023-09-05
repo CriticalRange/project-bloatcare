@@ -2,7 +2,10 @@
 
 import { atom } from "recoil";
 
-// Not sure why I keep this
+export const userAtom = atom({
+  key: "userAtom",
+  default: [],
+});
 
 export const discordButtonLoading = atom({
   key: "discordButtonLoading",

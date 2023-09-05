@@ -3,9 +3,9 @@
 const sql = require("mssql");
 
 export const sqlConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_NAME,
+  user: process.env.NEXT_PUBLIC_DB_USER,
+  password: process.env.NEXT_PUBLIC_DB_PASSWORD,
+  server: process.env.NEXT_PUBLIC_DB_NAME,
   database: "bloatcare",
   pool: {
     max: 10,

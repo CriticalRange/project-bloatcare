@@ -28,8 +28,6 @@ import {
 } from "../../../Icons/Components/IconComponents";
 import { passwordCheckerAtom } from "../../../atoms/passwordsAtom";
 import { showPasswordAtom } from "../../../atoms/passwordsAtom";
-import { auth, firestore } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
@@ -37,6 +35,8 @@ import PasswordChecker, {
 import dynamic from "next/dynamic";
 import * as jose from "jose";
 import axios from "axios";
+import { userAtom } from "../../../atoms/authAtom";
+import { authModalAtom } from "../../../atoms/modalAtoms";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -48,6 +48,7 @@ export default function SignupForm() {
     password: "",
     confirmPassword: "",
   });
+  const [createUserLoading, setCreateUserLoading] = useState(false);
   const [isFormValid, setFormValid] = useState(false);
   const [formChecker, setFormChecker] = useState({
     usernameStatus: "unknown",
@@ -56,14 +57,12 @@ export default function SignupForm() {
   });
   const [passwordChecker, setPasswordChecker] =
     useRecoilState(passwordCheckerAtom);
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
 
   const debouncedUsername = useDebouncedCallback(async (value) => {
-    const { doc, getDoc, setDoc, updateDoc } = await import(
-      "firebase/firestore"
-    );
     if (value.length != 0) {
-      const usernameDocRef = doc(firestore, "usernames", value);
       setFormChecker((prev) => ({
         ...prev,
         usernameLoading: true,
@@ -72,7 +71,6 @@ export default function SignupForm() {
       axios
         .get(`/api/usernames/${signupForm.username}`)
         .then((response) => {
-          console.log(response.data.available);
           if (!response.data.available) {
             setFormChecker((prev) => ({
               ...prev,
@@ -89,7 +87,6 @@ export default function SignupForm() {
               usernameStatus: "available",
               usernameInvalid: false,
             }));
-            console.log("Username is available");
             return;
           }
         })
@@ -103,10 +100,6 @@ export default function SignupForm() {
       }));
     }
   }, 1000);
-
-  // Firebase auth hook
-  const [createUserWithEmailAndPassword, fbUser, loading, userError] =
-    useCreateUserWithEmailAndPassword(auth);
 
   const handleSignup = async (event) => {
     event.preventDefault();
@@ -125,76 +118,67 @@ export default function SignupForm() {
     }
 
     if (isFormValid) {
-      // Create user (firebase)
-      const { doc, getDoc, setDoc, updateDoc } = await import(
-        "firebase/firestore"
-      );
+      // Create user (Custom api endpoint "/api/users" with a POST Request) and save it in userInfo atom
+      setCreateUserLoading(true);
       try {
         const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
-        const secret = new TextEncoder().encode(signupForm.password);
+        const secret = new TextEncoder().encode(
+          `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+        );
+
         const encodedPassword = await new jose.SignJWT({
-          "urn:example:claim": true,
+          Password: signupForm.password,
         })
           .setProtectedHeader({ alg })
-          .setIssuedAt()
-          .setIssuer("urn:example:issuer")
-          .setAudience("urn:example:audience")
           .sign(secret);
-        axios
+        await axios
           .post("/api/users", {
             Display_Name: signupForm.username,
             Email: signupForm.email,
-            Password: JSON.stringify(encodedPassword),
+            Password: encodedPassword,
             Phone_Number: "nothereyet",
           })
           .then(async (response) => {
-            console.log(response.status, response.data);
+            const userData = await jose.jwtVerify(
+              response.data.access_token,
+              secret
+            );
+            setUserInfo(userData.payload);
+            setCreateUserLoading(false);
+            setSignupForm({
+              confirmPassword: "",
+              email: "",
+              password: "",
+              username: "",
+            });
+            setPasswordChecker({
+              showPasswordChecker: false,
+              showConfirmPasswordChecker: false,
+              passwordsMatch: false,
+              testIsLowercase: false,
+              testIsUppercase: false,
+              testIsNumbers: false,
+              testIsSpecialChars: false,
+              testPasswordLength: false,
+            });
+            toast({
+              title: "Signup success!",
+              description:
+                "You successfully signed up and logged in to your account.",
+              status: "success",
+              duration: 2500,
+              position: "bottom-left",
+              isClosable: true,
+            });
+            setAuthModal((prev) => ({
+              ...prev,
+              openAuthModal: false,
+            }));
+          })
+          .catch((error) => {
+            console.log(error);
+            setCreateUserLoading(false);
           });
-        /* await createUserWithEmailAndPassword(
-          signupForm.email,
-          signupForm.password
-        ).then(async (userCredential) => {
-          await updateProfile(userCredential.user, {
-            displayName: signupForm.username,
-          });
-          const usernameDocRef = doc(
-            firestore,
-            "usernames",
-            userCredential.user.displayName
-          );
-          await setDoc(usernameDocRef, {
-            userUid: userCredential.user.uid,
-          });
-          const usersDocRef = doc(firestore, "users", userCredential.user.uid);
-          return await updateDoc(usersDocRef, {
-            displayName: signupForm.username,
-          });
-        }); */
-        setSignupForm({
-          confirmPassword: "",
-          email: "",
-          password: "",
-          username: "",
-        });
-        setPasswordChecker({
-          showPasswordChecker: false,
-          showConfirmPasswordChecker: false,
-          passwordsMatch: false,
-          testIsLowercase: false,
-          testIsUppercase: false,
-          testIsNumbers: false,
-          testIsSpecialChars: false,
-          testPasswordLength: false,
-        });
-        toast({
-          title: "Signup success!",
-          description:
-            "You successfully signed up and logged in to your account.",
-          status: "success",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
       } catch (error) {
         console.log("Error creating account: ", error);
       }
@@ -202,9 +186,6 @@ export default function SignupForm() {
   };
 
   const onFormInfoChange = async (event) => {
-    const { doc, getDoc, setDoc, updateDoc } = await import(
-      "firebase/firestore"
-    );
     const { name, value } = event.target;
     if (name === "username") {
       const truncatedValue = value.slice(0, 21);
@@ -458,19 +439,19 @@ export default function SignupForm() {
         signupForm.password !== "" ? (
           <ConfirmPasswordChecker />
         ) : null}
-        {userError && (
+        {/* {userError && (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
             <AlertTitle>{FIREBASE_ERRORS[userError.message]}</AlertTitle>
           </Alert>
-        )}
+        )} */}
         <Button
           aria-label="Signup button"
           type="submit"
           w="full"
           margin="auto"
           marginTop="2"
-          isLoading={loading}
+          isLoading={createUserLoading}
           isDisabled={!isFormValid}
         >
           Signup

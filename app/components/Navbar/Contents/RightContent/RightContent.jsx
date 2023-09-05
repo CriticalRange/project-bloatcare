@@ -11,10 +11,11 @@ import { Suspense, useEffect, useState } from "react";
 import AuthModal from "../../../Modal/Auth/AuthModal";
 import dynamic from "next/dynamic";
 import CommunitiesDropdown from "./CommunitiesDropdown";
+import { userAtom } from "../../../atoms/authAtom";
 
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
-  const [user, loading, error] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
 
   const [userIsLoaded, setUserLoaded] = useState(false);
 
@@ -26,7 +27,7 @@ const RightContent = () => {
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunitiesDropdown />
-      {userIsLoaded && user ? (
+      {userInfo.length !== 0 ? (
         <NavbarProfile />
       ) : (
         <Button

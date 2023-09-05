@@ -18,6 +18,8 @@ import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
+import * as jose from "jose";
+import axios from "axios";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -29,6 +31,8 @@ export default function SigninForm({ InitialFocusRef }) {
   });
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
+  const [signInLoading, setSignInLoading] = useState(false);
+  const [signInError, setSignInError] = useState(false);
 
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
@@ -37,7 +41,34 @@ export default function SigninForm({ InitialFocusRef }) {
 
     // Process sign in
     try {
-      await signInWithEmailAndPassword(loginForm.email, loginForm.password);
+      setSignInLoading(true);
+      const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+      const secret = new TextEncoder().encode(
+        `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+      );
+
+      const encodedPassword = await new jose.SignJWT({
+        Password: loginForm.password,
+      })
+        .setProtectedHeader({ alg })
+        .sign(secret);
+      console.log("Encoded password: ", encodedPassword);
+
+      await axios
+        .post("/auth/login", {
+          Email: loginForm.email,
+          Password: encodedPassword,
+        })
+        .then(async (response) => {
+          console.log(response.data);
+          setSignInLoading(false);
+        })
+        .catch((error) => {
+          console.log(error.error);
+          setSignInError(error.error);
+          setSignInLoading(false);
+        });
+      /* await signInWithEmailAndPassword(loginForm.email, loginForm.password);
       !error && user
         ? toast({
             title: "Login success!",
@@ -47,8 +78,10 @@ export default function SigninForm({ InitialFocusRef }) {
             position: "bottom-left",
             isClosable: true,
           })
-        : null;
-    } catch (error) {}
+        : null; */
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onFormInfoChange = (event) => {
@@ -145,10 +178,10 @@ export default function SigninForm({ InitialFocusRef }) {
             </Text>
           </Button>
         </Flex>
-        {error ? (
+        {signInError ? (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{FIREBASE_ERRORS[error.message]}</AlertTitle>
+            <AlertTitle>{signInError.error[1]}</AlertTitle>
           </Alert>
         ) : null}
         <Button
@@ -165,7 +198,7 @@ export default function SigninForm({ InitialFocusRef }) {
           _hover={{
             bg: "#60a5fa",
           }}
-          isLoading={loading}
+          isLoading={signInLoading}
         >
           Login
         </Button>
