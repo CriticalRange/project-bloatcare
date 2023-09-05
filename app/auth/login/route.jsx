@@ -34,9 +34,8 @@ export async function POST(req) {
     ,[Phone_Number]
     ,[Password_Salt]
     ,[Tokens_Valid_After_Time]
-FROM [dbo].[users]
-WHERE [Email] = ${Email}
-`;
+      FROM [dbo].[users]
+      WHERE [Email] = ${Email}`;
 
     if (emailQueryResult.recordset.length === 0) {
       return NextResponse.json({
@@ -48,7 +47,6 @@ WHERE [Email] = ${Email}
     }
 
     let userInfo = {};
-
     emailQueryResult.recordset.forEach((item) => {
       userInfo = {
         ...item,
@@ -60,17 +58,10 @@ WHERE [Email] = ${Email}
 
     const decodedPassword = await jose.jwtVerify(Password, secret);
     const userInputPassword = decodedPassword.payload.Password;
-    console.log(
-      "Password: ",
-      userInputPassword,
-      "DB Hash: ",
-      userInfo.Password_Hash
+    const match = bcrypt.compareSync(
+      `${userInputPassword}`,
+      `${userInfo.Password_Hash}`
     );
-    const match = await bcrypt.compare(
-      userInputPassword,
-      userInfo.Password_Hash
-    );
-    console.log("Matches?", match);
 
     const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
     const accessToken = await new jose.SignJWT(userInfo)
@@ -82,12 +73,17 @@ WHERE [Email] = ${Email}
         access_token: accessToken,
       });
     } else {
-      return NextResponse.json({
-        error: {
-          code: "credentials_dont_match",
-          message: "Credentials doesn't match. Please try again.",
+      return NextResponse.json(
+        {
+          error: {
+            code: "credentials_dont_match",
+            message: "Credentials doesn't match. Please try again.",
+          },
         },
-      });
+        {
+          status: 200,
+        }
+      );
     }
   } catch (err) {
     console.error(err);

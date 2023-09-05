@@ -20,6 +20,7 @@ import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import * as jose from "jose";
 import axios from "axios";
+import { userAtom } from "../../../atoms/authAtom";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -29,10 +30,15 @@ export default function SigninForm({ InitialFocusRef }) {
     email: "",
     password: "",
   });
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
   const [signInLoading, setSignInLoading] = useState(false);
-  const [signInError, setSignInError] = useState(false);
+  const [signInError, setSignInError] = useState({
+    code: "",
+    message: "",
+  });
 
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
@@ -41,6 +47,10 @@ export default function SigninForm({ InitialFocusRef }) {
 
     // Process sign in
     try {
+      setSignInError({
+        code: "",
+        message: "",
+      });
       setSignInLoading(true);
       const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
       const secret = new TextEncoder().encode(
@@ -52,7 +62,6 @@ export default function SigninForm({ InitialFocusRef }) {
       })
         .setProtectedHeader({ alg })
         .sign(secret);
-      console.log("Encoded password: ", encodedPassword);
 
       await axios
         .post("/auth/login", {
@@ -60,11 +69,34 @@ export default function SigninForm({ InitialFocusRef }) {
           Password: encodedPassword,
         })
         .then(async (response) => {
-          console.log(response.data);
+          if (response.data.error !== undefined) {
+            setSignInError({
+              code: response.data.error.code,
+              message: response.data.error.message,
+            });
+            setSignInLoading(false);
+            return;
+          }
+          const userData = await jose.jwtVerify(
+            response.data.access_token,
+            secret
+          );
+          setUserInfo(userData.payload);
           setSignInLoading(false);
+          toast({
+            title: "Login success!",
+            description: "You successfully logged in to your account.",
+            status: "success",
+            duration: 2500,
+            position: "bottom-left",
+            isClosable: true,
+          });
+          setAuthModal((prev) => ({
+            ...prev,
+            openAuthModal: false,
+          }));
         })
         .catch((error) => {
-          console.log(error.error);
           setSignInError(error.error);
           setSignInLoading(false);
         });
@@ -178,10 +210,10 @@ export default function SigninForm({ InitialFocusRef }) {
             </Text>
           </Button>
         </Flex>
-        {signInError ? (
+        {signInError?.code !== "" ? (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{signInError.error[1]}</AlertTitle>
+            <AlertTitle>{signInError?.message}</AlertTitle>
           </Alert>
         ) : null}
         <Button
