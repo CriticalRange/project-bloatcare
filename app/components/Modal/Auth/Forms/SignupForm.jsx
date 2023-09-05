@@ -35,6 +35,8 @@ import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
 import dynamic from "next/dynamic";
+import * as jose from "jose";
+import axios from "axios";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -67,9 +69,11 @@ export default function SignupForm() {
         usernameLoading: true,
         usernameInvalid: false,
       }));
-      await getDoc(usernameDocRef)
-        .then((docSnapshot) => {
-          if (docSnapshot.exists()) {
+      axios
+        .get(`/api/usernames/${signupForm.username}`)
+        .then((response) => {
+          console.log(response.data.available);
+          if (!response.data.available) {
             setFormChecker((prev) => ({
               ...prev,
               usernameLoading: false,
@@ -90,8 +94,7 @@ export default function SignupForm() {
           }
         })
         .catch((error) => {
-          console.log("Error checking username: ", error);
-          return;
+          console.log("Error: ", error);
         });
     } else {
       setFormChecker((prev) => ({
@@ -127,7 +130,27 @@ export default function SignupForm() {
         "firebase/firestore"
       );
       try {
-        await createUserWithEmailAndPassword(
+        const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+        const secret = new TextEncoder().encode(signupForm.password);
+        const encodedPassword = await new jose.SignJWT({
+          "urn:example:claim": true,
+        })
+          .setProtectedHeader({ alg })
+          .setIssuedAt()
+          .setIssuer("urn:example:issuer")
+          .setAudience("urn:example:audience")
+          .sign(secret);
+        axios
+          .post("/api/users", {
+            Display_Name: signupForm.username,
+            Email: signupForm.email,
+            Password: JSON.stringify(encodedPassword),
+            Phone_Number: "nothereyet",
+          })
+          .then(async (response) => {
+            console.log(response.status, response.data);
+          });
+        /* await createUserWithEmailAndPassword(
           signupForm.email,
           signupForm.password
         ).then(async (userCredential) => {
@@ -146,7 +169,7 @@ export default function SignupForm() {
           return await updateDoc(usersDocRef, {
             displayName: signupForm.username,
           });
-        });
+        }); */
         setSignupForm({
           confirmPassword: "",
           email: "",
@@ -173,7 +196,7 @@ export default function SignupForm() {
           isClosable: true,
         });
       } catch (error) {
-        console.log("Error creating account: ", error.message);
+        console.log("Error creating account: ", error);
       }
     }
   };
@@ -447,14 +470,6 @@ export default function SignupForm() {
           w="full"
           margin="auto"
           marginTop="2"
-          bg="brand.primary"
-          textColor="white"
-          _dark={{
-            textColor: "white",
-          }}
-          _hover={{
-            bg: "brand.secondary",
-          }}
           isLoading={loading}
           isDisabled={!isFormValid}
         >

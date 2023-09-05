@@ -1,8 +1,8 @@
-import { verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 const db = require("../db");
 const bcrypt = require("bcrypt");
+const jose = require("jose");
 
 export async function GET(req) {
   return NextResponse.json(
@@ -30,11 +30,12 @@ export async function POST(req) {
     const utcMilllisecondsSinceEpoch =
       now.getTime() + now.getTimezoneOffset() * 60 * 1000;
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    const decodedPassword = verify(
-      res.Password,
-      process.env.JWT_AUTH_SECRET_KEY
+    const secret = new TextEncoder().encode(
+      process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY
     );
-    const hashedPassword = await bcrypt.hash(decodedPassword, 10);
+    const decodedPassword = await jose.jwtVerify(res.Password, secret);
+    console.log(decodedPassword);
+    const hashedPassword = await bcrypt.hash(decodedPassword.toString(), 10);
 
     const userCreateRequest = [
       {

@@ -6,9 +6,9 @@ export async function GET(req, { params }) {
   try {
     const pool = await db.connect();
 
-    const userSearchResult = await pool.request().query`SELECT *
-      FROM usernames
-      WHERE username = ${username}`;
+    const userSearchResult = await pool.request().query`SELECT [username]
+      FROM [dbo].[usernames]
+      WHERE [username] = ${username}`;
 
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(

@@ -1,7 +1,7 @@
-import { JsonWebTokenError, sign, verify } from "jsonwebtoken";
 import { NextResponse } from "next/server";
 const db = require("../../api/db");
 const bcrypt = require("bcrypt");
+const jose = require("jose");
 
 export async function POST(req) {
   const res = await req.json();
@@ -56,10 +56,13 @@ WHERE [Email] = ${Email}
         ...item,
       };
     });
-    const decodedPassword = verify(Password, process.env.JWT_AUTH_SECRET_KEY);
+    const secret = new TextEncoder().encode(
+      process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY
+    );
+    const decodedPassword = await jose.jwtVerify(Password, secret);
     const match = await bcrypt.compare(decodedPassword, usersPasswordHash);
 
-    const accessToken = sign(userInfo, process.env.JWT_AUTH_SECRET_KEY);
+    const accessToken = await jose.jwtVerify(userInfo, secret);
 
     if (match) {
       return NextResponse.json({
@@ -75,15 +78,6 @@ WHERE [Email] = ${Email}
     }
   } catch (err) {
     console.error(err);
-    if (err instanceof JsonWebTokenError) {
-      return NextResponse.json({
-        error: {
-          code: "password_is_invalid",
-          message:
-            "Password is not the same as the password you created. Try again with another password",
-        },
-      });
-    }
     return NextResponse.json(
       { error: { message: `${err}` } },
       {
