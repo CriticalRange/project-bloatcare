@@ -3,7 +3,7 @@
 // Main Providers are held here
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
-import { RecoilRoot } from "recoil";
+import { RecoilRoot, useRecoilState } from "recoil";
 import theme from "./components/theme/index";
 import { StrictMode } from "react";
 

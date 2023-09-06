@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import CustomNavbar from "./CustomNavbar";
+// @ts-ignore
 const DynamicNextTopLoader = dynamic(() => import("nextjs-toploader"), {
   ssr: false,
 });

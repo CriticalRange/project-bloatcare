@@ -12,15 +12,15 @@ import {
   chakra,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
+import * as jose from "jose";
+import Cookies from "js-cookie";
 import { useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
+import { userAtom } from "../../../atoms/authAtom";
 import { authModalAtom } from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
-import * as jose from "jose";
-import axios from "axios";
-import { userAtom } from "../../../atoms/authAtom";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -81,6 +81,12 @@ export default function SigninForm({ InitialFocusRef }) {
             response.data.access_token,
             secret
           );
+          Cookies.set("accessToken", response.data.access_token, {
+            expires: 1,
+            secure: true,
+            sameSite: "strict",
+          });
+          // @ts-ignore
           setUserInfo(userData.payload);
           setSignInLoading(false);
           toast({
@@ -100,17 +106,6 @@ export default function SigninForm({ InitialFocusRef }) {
           setSignInError(error.error);
           setSignInLoading(false);
         });
-      /* await signInWithEmailAndPassword(loginForm.email, loginForm.password);
-      !error && user
-        ? toast({
-            title: "Login success!",
-            description: "You successfully logged in to your account.",
-            status: "success",
-            duration: 2500,
-            position: "bottom-left",
-            isClosable: true,
-          })
-        : null; */
     } catch (error) {
       console.log(error);
     }

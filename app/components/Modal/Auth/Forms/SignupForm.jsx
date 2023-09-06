@@ -1,9 +1,6 @@
 "use client";
 
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Button,
   Flex,
   FormControl,
@@ -16,9 +13,10 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { updateProfile } from "firebase/auth";
+import axios from "axios";
+import * as jose from "jose";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -26,17 +24,16 @@ import {
   CustomEyeClosed,
   CustomEyeOpen,
 } from "../../../Icons/Components/IconComponents";
-import { passwordCheckerAtom } from "../../../atoms/passwordsAtom";
-import { showPasswordAtom } from "../../../atoms/passwordsAtom";
+import { userAtom } from "../../../atoms/authAtom";
+import { authModalAtom } from "../../../atoms/modalAtoms";
+import {
+  passwordCheckerAtom,
+  showPasswordAtom,
+} from "../../../atoms/passwordsAtom";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
-import dynamic from "next/dynamic";
-import * as jose from "jose";
-import axios from "axios";
-import { userAtom } from "../../../atoms/authAtom";
-import { authModalAtom } from "../../../atoms/modalAtoms";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -143,6 +140,12 @@ export default function SignupForm() {
               response.data.access_token,
               secret
             );
+            Cookies.set("accessToken", response.data.access_token, {
+              expires: 1,
+              secure: true,
+              sameSite: "strict",
+            });
+            // @ts-ignore
             setUserInfo(userData.payload);
             setCreateUserLoading(false);
             setSignupForm({
