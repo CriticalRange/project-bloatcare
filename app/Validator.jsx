@@ -31,9 +31,6 @@ const Validator = () => {
       setUserData(decodedAccessToken.payload);
     } catch (error) {
       if (error.code === "ERR_JWT_EXPIRED") {
-        console.log(
-          "Access token is expired. Getting a new one using the refresh token"
-        );
         const refreshToken = Cookies.get("refreshToken");
         await axios
           .post("/api/auth/token", {

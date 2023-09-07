@@ -63,10 +63,8 @@ const EmailConfirmationModal = () => {
           verification_code: pin,
         })
         .then(async (response) => {
-          console.log(response.data.matches);
           if (response.data.matches === false) {
             setVerificationMatch(false);
-            console.log("Setting to false");
           } else {
             setVerificationMatch(true);
             setEmailConfirmationModal((prev) => ({

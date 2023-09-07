@@ -51,8 +51,6 @@ export async function POST(req) {
       matches = false;
     }
 
-    console.log("Local: ", verification_code);
-    console.log("Database: ", userInfo.Verification_Code);
     return NextResponse.json({
       matches: matches,
     });

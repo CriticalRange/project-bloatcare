@@ -115,7 +115,6 @@ const CreateCommunityForm = () => {
   const onFormInfoChange = (event) => {
     const { name, value } = event.target;
     if (name === "title") {
-      console.log("title changed");
       const truncatedValue = value.slice(0, 21);
       if (remainingChars <= 0) {
         setCreateCommunityForm((prev) => ({

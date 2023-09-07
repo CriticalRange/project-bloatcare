@@ -21,8 +21,6 @@ export async function POST(req) {
 
     const verificationCode = generateVerificationCode(6); // 6 karakterlik bir kod oluşturuluyor
 
-    console.log("Verification code is: ", verificationCode);
-
     // @ts-ignore
     const pool = await db.connect();
 
@@ -57,7 +55,6 @@ export async function POST(req) {
         ...item,
       };
     });
-    console.log(verificationCode, Email);
 
     const insertVerificationCodeQuery = `UPDATE [users]
     SET Verification_Code = '${verificationCode}'

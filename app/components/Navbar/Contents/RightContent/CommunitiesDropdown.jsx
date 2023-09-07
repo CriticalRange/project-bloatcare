@@ -43,7 +43,6 @@ const CommunitiesDropdown = () => {
   const redirectToNewPostPage = () => {
     const currentUrl = pathname;
     if (currentUrl !== `/communities/${params.communityId}`) {
-      console.log("Please make a decent posts selection page");
       // Make a decent posts selection page later
       return;
     }
@@ -129,12 +128,7 @@ const CommunitiesDropdown = () => {
                     });
                   }}
                 >
-                  <Flex
-                    h="10"
-                    align="center"
-                    borderRadius="md"
-                    bg="gray.300"
-                  >
+                  <Flex h="10" align="center" borderRadius="md" bg="gray.300">
                     <Text
                       fontSize="md"
                       fontWeight="semibold"

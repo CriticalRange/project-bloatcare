@@ -204,9 +204,7 @@ export default function SignupForm() {
               openEmailConfirmationModal: true,
             }));
           });
-      } catch (error) {
-        console.log("Error creating account: ", error);
-      }
+      } catch (error) {}
     }
   };
 
