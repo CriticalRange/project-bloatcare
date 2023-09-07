@@ -21,6 +21,7 @@ import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
 import { userAtom } from "../../../atoms/authAtom";
+import Cookies from "js-cookie";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
@@ -39,6 +40,7 @@ export default function NavbarProfile() {
             textColor: "white",
           }}
           icon={
+            // @ts-ignore
             userInfo.photoURL === null ? (
               <CustomUserEmptyIcon w="8" h="8" />
             ) : null
@@ -53,10 +55,22 @@ export default function NavbarProfile() {
                 maxWidth="100"
                 className="notranslate"
               >
-                {userInfo.Display_Name}
+                {
+                  // @ts-ignore
+                  userInfo.Display_Name
+                }
               </Text>
             </Hide>
-            <Avatar src={userInfo.photoURL !== null ? userInfo.photoURL : ""} />
+
+            <Avatar
+              src={
+                // @ts-ignore
+                userInfo.photoURL !== null
+                  ? // @ts-ignore
+                    userInfo.photoURL
+                  : ""
+              }
+            />
           </Stack>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
@@ -86,6 +100,7 @@ export default function NavbarProfile() {
             onClick={async () => {
               await signOut();
               document.cookie = "";
+              Cookies.remove("accessToken");
               resetCommunityState;
               setUserInfo([]);
               toast({

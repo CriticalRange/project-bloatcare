@@ -119,7 +119,7 @@ export default function SignupForm() {
       setCreateUserLoading(true);
       try {
         const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
-        const secret = new TextEncoder().encode(
+        const accessSecret = new TextEncoder().encode(
           `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
         );
 
@@ -127,7 +127,7 @@ export default function SignupForm() {
           Password: signupForm.password,
         })
           .setProtectedHeader({ alg })
-          .sign(secret);
+          .sign(accessSecret);
         await axios
           .post("/api/users", {
             Display_Name: signupForm.username,
@@ -138,8 +138,9 @@ export default function SignupForm() {
           .then(async (response) => {
             const userData = await jose.jwtVerify(
               response.data.access_token,
-              secret
+              accessSecret
             );
+            Cookies.remove("accessToken");
             Cookies.set("accessToken", response.data.access_token, {
               expires: 1,
               secure: true,

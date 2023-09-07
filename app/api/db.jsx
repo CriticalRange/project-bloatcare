@@ -19,6 +19,14 @@ export const sqlConfig = {
   },
 };
 
+export const accessSecret = new TextEncoder().encode(
+  `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+);
+
+export const refreshSecret = new TextEncoder().encode(
+  `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+);
+
 // Bağlantı havuzunu oluştur
 const pool = new sql.ConnectionPool(sqlConfig);
 

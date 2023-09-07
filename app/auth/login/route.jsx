@@ -18,6 +18,7 @@ export async function POST(req) {
   }
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
     const tableName = "users";
 
@@ -51,12 +52,11 @@ export async function POST(req) {
       userInfo = {
         ...item,
       };
+      delete userInfo.Password_Hash;
+      delete userInfo.Password_Salt;
     });
-    const secret = new TextEncoder().encode(
-      process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY
-    );
 
-    const decodedPassword = await jose.jwtVerify(Password, secret);
+    const decodedPassword = await jose.jwtVerify(Password, db.accessSecret);
     const userInputPassword = decodedPassword.payload.Password;
     const match = bcrypt.compareSync(
       `${userInputPassword}`,
@@ -64,9 +64,10 @@ export async function POST(req) {
     );
 
     const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+    // @ts-ignore
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg })
-      .sign(secret);
+      .sign(db.accessSecret);
 
     if (match) {
       return NextResponse.json({

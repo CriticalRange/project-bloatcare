@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import CustomNavbar from "./CustomNavbar";
+import Validator from "./Validator";
 // @ts-ignore
 const DynamicNextTopLoader = dynamic(() => import("nextjs-toploader"), {
   ssr: false,
@@ -40,6 +41,7 @@ const RootLayout = ({ children }) => {
           shadow={false}
         />
         <Providers>
+          <Validator />
           <CustomNavbar />
           {children}
         </Providers>

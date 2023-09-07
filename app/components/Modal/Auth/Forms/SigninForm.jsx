@@ -53,7 +53,7 @@ export default function SigninForm({ InitialFocusRef }) {
       });
       setSignInLoading(true);
       const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
-      const secret = new TextEncoder().encode(
+      const accessSecret = new TextEncoder().encode(
         `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
       );
 
@@ -61,7 +61,7 @@ export default function SigninForm({ InitialFocusRef }) {
         Password: loginForm.password,
       })
         .setProtectedHeader({ alg })
-        .sign(secret);
+        .sign(accessSecret);
 
       await axios
         .post("/auth/login", {
@@ -79,8 +79,9 @@ export default function SigninForm({ InitialFocusRef }) {
           }
           const userData = await jose.jwtVerify(
             response.data.access_token,
-            secret
+            accessSecret
           );
+          Cookies.remove("accessToken");
           Cookies.set("accessToken", response.data.access_token, {
             expires: 1,
             secure: true,

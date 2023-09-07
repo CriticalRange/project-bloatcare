@@ -4,6 +4,8 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 const jose = require("jose");
 
+// @ts-ignore
+// @ts-ignore
 export async function GET(req) {
   return NextResponse.json(
     {
@@ -22,6 +24,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const res = await req.json();
+    // @ts-ignore
     const pool = await db.connect();
 
     const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
@@ -29,12 +32,11 @@ export async function POST(req) {
     const now = new Date();
     const utcMilllisecondsSinceEpoch =
       now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+    // @ts-ignore
+    // @ts-ignore
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
 
-    const secret = new TextEncoder().encode(
-      process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY
-    );
-    const decodedPassword = await jose.jwtVerify(res.Password, secret);
+    const decodedPassword = await jose.jwtVerify(res.Password, db.accessSecret);
 
     const newUserUid = uuidv4();
     const salt = bcrypt.genSaltSync(10);
@@ -70,15 +72,18 @@ export async function POST(req) {
       userInfo = {
         ...item,
       };
+      delete userInfo.Password_Hash;
+      delete userInfo.Password_Salt;
       const userCreateQuery = `
       INSERT INTO [users] (Custom_Claims, Disabled, Display_Name, Email, Email_Verified, Metadata, Password_Hash, Password_Salt, Phone_Number, Photo_URL, Provider_Data, Tokens_Valid_After_Time, Uid) VALUES ('${item.Custom_Claims}', '${item.Disabled}', '${item.Display_Name}', '${item.Email}', '${item.Email_Verified}', '${item.Metadata}', '${item.Password_Hash}', '${item.Password_Salt}', '${item.Phone_Number}', '${item.Photo_URL}', '${item.Provider_Data}', '${item.Tokens_Valid_After_Time}', '${item.Uid}')
       `;
+      // @ts-ignore
       await pool.query(userCreateQuery);
     });
-
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg })
-      .sign(secret);
+      .setExpirationTime("10s")
+      .sign(db.accessSecret);
 
     return NextResponse.json(
       { access_token: accessToken },
@@ -101,9 +106,11 @@ export async function DELETE(req) {
   const userUid = url.searchParams.get("userUid");
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
 
     const userDeleteQuery = `DELETE FROM users WHERE [Uid] = '${userUid}'`;
+    // @ts-ignore
     await pool.query(userDeleteQuery);
 
     return NextResponse.json(
@@ -116,6 +123,7 @@ export async function DELETE(req) {
     );
   } catch (error) {
     return NextResponse.json(
+      // @ts-ignore
       { error: { message: `${err}` } },
       {
         status: 400,
