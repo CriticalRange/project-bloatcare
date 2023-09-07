@@ -27,7 +27,9 @@ export const refreshSecret = new TextEncoder().encode(
   `${process.env.NEXT_PUBLIC_JWT_REFRESH_SECRET_KEY}`
 );
 
-export const accessTokenAlgorithm = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+export const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+
+export const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
 // Bağlantı havuzunu oluştur
 const pool = new sql.ConnectionPool(sqlConfig);
@@ -48,5 +50,6 @@ module.exports = {
   connect,
   accessSecret,
   refreshSecret,
-  accessTokenAlgorithm,
+  accessAlg,
+  refreshAlg,
 };

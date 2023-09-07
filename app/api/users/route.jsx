@@ -27,7 +27,8 @@ export async function POST(req) {
     // @ts-ignore
     const pool = await db.connect();
 
-    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+    const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+    const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
     const now = new Date();
     const utcMilllisecondsSinceEpoch =
@@ -81,12 +82,19 @@ export async function POST(req) {
       await pool.query(userCreateQuery);
     });
     const accessToken = await new jose.SignJWT(userInfo)
-      .setProtectedHeader({ alg })
+      .setProtectedHeader({ alg: accessAlg })
       .setExpirationTime("30m")
       .sign(db.accessSecret);
+    const refreshToken = await new jose.SignJWT(userInfo)
+      .setProtectedHeader({ alg: refreshAlg })
+      .setExpirationTime("100d")
+      .sign(db.refreshSecret);
 
     return NextResponse.json(
-      { access_token: accessToken },
+      {
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      },
       {
         status: 200,
       }

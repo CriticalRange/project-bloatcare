@@ -55,7 +55,8 @@ export async function POST(req) {
       delete userInfo.Password_Hash;
       delete userInfo.Password_Salt;
     });
-    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+    const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+    const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
     const decodedPassword = await jose.jwtVerify(Password, db.accessSecret);
     const userInputPassword = decodedPassword.payload.Password;
@@ -66,13 +67,19 @@ export async function POST(req) {
 
     // @ts-ignore
     const accessToken = await new jose.SignJWT(userInfo)
-      .setProtectedHeader({ alg })
+      .setProtectedHeader({ alg: accessAlg })
       .setExpirationTime("30m")
+      .sign(db.accessSecret);
+    // @ts-ignore
+    const refreshToken = await new jose.SignJWT(userInfo)
+      .setProtectedHeader({ alg: refreshAlg })
+      .setExpirationTime("100d")
       .sign(db.accessSecret);
 
     if (match) {
       return NextResponse.json({
         access_token: accessToken,
+        refresh_token: refreshToken,
       });
     } else {
       return NextResponse.json(

@@ -7,15 +7,20 @@ export async function POST(req) {
   const res = await req.json();
 
   try {
-    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+    const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
 
-    const accessTokenInfo = await jose.jwtVerify(
+    const refreshTokenInfo = await jose.jwtVerify(
       res.refresh_token,
-      db.accessSecret
+      db.refreshSecret
     );
-    const newAccessToken = await new jose.SignJWT(accessTokenInfo.payload)
-      .setProtectedHeader({ alg })
+
+    const newAccessToken = await new jose.SignJWT(refreshTokenInfo.payload)
+      .setProtectedHeader({ alg: accessAlg })
       .sign(db.accessSecret);
+
+    return NextResponse.json({
+      access_token: newAccessToken,
+    });
   } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },

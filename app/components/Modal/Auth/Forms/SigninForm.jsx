@@ -52,7 +52,7 @@ export default function SigninForm({ InitialFocusRef }) {
         message: "",
       });
       setSignInLoading(true);
-      const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+      const alg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
       const accessSecret = new TextEncoder().encode(
         `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
       );
@@ -82,8 +82,14 @@ export default function SigninForm({ InitialFocusRef }) {
             accessSecret
           );
           Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
           Cookies.set("accessToken", response.data.access_token, {
-            expires: 1,
+            expires: 1 / 48,
+            secure: true,
+            sameSite: "strict",
+          });
+          Cookies.set("refreshToken", response.data.refresh_token, {
+            expires: 100,
             secure: true,
             sameSite: "strict",
           });

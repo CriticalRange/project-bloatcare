@@ -117,7 +117,7 @@ export default function SignupForm() {
       // Create user (Custom api endpoint "/api/users" with a POST Request) and save it in userInfo atom
       setCreateUserLoading(true);
       try {
-        const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+        const alg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
         const accessSecret = new TextEncoder().encode(
           `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
         );
@@ -135,18 +135,24 @@ export default function SignupForm() {
             Phone_Number: "nothereyet",
           })
           .then(async (response) => {
-            const userData = await jose.jwtVerify(
+            const accessData = await jose.jwtVerify(
               response.data.access_token,
               accessSecret
             );
             Cookies.remove("accessToken");
+            Cookies.remove("refreshToken");
             Cookies.set("accessToken", response.data.access_token, {
-              expires: 1,
+              expires: 1 / 48,
+              secure: true,
+              sameSite: "strict",
+            });
+            Cookies.set("refreshToken", response.data.refresh_token, {
+              expires: 100,
               secure: true,
               sameSite: "strict",
             });
             // @ts-ignore
-            setUserInfo(userData.payload);
+            setUserInfo(accessData.payload);
             setCreateUserLoading(false);
             setSignupForm({
               confirmPassword: "",
