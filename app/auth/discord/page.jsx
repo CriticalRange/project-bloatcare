@@ -76,7 +76,6 @@ const DiscordAuth = ({ searchParams }) => {
         }
       );
       const accessToken = tokenResponse.data.access_token;
-      console.log(accessToken);
 
       const userResponse = await axios.get(discordUserURL, {
         headers: {
@@ -84,7 +83,6 @@ const DiscordAuth = ({ searchParams }) => {
         },
       });
       const userData = userResponse.data;
-      console.log("User Data: ", userData);
       await fetchSignInMethodsForEmail(
         auth,
         `discord.${userResponse.data.email}`
@@ -181,7 +179,6 @@ const DiscordAuth = ({ searchParams }) => {
           displayName: userDataState.displayName,
           photoURL: userDataState.avatarUrl,
         });
-        console.log("Current user: ", auth.currentUser);
       } else {
         await createUserWithEmailAndPassword(
           auth,

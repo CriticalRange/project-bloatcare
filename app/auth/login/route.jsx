@@ -11,8 +11,7 @@ export async function POST(req) {
     return NextResponse.json({
       error: {
         code: "email_or_password_is_empty",
-        message:
-          "This GET Request requires Email and Password on the URL. Example: /api/auth/login?Email=test@gmail.com&password=$2b$10$7KfzslK1/zYXnuYa8H6KR.8t0aw.619eEzatLTjMln1YzrpFh9q1m",
+        message: "This GET Request requires Email and Password on the BODY.",
       },
     });
   }
@@ -20,7 +19,6 @@ export async function POST(req) {
   try {
     // @ts-ignore
     const pool = await db.connect();
-    const tableName = "users";
 
     const emailQueryResult = await pool.request().query`SELECT [Custom_Claims]
     ,[Disabled]
@@ -48,25 +46,28 @@ export async function POST(req) {
     }
 
     let userInfo = {};
+    let Password_Hash;
     emailQueryResult.recordset.forEach((item) => {
       userInfo = {
         ...item,
       };
+      Password_Hash = item.Password_Hash;
       delete userInfo.Password_Hash;
       delete userInfo.Password_Salt;
     });
+    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
 
     const decodedPassword = await jose.jwtVerify(Password, db.accessSecret);
     const userInputPassword = decodedPassword.payload.Password;
     const match = bcrypt.compareSync(
       `${userInputPassword}`,
-      `${userInfo.Password_Hash}`
+      `${Password_Hash}`
     );
 
-    const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
     // @ts-ignore
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg })
+      .setExpirationTime("30m")
       .sign(db.accessSecret);
 
     if (match) {

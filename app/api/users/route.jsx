@@ -82,7 +82,7 @@ export async function POST(req) {
     });
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg })
-      .setExpirationTime("10s")
+      .setExpirationTime("30m")
       .sign(db.accessSecret);
 
     return NextResponse.json(

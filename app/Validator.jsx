@@ -11,7 +11,7 @@ const Validator = () => {
   const getUserData = async () => {
     try {
       const accessSecret = new TextEncoder().encode(
-        `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+        `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
       );
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) {

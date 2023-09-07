@@ -75,7 +75,6 @@ export default function SignupForm() {
               usernameStatus: "taken",
               usernameInvalid: false,
             }));
-            console.log("Username is taken");
             return;
           } else {
             setFormChecker((prev) => ({
@@ -120,7 +119,7 @@ export default function SignupForm() {
       try {
         const alg = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
         const accessSecret = new TextEncoder().encode(
-          `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+          `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
         );
 
         const encodedPassword = await new jose.SignJWT({

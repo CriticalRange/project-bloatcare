@@ -20,12 +20,14 @@ export const sqlConfig = {
 };
 
 export const accessSecret = new TextEncoder().encode(
-  `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+  `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
 );
 
 export const refreshSecret = new TextEncoder().encode(
-  `${process.env.NEXT_PUBLIC_JWT_AUTH_SECRET_KEY}`
+  `${process.env.NEXT_PUBLIC_JWT_REFRESH_SECRET_KEY}`
 );
+
+export const accessTokenAlgorithm = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
 
 // Bağlantı havuzunu oluştur
 const pool = new sql.ConnectionPool(sqlConfig);
@@ -44,4 +46,7 @@ async function connect() {
 
 module.exports = {
   connect,
+  accessSecret,
+  refreshSecret,
+  accessTokenAlgorithm,
 };

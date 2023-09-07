@@ -57,7 +57,6 @@ const TwitchAuth = ({ searchParams }) => {
         }
       );
       const accessToken = tokenResponse.data.access_token;
-      console.log(accessToken);
 
       const userInfoResponse = await axios.get(twitchUserURL, {
         headers: {
@@ -66,7 +65,6 @@ const TwitchAuth = ({ searchParams }) => {
         },
       });
       const userData = userInfoResponse.data.data[0];
-      console.log("User data: ", userData.email);
       await fetchSignInMethodsForEmail(auth, `twitch.${userData.email}`)
         .then(async (signInMethods) => {
           if (signInMethods.length === 0) {
@@ -104,7 +102,6 @@ const TwitchAuth = ({ searchParams }) => {
   const handleTwitchFirebaseAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
-    console.log(userDataState);
     if (
       twitchOauthPassword.twitchOauthPassword !==
         twitchOauthPassword.twitchOauthPasswordAgain ||
@@ -125,7 +122,6 @@ const TwitchAuth = ({ searchParams }) => {
         displayName: userDataState.displayName,
         photoURL: userDataState.avatarUrl,
       });
-      console.log("Current user: ", auth.currentUser);
     } else {
       await createUserWithEmailAndPassword(
         auth,
