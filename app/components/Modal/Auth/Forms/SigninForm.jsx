@@ -19,7 +19,10 @@ import { useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/authAtom";
-import { authModalAtom } from "../../../atoms/modalAtoms";
+import {
+  authModalAtom,
+  emailConfirmationModalAtom,
+} from "../../../atoms/modalAtoms";
 import { auth } from "../../../firebase/clientApp";
 
 export default function SigninForm({ InitialFocusRef }) {

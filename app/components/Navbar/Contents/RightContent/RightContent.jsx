@@ -13,6 +13,13 @@ import dynamic from "next/dynamic";
 import CommunitiesDropdown from "./CommunitiesDropdown";
 import { userAtom } from "../../../atoms/authAtom";
 
+const DynamicEmailConfirmationModal = dynamic(
+  () => import("../../../Modal/Auth/Email/Confirmation/EmailConfirmationModal"),
+  {
+    ssr: false,
+  }
+);
+
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -53,6 +60,7 @@ const RightContent = () => {
         </Button>
       )}
       <AuthModal />
+      <DynamicEmailConfirmationModal />
     </Flex>
   );
 };

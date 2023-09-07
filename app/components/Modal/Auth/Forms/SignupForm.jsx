@@ -25,7 +25,10 @@ import {
   CustomEyeOpen,
 } from "../../../Icons/Components/IconComponents";
 import { userAtom } from "../../../atoms/authAtom";
-import { authModalAtom } from "../../../atoms/modalAtoms";
+import {
+  authModalAtom,
+  emailConfirmationModalAtom,
+} from "../../../atoms/modalAtoms";
 import {
   passwordCheckerAtom,
   showPasswordAtom,
@@ -54,6 +57,9 @@ export default function SignupForm() {
   });
   const [passwordChecker, setPasswordChecker] =
     useRecoilState(passwordCheckerAtom);
+  const [emailConfirmationModal, setEmailConfirmationModal] = useRecoilState(
+    emailConfirmationModalAtom
+  );
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
@@ -153,7 +159,16 @@ export default function SignupForm() {
             });
             // @ts-ignore
             setUserInfo(accessData.payload);
+          })
+          .catch((error) => {
+            console.log(error);
             setCreateUserLoading(false);
+          });
+        await axios
+          .post("auth/sendVerificationCode", {
+            Email: signupForm.email,
+          })
+          .then(() => {
             setSignupForm({
               confirmPassword: "",
               email: "",
@@ -179,14 +194,15 @@ export default function SignupForm() {
               position: "bottom-left",
               isClosable: true,
             });
+            setCreateUserLoading(false);
             setAuthModal((prev) => ({
               ...prev,
               openAuthModal: false,
             }));
-          })
-          .catch((error) => {
-            console.log(error);
-            setCreateUserLoading(false);
+            setEmailConfirmationModal((prev) => ({
+              ...prev,
+              openEmailConfirmationModal: true,
+            }));
           });
       } catch (error) {
         console.log("Error creating account: ", error);

@@ -34,10 +34,6 @@ export default function AuthModal() {
     }));
   };
 
-  useEffect(() => {
-    if (user) handleAuthModalClose();
-  }, [user]);
-
   return (
     <Modal
       isOpen={authModalState.openAuthModal}
