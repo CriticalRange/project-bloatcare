@@ -1,6 +1,6 @@
-import { Box, Center, Flex, Spinner, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import { Center, Flex } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
+import { useEffect } from "react";
 import {
   BloatcareIcon,
   CustomAnimatedLoadingSpinnerIcon,

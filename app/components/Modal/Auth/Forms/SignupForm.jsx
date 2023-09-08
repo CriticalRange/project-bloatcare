@@ -72,7 +72,9 @@ export default function SignupForm() {
         usernameInvalid: false,
       }));
       axios
-        .get(`/api/usernames/${signupForm.username}`)
+        .post("/api/usernames/", {
+          Username: signupForm.username,
+        })
         .then((response) => {
           if (!response.data.available) {
             setFormChecker((prev) => ({

@@ -1,11 +1,11 @@
 import dynamic from "next/dynamic";
 import CustomNavbar from "./CustomNavbar";
-import Validator from "./Validator";
+import Validator from "./(layout)/Validator";
 // @ts-ignore
 const DynamicNextTopLoader = dynamic(() => import("nextjs-toploader"), {
   ssr: false,
 });
-const Providers = dynamic(() => import("./providers"), { ssr: false });
+const Providers = dynamic(() => import("./(layout)/providers"), { ssr: false });
 
 export const metadata = {
   metadataBase: new URL("https://project-bloatcare.vercel.app/"),

@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useEffect } from "react";
 import * as jose from "jose";
 import { useRecoilState } from "recoil";
-import { userAtom } from "./components/atoms/authAtom";
+import { userAtom } from "../components/atoms/authAtom";
 import axios from "axios";
 
 const Validator = () => {

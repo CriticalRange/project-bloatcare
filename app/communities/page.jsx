@@ -10,14 +10,14 @@ import {
   StackDivider,
   Text,
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import CommunityImage from "../components/Community/CommunityHeader/CommunityImage";
 import { CustomUserSettingsIcon } from "../components/Icons/Components/IconComponents";
-import { auth } from "../components/firebase/clientApp";
 import useCommunities from "../hooks/Communities/useCommunities";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../components/atoms/authAtom";
 
 const Communities = () => {
-  const [user] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const { communityData } = useCommunities();
 
   return (
@@ -42,7 +42,7 @@ const Communities = () => {
               />
             }
           >
-            {user ? (
+            {userInfo ? (
               communityData.userSnippets.map((snippet) => {
                 if (snippet.isJoined === true) {
                   return (

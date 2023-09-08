@@ -4,7 +4,7 @@
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { RecoilRoot, useRecoilState } from "recoil";
-import theme from "./components/theme/index";
+import theme from "../components/theme/index";
 import { StrictMode } from "react";
 
 const Providers = ({ children }) => {
