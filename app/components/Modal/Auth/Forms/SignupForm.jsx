@@ -167,7 +167,7 @@ export default function SignupForm() {
             setCreateUserLoading(false);
           });
         await axios
-          .post("auth/sendVerificationCode", {
+          .post("/auth/sendVerificationCode", {
             Email: signupForm.email,
           })
           .then(() => {

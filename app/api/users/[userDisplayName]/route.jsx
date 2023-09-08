@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 const db = require("../../db");
 
 export async function GET(req, { params }) {
-  const userUid = params.userUid;
+  const userDisplayName = params.userDisplayName;
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
     const userSearchResult = await pool.request().query`SELECT *
       FROM users
-      WHERE Uid = ${userUid}`;
+      WHERE [Display_Name] = ${userDisplayName}`;
 
     const parsedMetadata = JSON.parse(userSearchResult.recordset[0].Metadata);
     const parsedProviderData = JSON.parse(
@@ -23,20 +24,11 @@ export async function GET(req, { params }) {
           userSearchResult.recordset[0].disabled === 0 ? "false" : "true",
         display_Name: userSearchResult.recordset[0].Display_Name,
         Email: userSearchResult.recordset[0].Email,
-        Email_Verified:
-          userSearchResult.recordset[0].Email_Verified === 0 ? "false" : "true",
         Metadata: {
           ...parsedMetadata,
         },
-        Password_Hash: userSearchResult.recordset[0].Password_Hash,
-        Password_Salt: userSearchResult.recordset[0].Password_Salt,
         Phone_Number: userSearchResult.recordset[0].Phone_Number,
         Photo_URL: userSearchResult.recordset[0].Photo_URL,
-        Provider_Data: {
-          ...parsedProviderData[0],
-        },
-        Tokens_Valid_After_Time:
-          userSearchResult.recordset[0].Tokens_Valid_After_Time,
         Uid: userSearchResult.recordset[0].Uid,
       },
       {
