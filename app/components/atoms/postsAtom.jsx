@@ -69,3 +69,8 @@ export const postModalAtom = atom({
     postInfo: {},
   },
 });
+
+export const profileInfoAtom = atom({
+  key: "profileInfoAtom",
+  default: [],
+});

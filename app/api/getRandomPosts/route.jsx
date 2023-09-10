@@ -20,11 +20,10 @@ export async function GET(req) {
     );
   }
   try {
+    // @ts-ignore
     const pool = await db.connect();
 
     const communityIdsArray = communityIds.split(",");
-
-    console.log(communityIdsArray);
 
     const postSearchResult =
       isAuthenticated === "false"

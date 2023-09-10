@@ -21,18 +21,33 @@ import {
   TwitterIcon,
   YahooIcon,
 } from "../../../Icons/Components/IconComponents";
-import { discordButtonLoading } from "../../../atoms/authAtom";
+import {
+  discordButtonLoading,
+  socialOnboardingAtom,
+} from "../../../atoms/authAtom";
 import { twitchButtonLoading } from "../../../atoms/authAtom";
 import { auth } from "../../../firebase/clientApp";
+import Cookies from "js-cookie";
+import {
+  SocialOnboardingModalAtom,
+  authModalAtom,
+} from "../../../atoms/modalAtoms";
+import { useState } from "react";
 
 function OAuthButtons() {
   const toast = useToast();
+
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [socialOnboarding, setSocialOnboarding] =
+    useRecoilState(socialOnboardingAtom);
   const [discordLoading, setDiscordLoading] =
     useRecoilState(discordButtonLoading);
   const [twitchLoading, setTwitchLoading] = useRecoilState(twitchButtonLoading);
+  const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
+  const [socialOnboardingModal, setSocialOnboardingModal] = useRecoilState(
+    SocialOnboardingModalAtom
+  );
 
-  const [signInWithGoogle, googleUser, googleLoading, googleError] =
-    useSignInWithGoogle(auth);
   const [signInWithYahoo, yahooUser, yahooLoading, yahooError] =
     useSignInWithYahoo(auth);
   const [signInWithGithub, githubUser, githubLoading, githubError] =
@@ -46,7 +61,67 @@ function OAuthButtons() {
 
   // Handle mechanisms
   const handleGoogleSignin = async () => {
-    await signInWithGoogle();
+    try {
+      console.log("Handle google sign in started.");
+      setGoogleLoading(true);
+      const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+      const googleRedirectUri = `${window.location.origin}/auth/google`;
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${encodeURIComponent(
+        googleClientId
+      )}&redirect_uri=${encodeURIComponent(
+        googleRedirectUri
+      )}&scope=profile%20email&response_type=token`;
+      const width = 600; // Popup pencerenin genişliği
+      const height = 600; // Popup pencerenin yüksekliği
+      const left = window.innerWidth / 2 - width / 2;
+      const top = window.innerHeight / 2 - height / 2;
+      const options = `width=${width}, height=${height}, top=${top}, left=${left}, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no`;
+      const popupWindow = window.open(googleAuthUrl, "_blank", options);
+
+      // Pop-up'tan gelen mesajları dinle
+      window.addEventListener("message", function (event) {
+        /* // Bu kontrol, güvenlik amacıyla eklenmiştir. Sadece güvenilir kaynaklardan gelen mesajları kabul edin.
+        if (event.origin !== `${this.window.location.origin}/auth/google`) {
+          console.log("returning...");
+          return;
+        } */
+
+        // Pop-up'tan gelen mesajda token varsa alın
+        if (event.data.userInfo) {
+          setSocialOnboarding((prev) => ({
+            ...prev,
+            userInfo: event.data.userInfo,
+          }));
+          console.log(event.data.userInfo);
+          popupWindow.close();
+        }
+      });
+
+      // Check if the popup is closed every 500ms
+      const interval = window.setInterval(() => {
+        if (popupWindow.closed) {
+          console.log("Google popup closed.");
+          setSocialOnboarding((prev) => ({
+            ...prev,
+            provider: "google",
+          }));
+          setGoogleLoading(false);
+          setAuthModalState((prev) => ({
+            ...prev,
+            openAuthModal: false,
+          }));
+          setSocialOnboardingModal((prev) => ({
+            ...prev,
+            openSocialOnboardingModal: true,
+          }));
+
+          // Clear the interval once the popup is closed
+          window.clearInterval(interval);
+        }
+      }, 500);
+    } catch (error) {
+      setGoogleLoading(false);
+    }
   };
   const handleFacebookSignin = async () => {
     await signInWithFacebook();

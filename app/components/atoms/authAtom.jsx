@@ -16,3 +16,13 @@ export const twitchButtonLoading = atom({
   key: "twitchButtonLoading",
   default: false,
 });
+
+export const socialOnboardingAtom = atom({
+  key: "socialOnboardingAtom",
+  default: {
+    provider: "",
+    receivedToken: "",
+    tokenExpiresAt: "",
+    userInfo: {},
+  },
+});

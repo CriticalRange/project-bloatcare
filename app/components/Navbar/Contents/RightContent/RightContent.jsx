@@ -20,6 +20,13 @@ const DynamicEmailConfirmationModal = dynamic(
   }
 );
 
+const DynamicSocialOnboardingModal = dynamic(
+  () => import("../../../Modal/Auth/Social/Onboarding/SocialOnboardingModal"),
+  {
+    ssr: false,
+  }
+);
+
 const RightContent = () => {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
@@ -61,6 +68,7 @@ const RightContent = () => {
       )}
       <AuthModal />
       <DynamicEmailConfirmationModal />
+      <DynamicSocialOnboardingModal />
     </Flex>
   );
 };

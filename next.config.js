@@ -31,7 +31,7 @@ module.exports = (phase, { defaultConfig }) => {
       },
       images: {
         loader: "default",
-        domains: ["localhost"],
+        domains: ["localhost", "lh3.googleusercontent.com"],
       },
     };
   }

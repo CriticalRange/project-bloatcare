@@ -37,7 +37,7 @@ const MainViewPage = () => {
       {showSplash ? (
         <SplashScreen />
       ) : (
-        <Box bgColor="gray.300" _dark={{ bgColor: "colors.customGray" }}>
+        <Box>
           <Flex direction="row">
             <Flex
               w={{ base: "100%", md: "60%" }}

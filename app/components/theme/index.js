@@ -6,7 +6,7 @@ const themeConfig = {
   styles: {
     global: ({ colorMode }) => ({
       body: {
-        bg: colorMode === "light" ? "#60a5fa" : "#1c212e",
+        bg: colorMode === "light" ? "gray.300" : "colors.customGray",
       },
     }),
   },

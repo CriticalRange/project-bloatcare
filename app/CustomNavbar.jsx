@@ -8,7 +8,9 @@ const CustomNavbar = () => {
   return (
     <>
       {/* With this dynamic check, we don't show Navbar on twitch and discord */}
-      {pathname === "/auth/twitch" || pathname === "/auth/discord" ? null : (
+      {pathname === "/auth/twitch" ||
+      pathname === "/auth/discord" ||
+      pathname === "/auth/google" ? null : (
         <Navbar />
       )}
     </>

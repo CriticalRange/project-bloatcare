@@ -22,7 +22,7 @@ export async function GET(req, { params }) {
         Custom_Claims: userSearchResult.recordset[0].Custom_Claims,
         disabled:
           userSearchResult.recordset[0].disabled === 0 ? "false" : "true",
-        display_Name: userSearchResult.recordset[0].Display_Name,
+        Display_Name: userSearchResult.recordset[0].Display_Name,
         Email: userSearchResult.recordset[0].Email,
         Metadata: {
           ...parsedMetadata,

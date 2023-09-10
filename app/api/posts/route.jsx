@@ -5,6 +5,7 @@ const sql = require("mssql");
 
 export async function GET(req) {
   try {
+    // @ts-ignore
     const pool = await db.connect();
 
     const postSearchResult = await pool.request().query`SELECT [post_id]
@@ -56,6 +57,7 @@ export async function POST(req) {
   const res = await req.json();
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
     const tableName = "posts";
 
@@ -113,6 +115,7 @@ export async function DELETE(req) {
   const postId = url.searchParams.get("postId");
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
 
     const deleteQuery = `DELETE FROM posts WHERE [post_id] = '${postId}'`;

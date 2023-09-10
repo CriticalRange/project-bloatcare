@@ -14,12 +14,13 @@ export async function POST(req) {
   /* const res = await req.json(); */
 
   try {
+    // @ts-ignore
     const pool = await db.connect();
 
     return NextResponse.json({
       comment_id: "comment_id",
     });
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
       { error: { message: `${err}` } },
       {

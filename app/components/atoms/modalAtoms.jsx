@@ -48,3 +48,11 @@ export const emailConfirmationModalAtom = atom({
     emailConfirmationModalView: "unknown",
   },
 });
+
+export const SocialOnboardingModalAtom = atom({
+  key: "SocialOnboardingModalAtom",
+  default: {
+    openSocialOnboardingModal: false,
+    SocialOnboardingModalView: "unknown",
+  },
+});
