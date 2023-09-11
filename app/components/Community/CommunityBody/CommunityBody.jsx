@@ -33,7 +33,7 @@ const CommunityBody = () => {
         <Flex flex="1" direction="column">
           <Flex flex="1" direction="row" justify="flex-start">
             <Text fontSize="2xl" fontWeight="bold" mt="3">
-              Posts on {communityData.communityId}
+              Posts
             </Text>
             <CommunitySorter />
           </Flex>

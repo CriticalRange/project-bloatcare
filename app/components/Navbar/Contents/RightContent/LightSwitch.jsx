@@ -17,6 +17,7 @@ const LightSwitch = () => {
         aria-label="Change theme"
         icon={
           colorMode === "light" ? (
+            /* make the loop real */
             <Icon icon="line-md:sun-rising-loop" width="24" height="24" />
           ) : (
             <Icon icon="line-md:moon-filled-loop" width="24" height="24" />

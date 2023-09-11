@@ -33,6 +33,7 @@ export async function POST(req) {
     ,[Phone_Number]
     ,[Password_Salt]
     ,[Tokens_Valid_After_Time]
+    ,[Communities]
       FROM [dbo].[users]
       WHERE [Email] = ${Email}`;
 

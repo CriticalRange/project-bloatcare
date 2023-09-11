@@ -8,18 +8,17 @@ import { auth, firestore } from "../../components/firebase/clientApp";
 import CommunityBody from "../../components/Community/CommunityBody/CommunityBody";
 import { useParams } from "next/navigation";
 import { Box, Button, Center, Flex, Text, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import CommunitySettingsModal from "../../components/Modal/Community/Settings/CommunitySettingsModal";
 import {
   authModalAtom,
   createCommunityModalAtom,
 } from "../../components/atoms/modalAtoms";
 import { useAuthState } from "react-firebase-hooks/auth";
+import axios from "axios";
 
 const Community = () => {
   const toast = useToast();
   const [user] = useAuthState(auth);
-  const router = useRouter();
   const [communityDataState, setCommunityDataState] =
     useRecoilState(communitiesAtom);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -33,14 +32,15 @@ const Community = () => {
 
   const getCommunityDocuments = async () => {
     try {
-      const { doc, getDoc } = await import("firebase/firestore");
-      const communityDocRef = doc(firestore, "communities", communityIdParam);
-      const communityDoc = await getDoc(communityDocRef);
-      if (communityDoc.exists()) {
+      const communityInfoRequest = await axios.get(
+        `/api/communities/${communityIdParam}`
+      );
+      const response = communityInfoRequest.data.response;
+
+      if (response.length !== 0) {
         setCommunityDataState((prev) => ({
           ...prev,
-          communityId: communityIdParam,
-          userSnippets: [...prev.userSnippets, communityDoc.data()],
+          communityInfo: response,
         }));
         setCommunityDataExists("yes");
         return;

@@ -3,7 +3,6 @@
 import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import useCommunityData from "../../../hooks/Communities/useCommunityData";
 import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
 import {
   authModalAtom,
@@ -12,11 +11,15 @@ import {
 import { auth } from "../../firebase/clientApp";
 import CommunityImage from "./CommunityImage";
 import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
+import { communitiesAtom } from "../../atoms/communitiesAtom";
+import { userAtom } from "../../atoms/authAtom";
+import { useEffect } from "react";
 
 const Header = () => {
-  const [user] = useAuthState(auth);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
+  const [communityDataState, setCommunityDataState] =
+    useRecoilState(communitiesAtom);
   const [communitySettingsModal, setcommunitySettingsModal] = useRecoilState(
     communitySettingsModalAtom
   );
@@ -41,7 +44,7 @@ const Header = () => {
                 noOfLines={2}
                 textOverflow="ellipsis"
               >
-                {communityData.communityId}
+                {communityDataState.communityInfo.Display_Name}
               </Text>
               <Text
                 maxW="200px"
@@ -50,11 +53,11 @@ const Header = () => {
                 fontWeight="thin"
                 ml="3"
               >
-                {communityData.communityId}
+                {communityDataState.communityInfo.Display_Name}
               </Text>
             </Flex>
             <Flex flex="1" mr="10" justify="flex-end" align="center">
-              {communityData.isModerator ? (
+              {/* {communityData.isModerator ? (
                 <>
                   <CommunitySettingsModal />
                   <IconButton
@@ -70,9 +73,9 @@ const Header = () => {
                     icon={<CustomCommunitySettingsIcon />}
                   />
                 </>
-              ) : null}
+              ) : null} */}
 
-              <Button
+              {/* <Button
                 aria-label={user && communityData.isJoined ? "Joined" : "Join"}
                 bg="brand.primary"
                 _dark={{ bg: "black" }}
@@ -88,7 +91,7 @@ const Header = () => {
                 ) : (
                   <Text fontSize="md">Join</Text>
                 )}
-              </Button>
+              </Button> */}
             </Flex>
           </Flex>
         </Flex>

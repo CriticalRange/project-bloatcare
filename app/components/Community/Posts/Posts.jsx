@@ -6,7 +6,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import InfiniteScroll from "react-infinite-scroll-component";
-import useCommunityData from "../../../hooks/Communities/useCommunityData";
 import usePosts from "../../../hooks/Posts/usePosts";
 import { auth } from "../../firebase/clientApp";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
@@ -32,9 +31,6 @@ const Posts = () => {
   const params = useParams();
   const communityIdParam = params.communityId;
   const [user] = useAuthState(auth);
-
-  const { communityData, onJoinOrLeaveCommunity, communityLoading } =
-    useCommunityData();
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
 
   useEffect(() => {
@@ -125,7 +121,7 @@ const Posts = () => {
             }
           );
           // Generate a unique key for each post using post.id and communityData.communityId
-          const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt}-${index}`;
+          const uniqueKey = `${post.id}-${post.createdAt}-${index}`;
           return <DynamicCommunityCards key={uniqueKey} post={post} />;
         })}
       </InfiniteScroll>

@@ -12,13 +12,11 @@ import {
 } from "@chakra-ui/react";
 import CommunityImage from "../components/Community/CommunityHeader/CommunityImage";
 import { CustomUserSettingsIcon } from "../components/Icons/Components/IconComponents";
-import useCommunities from "../hooks/Communities/useCommunities";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../components/atoms/authAtom";
 
 const Communities = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const { communityData } = useCommunities();
 
   return (
     <Flex
@@ -42,7 +40,7 @@ const Communities = () => {
               />
             }
           >
-            {userInfo ? (
+            {/* {userInfo ? (
               communityData.userSnippets.map((snippet) => {
                 if (snippet.isJoined === true) {
                   return (
@@ -88,7 +86,7 @@ const Communities = () => {
                   <Button aria-label="Go to Dummy">Go to Dummy</Button>
                 </Link>
               </Flex>
-            )}
+            )} */}
           </Stack>
         </Flex>
       </Flex>

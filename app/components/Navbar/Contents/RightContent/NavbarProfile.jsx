@@ -84,7 +84,12 @@ export default function NavbarProfile() {
               Account
             </MenuItem>
           </Link>
-          <Link href="/profile">
+          <Link
+            href={`/profile/${
+              // @ts-ignore
+              userInfo.Display_Name
+            }`}
+          >
             <MenuItem
               bg="white"
               textColor="black"

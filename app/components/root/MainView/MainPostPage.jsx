@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CommunityLoadingCard from "../../Community/CommunityBody/CommunityLoadingCard";
 import useMainPosts from "../../../hooks/Posts/useMainPosts";
-import useCommunityData from "../../../hooks/Communities/useCommunityData";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
@@ -13,8 +12,6 @@ import { auth } from "../../firebase/clientApp";
 const MainPostPage = () => {
   const [user] = useAuthState(auth);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { communityData, onJoinOrLeaveCommunity, communityLoading } =
-    useCommunityData();
   const {
     getPostsLogin,
     getPostsNoLogin,
@@ -102,7 +99,7 @@ const MainPostPage = () => {
           loading: () => <CommunityLoadingCard />,
         });
         // Generate a unique key for each post using post.id and communityData.communityId
-        const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt.seconds}-${index}`;
+        const uniqueKey = `${post.id}-${post.createdAt.seconds}-${index}`;
         return <DynamicMainCards key={uniqueKey} post={post} />;
       })}
     </InfiniteScroll>

@@ -1,17 +1,15 @@
 "use client";
 
 import { Button, Flex } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/modalAtoms";
-import { auth } from "../../../firebase/clientApp";
-import NavbarProfile from "./NavbarProfile";
-import LightSwitch from "./LightSwitch";
-import { Suspense, useEffect, useState } from "react";
-import AuthModal from "../../../Modal/Auth/AuthModal";
 import dynamic from "next/dynamic";
-import CommunitiesDropdown from "./CommunitiesDropdown";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import AuthModal from "../../../Modal/Auth/AuthModal";
 import { userAtom } from "../../../atoms/authAtom";
+import { authModalAtom } from "../../../atoms/modalAtoms";
+import CommunitiesDropdown from "./CommunitiesDropdown";
+import LightSwitch from "./LightSwitch";
+import NavbarProfile from "./NavbarProfile";
 
 const DynamicEmailConfirmationModal = dynamic(
   () => import("../../../Modal/Auth/Email/Confirmation/EmailConfirmationModal"),

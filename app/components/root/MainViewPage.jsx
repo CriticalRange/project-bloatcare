@@ -34,7 +34,7 @@ const MainViewPage = () => {
 
   return (
     <Box>
-      {showSplash ? (
+      {/* {showSplash ? (
         <SplashScreen />
       ) : (
         <Box>
@@ -68,7 +68,7 @@ const MainViewPage = () => {
             <DynamicPostModal />
           </Flex>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 };
