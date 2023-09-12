@@ -1,9 +1,9 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { profileInfoAtom } from "../atoms/postsAtom";
+import { profileInfoAtom } from "../../atoms/postsAtom";
 import { Box, Text } from "@chakra-ui/react";
 
-const UserFollowers = () => {
+const UserPosts = () => {
   const [profileOwnerInfo, setProfileOwnerInfo] =
     useRecoilState(profileInfoAtom);
   return (
@@ -13,10 +13,10 @@ const UserFollowers = () => {
           // @ts-ignore
           profileOwnerInfo.Display_Name
         }
-        &apos; followers
+        &apos; posts
       </Text>
     </Box>
   );
 };
 
-export default UserFollowers;
+export default UserPosts;

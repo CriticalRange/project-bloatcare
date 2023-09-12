@@ -2,12 +2,11 @@
 
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-  InputGroup,
+  Flex,
   Input,
+  InputGroup,
   InputLeftElement,
   useBreakpointValue,
-  Box,
-  Flex,
 } from "@chakra-ui/react";
 
 const SearchInput = () => {

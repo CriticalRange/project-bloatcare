@@ -1,10 +1,6 @@
 "use client";
 
-import { Box, Flex, IconButton, useColorMode } from "@chakra-ui/react";
-import {
-  CustomMoonIcon,
-  CustomSunIcon,
-} from "../../../Icons/Components/IconComponents";
+import { Flex, IconButton, useColorMode } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 
 const LightSwitch = () => {

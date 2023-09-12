@@ -12,7 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";

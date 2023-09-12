@@ -20,9 +20,9 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { CustomUserEmptyIcon } from "../../components/Icons/Components/IconComponents";
-import UserCommunities from "../../components/Profile/UserCommunities";
-import UserFollowers from "../../components/Profile/UserFollowers";
-import UserPosts from "../../components/Profile/UserPosts";
+import UserCommunities from "../../components/Profile/Tabs/UserCommunities";
+import UserFollowers from "../../components/Profile/Tabs/UserFollowers";
+import UserPosts from "../../components/Profile/Tabs/UserPosts";
 import { userAtom } from "../../components/atoms/authAtom";
 import { profileInfoAtom } from "../../components/atoms/postsAtom";
 
@@ -49,6 +49,7 @@ const Profile = () => {
   useEffect(() => {
     getProfileOwnerInfo();
   }, []);
+
   return (
     <Flex direction="column">
       <Center>

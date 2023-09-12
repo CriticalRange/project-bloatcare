@@ -7,6 +7,8 @@ import MainSorter from "./MainView/MainSorter";
 import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
 import { useEffect, useState } from "react";
 import SplashScreen from "./splash/SplashScreen";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../atoms/authAtom";
 
 const MainViewPage = () => {
   // Dynamically loading post modal and post page to decrease initial page load time

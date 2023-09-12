@@ -2,8 +2,7 @@
 
 import { Button, Flex } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import AuthModal from "../../../Modal/Auth/AuthModal";
 import { userAtom } from "../../../atoms/authAtom";
 import { authModalAtom } from "../../../atoms/modalAtoms";
@@ -26,14 +25,8 @@ const DynamicSocialOnboardingModal = dynamic(
 );
 
 const RightContent = () => {
-  const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
-
-  const [userIsLoaded, setUserLoaded] = useState(false);
-
-  useEffect(() => {
-    setUserLoaded(true);
-  }, []);
+  const setAuthModalState = useSetRecoilState(authModalAtom);
+  const userInfo = useRecoilValue(userAtom);
 
   return (
     <Flex flex="1" justify="flex-end">

@@ -12,16 +12,6 @@ export const userCommunityInfoAtom = atom({
   default: {},
 });
 
-export const discordButtonLoading = atom({
-  key: "discordButtonLoading",
-  default: false,
-});
-
-export const twitchButtonLoading = atom({
-  key: "twitchButtonLoading",
-  default: false,
-});
-
 export const socialOnboardingAtom = atom({
   key: "socialOnboardingAtom",
   default: {

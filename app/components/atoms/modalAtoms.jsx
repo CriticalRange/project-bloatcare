@@ -49,6 +49,7 @@ export const emailConfirmationModalAtom = atom({
   },
 });
 
+// Atom for social onboarding (probably will be removed)
 export const SocialOnboardingModalAtom = atom({
   key: "SocialOnboardingModalAtom",
   default: {
