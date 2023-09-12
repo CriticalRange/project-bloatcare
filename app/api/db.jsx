@@ -1,11 +1,12 @@
-// db.js
+// Database connections page
 
 const sql = require("mssql");
 
+// SQL Server config resides here
 export const sqlConfig = {
-  user: process.env.NEXT_PUBLIC_DB_USER,
+  user: process.env.NEXT_PUBLIC_DB_USERNAME,
   password: process.env.NEXT_PUBLIC_DB_PASSWORD,
-  server: process.env.NEXT_PUBLIC_DB_NAME,
+  server: process.env.NEXT_PUBLIC_DB_ADDRESS,
   database: "bloatcare",
   pool: {
     max: 10,

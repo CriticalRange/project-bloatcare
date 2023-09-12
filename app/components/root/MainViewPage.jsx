@@ -34,7 +34,7 @@ const MainViewPage = () => {
 
   return (
     <Box>
-      {/* {showSplash ? (
+      {showSplash ? (
         <SplashScreen />
       ) : (
         <Box>
@@ -57,6 +57,7 @@ const MainViewPage = () => {
               <Text display={{ base: "none", md: "block" }} fontSize="3xl">
                 Communities (Beta)
               </Text>
+              {/* For now stacking the cards */}
               <MainViewCommunityCard />
               <MainViewCommunityCard />
               <MainViewCommunityCard />
@@ -68,7 +69,7 @@ const MainViewPage = () => {
             <DynamicPostModal />
           </Flex>
         </Box>
-      )} */}
+      )}
     </Box>
   );
 };

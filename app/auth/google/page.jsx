@@ -11,25 +11,22 @@ import {
 } from "../../components/Icons/Components/IconComponents";
 
 const GoogleAuthPage = () => {
-  // URL'yi ayrıştırın
-  const url = window.location.hash.substring(1); // Tarayıcı penceresinin URL'sinden hash kısmını alın
-
-  // Hash'i parametrelerine ayırın
+  // Getting the access token from the URL
+  const url = window.location.hash.substring(1);
   const hashParams = new URLSearchParams(url);
-
-  // Access token'ı alın
   const accessToken = hashParams.get("access_token");
 
-  // Google API'ının userinfo endpoint URL'si
+  // Google API userinfo endpoint URL
   const userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
 
   const getUserInfo = async () => {
+    // Try to make a GET request to the endpoint with the accessToken
     await axios
       .get(userInfoUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        // Token'i pop-up'ı oluşturan sayfanın URL'sine iletmek için postMessage kullanın
+        // Return the userInfo to popup opener
         window.opener.postMessage(
           {
             userInfo: {
@@ -43,11 +40,12 @@ const GoogleAuthPage = () => {
       })
       .catch((error) => {
         console.log(error);
-        // Pop-up'ı kapatın
+        // Close the popup
         window.close();
       });
   };
 
+  // Make the request when page loads
   useEffect(() => {
     getUserInfo();
   });

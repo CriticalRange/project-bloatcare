@@ -11,17 +11,15 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
-import useCommunityData from "../../../../hooks/Communities/useCommunityData";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../../atoms/authAtom";
 
 const NewPostHeader = () => {
   const params = useParams();
   const communityIdParam = params.communityId;
-  const [user] = useAuthState(auth);
-  const { communityData, onJoinOrLeaveCommunity, loading } = useCommunityData();
+  const [user, setUser] = useRecoilState(userAtom);
   return (
     <Flex direction="row" p="6" align="center">
       <Text fontSize="3xl">New Post for</Text>
@@ -37,7 +35,7 @@ const NewPostHeader = () => {
               : communityIdParam}
           </MenuButton>
           <MenuList>
-            {user
+            {/* {user
               ? communityData.userSnippets.map((snippet) => {
                   return (
                     <Link
@@ -48,7 +46,7 @@ const NewPostHeader = () => {
                     </Link>
                   );
                 })
-              : null}
+              : null} */}
           </MenuList>
         </Menu>
       </Box>

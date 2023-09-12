@@ -3,10 +3,13 @@ const db = require("../../api/db");
 const bcrypt = require("bcrypt");
 const jose = require("jose");
 
+// POST Request for /auth/login api
 export async function POST(req) {
   const res = await req.json();
+  // Get the Email and Password from request body
   const { Email, Password } = res;
 
+  // If Email or Password is empty
   if (!Email || !Password) {
     return NextResponse.json({
       error: {
@@ -17,9 +20,10 @@ export async function POST(req) {
   }
 
   try {
-    // @ts-ignore
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
+    // Get the user info with the Email
     const emailQueryResult = await pool.request().query`SELECT [Custom_Claims]
     ,[Disabled]
     ,[Display_Name]
@@ -37,6 +41,7 @@ export async function POST(req) {
       FROM [dbo].[users]
       WHERE [Email] = ${Email}`;
 
+    // If user with the email doesn't exist
     if (emailQueryResult.recordset.length === 0) {
       return NextResponse.json({
         error: {
@@ -46,8 +51,11 @@ export async function POST(req) {
       });
     }
 
+    // Predefine user info and password hash
     let userInfo = {};
     let Password_Hash;
+
+    // Map the recordset to get userInfo and exclude password hash and salt
     emailQueryResult.recordset.forEach((item) => {
       userInfo = {
         ...item,
@@ -56,9 +64,12 @@ export async function POST(req) {
       delete userInfo.Password_Hash;
       delete userInfo.Password_Salt;
     });
+
+    // Algorithms
     const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
     const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
+    // Try to verify the password
     const decodedPassword = await jose.jwtVerify(Password, db.accessSecret);
     const userInputPassword = decodedPassword.payload.Password;
     const match = bcrypt.compareSync(
@@ -66,6 +77,7 @@ export async function POST(req) {
       `${Password_Hash}`
     );
 
+    // Create a new accessToken and refreshToken
     // @ts-ignore
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg: accessAlg })
@@ -77,6 +89,7 @@ export async function POST(req) {
       .setExpirationTime("100d")
       .sign(db.accessSecret);
 
+    // If the password match with the one in database, return access and refresh tokens
     if (match) {
       return NextResponse.json({
         access_token: accessToken,

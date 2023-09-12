@@ -1,15 +1,24 @@
 import { NextResponse } from "next/server";
 const db = require("../../db");
 
+// GET Request for posts/[postId] api
 export async function GET(req, { params }) {
+  // Get the postId from parameters
   const postId = params.postId;
+
   try {
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
+    // Queries the post info with the postId
     const userSearchResult = await await pool.request().query`SELECT *
           FROM posts
           WHERE post_id = ${postId}`;
 
+    //Close the server connection for efficiency
+    pool.close();
+
+    // if post is not found
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(
         {
@@ -23,8 +32,8 @@ export async function GET(req, { params }) {
         }
       );
     }
-    pool.close();
 
+    // return the post info
     return NextResponse.json(
       {
         postId: userSearchResult.recordset[0].post_id,
@@ -39,8 +48,6 @@ export async function GET(req, { params }) {
         creatorDisplayName: userSearchResult.recordset[0].creatorDisplayName,
         numberOfComments: userSearchResult.recordset[0].numberOfComments,
         createdAt_seconds: userSearchResult.recordset[0].createdAt_seconds,
-        createdAt_nanoseconds:
-          userSearchResult.recordset[0].createdAt_nanoseconds,
         createdAt_nanoseconds:
           userSearchResult.recordset[0].createdAt_nanoseconds,
       },

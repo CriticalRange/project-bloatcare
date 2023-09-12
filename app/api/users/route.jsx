@@ -4,8 +4,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 const jose = require("jose");
 
-// @ts-ignore
-// @ts-ignore
+// GET Request for users api
 export async function GET(req) {
   return NextResponse.json(
     {
@@ -21,28 +20,33 @@ export async function GET(req) {
   );
 }
 
+// POST Request for users api
 export async function POST(req) {
+  const res = await req.json();
+
   try {
-    const res = await req.json();
-    // @ts-ignore
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
+    // Algorithms
     const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
     const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
+    // Dates
     const now = new Date();
     const utcMilllisecondsSinceEpoch =
       now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-    // @ts-ignore
-    // @ts-ignore
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
 
+    // Password
     const decodedPassword = await jose.jwtVerify(res.Password, db.accessSecret);
-
-    const newUserUid = uuidv4();
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(`${decodedPassword.payload.Password}`, salt);
 
+    // User Uid
+    const newUserUid = uuidv4();
+
+    // Make a request array that contains new user information
     const userCreateRequest = [
       {
         Custom_Claims: JSON.stringify({}),
@@ -67,17 +71,7 @@ export async function POST(req) {
         Uid: newUserUid,
         Communities: JSON.stringify([
           {
-            name: "Template",
-            id: "Unknown",
-            isJoined: true,
-          },
-          {
-            name: "Hello",
-            id: "Unknown",
-            isJoined: true,
-          },
-          {
-            name: "Hi",
+            name: "template",
             id: "Unknown",
             isJoined: true,
           },
@@ -86,6 +80,7 @@ export async function POST(req) {
     ];
     let userInfo;
 
+    // Make a query with the request to add user to database
     userCreateRequest.forEach(async (item) => {
       userInfo = {
         ...item,
@@ -98,6 +93,8 @@ export async function POST(req) {
       // @ts-ignore
       await pool.query(userCreateQuery);
     });
+
+    // Sign new accessToken and refreshToken and send it to user
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg: accessAlg })
       .setExpirationTime("30m")
@@ -126,18 +123,21 @@ export async function POST(req) {
   }
 }
 
+// DELETE Request for users api
 export async function DELETE(req) {
   const url = new URL(req.url);
+  // Get userUid from search parameters
   const userUid = url.searchParams.get("userUid");
 
   try {
-    // @ts-ignore
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
+    // Make a request the delete the user with the userUid
     const userDeleteQuery = `DELETE FROM users WHERE [Uid] = '${userUid}'`;
-    // @ts-ignore
     await pool.query(userDeleteQuery);
 
+    // Return success: true
     return NextResponse.json(
       {
         success: "true",
@@ -146,9 +146,8 @@ export async function DELETE(req) {
         status: 200,
       }
     );
-  } catch (error) {
+  } catch (err) {
     return NextResponse.json(
-      // @ts-ignore
       { error: { message: `${err}` } },
       {
         status: 400,

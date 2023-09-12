@@ -21,19 +21,11 @@ import {
   chakra,
   useToast,
 } from "@chakra-ui/react";
-import {
-  doc,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { communityNameCheckerAtom } from "../../../../atoms/communitiesAtom";
 import { createCommunityModalAtom } from "../../../../atoms/modalAtoms";
-import { auth, firestore } from "../../../../firebase/clientApp";
 import {
   CustomAnimatedLoadingSpinnerIcon,
   CustomEyeOpen,
@@ -41,13 +33,14 @@ import {
   CustomUserEmptyIcon,
 } from "../../../../Icons/Components/IconComponents";
 import { useDebouncedCallback } from "use-debounce";
+import { userAtom } from "../../../../atoms/authAtom";
 
 const CreateCommunityForm = () => {
   const toast = useToast();
   const router = useRouter();
 
   // Get the current user info
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
 
   // States
   const [communityNameChecker, setCommunityNameChecker] = useRecoilState(
@@ -73,35 +66,11 @@ const CreateCommunityForm = () => {
 
   const debouncedTitle = useDebouncedCallback(async (value) => {
     if (value.length !== 0) {
-      const communitiesDocRef = doc(firestore, "communities", value);
       setTitleChecker((prev) => ({
         ...prev,
         titleLoading: true,
         titleInvalid: false,
       }));
-      await getDoc(communitiesDocRef)
-        .then((docSnapshot) => {
-          if (docSnapshot.exists()) {
-            setTitleChecker((prev) => ({
-              ...prev,
-              titleLoading: false,
-              titleInvalid: false,
-              titleStatus: "taken",
-            }));
-            return;
-          } else {
-            setTitleChecker((prev) => ({
-              ...prev,
-              titleLoading: false,
-              titleStatus: "available",
-              titleInvalid: false,
-            }));
-          }
-        })
-        .catch((error) => {
-          console.log("Error checking community title: ", error);
-          return;
-        });
     } else {
       console.log("Value length is 0");
       setTitleChecker((prev) => ({
@@ -157,69 +126,10 @@ const CreateCommunityForm = () => {
     }
 
     // Validate the community name not taken
-    const communityDocRef = doc(
-      firestore,
-      "communities",
-      createCommunityForm.title
-    );
 
-    await runTransaction(firestore, async (transaction) => {
-      const communityDoc = await transaction.get(communityDocRef);
-      if (communityDoc.exists()) {
-        setButtonLoading(false);
-        toast({
-          title: "Community name taken!",
-          description: "This community name is taken. Please try another one.",
-          status: "error",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        return;
-      }
+    // Create the community
 
-      // Create the community (firestore)
-      transaction.set(communityDocRef, {
-        creatorId: user?.uid,
-        createdAt: serverTimestamp(),
-        displayName: createCommunityForm.title,
-        communityDesc: createCommunityForm.description,
-        numberOfMembers: 1,
-        privacyType: checkboxSelectedOption,
-      });
-
-      // Create community snippets on user
-      transaction.set(
-        doc(
-          firestore,
-          `users/${user?.uid}/communitySnippets`,
-          createCommunityForm.title
-        ),
-        {
-          communityId: createCommunityForm.title,
-          isModerator: true,
-          isJoined: true,
-        }
-      );
-      setButtonLoading(false);
-      toast({
-        title: "Creation success!",
-        description: `You successfully created your community named ${
-          createCommunityForm.title
-        }. ${redirectSwitch ? "Redirecting..." : ""}`,
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-      if (redirectSwitch) {
-        router.push(`/communities/${createCommunityForm.title}`);
-      }
-      setCreateCommunityModal((prev) => ({
-        ...prev,
-        openCreateCommunityModal: false,
-      }));
-    });
+    // Create community snippets on user
   };
 
   return (

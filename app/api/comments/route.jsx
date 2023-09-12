@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 const db = require("../db");
 
+// GET Request for comments api
 export async function GET(req, res) {
   return NextResponse.json({
     required: {
@@ -10,8 +11,9 @@ export async function GET(req, res) {
   });
 }
 
+// POST Request for comments api
 export async function POST(req) {
-  /* const res = await req.json(); */
+  const res = await req.json();
 
   try {
     // @ts-ignore

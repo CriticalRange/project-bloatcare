@@ -467,7 +467,7 @@ export default function SignupForm() {
         {/* {userError && (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{FIREBASE_ERRORS[userError.message]}</AlertTitle>
+            <AlertTitle>Error!</AlertTitle>
           </Alert>
         )} */}
         <Button

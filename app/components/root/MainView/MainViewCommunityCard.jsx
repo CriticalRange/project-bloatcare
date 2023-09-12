@@ -48,7 +48,7 @@ const MainViewCommunityCard = () => {
           {/* Image */}
           <Box
             as="img"
-            src="https://firebasestorage.googleapis.com/v0/b/bloatcare.appspot.com/o/posts%2Fi5SnM3RXlHmrp72SKfaA%2Fimage?alt=media&token=a3e8901b-2780-4090-92ff-bd67c4890945"
+            src=""
             alt="My Image"
             objectFit="cover"
             bgColor="gray.300"

@@ -15,19 +15,16 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
-import { auth } from "../../../firebase/clientApp";
-import { userAtom } from "../../../atoms/authAtom";
 import Cookies from "js-cookie";
+import { userAtom } from "../../../atoms/authAtom";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
   const toast = useToast();
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
 
   return (
     <Flex mr="2">
@@ -103,7 +100,6 @@ export default function NavbarProfile() {
             textColor="black"
             _dark={{ bg: "black", textColor: "white" }}
             onClick={async () => {
-              await signOut();
               document.cookie = "";
               Cookies.remove("accessToken");
               resetCommunityState;

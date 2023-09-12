@@ -1,6 +1,5 @@
 "use client";
 
-import { Timestamp } from "firebase/firestore";
 import { atom } from "recoil";
 
 // Posts Atom
@@ -16,7 +15,8 @@ export const postsAtom = atom({
     description: "",
     numberOfComments: "",
     imageUrl: "",
-    createdAt: Timestamp,
+    createdAt: new Date(),
+    /* this might be a problem later */
   },
 });
 

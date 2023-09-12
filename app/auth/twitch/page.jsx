@@ -2,14 +2,7 @@
 
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
-import {
-  createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
 import { useEffect, useState } from "react";
-import { auth } from "../../components/firebase/clientApp";
 
 const TwitchAuth = ({ searchParams }) => {
   const [twitchOauthPassword, setTwitchOauthPassword] = useState({
@@ -40,7 +33,7 @@ const TwitchAuth = ({ searchParams }) => {
   }, [accountCreatedBefore]);
 
   const TwitchOauthHandler = async () => {
-    try {
+    /* try {
       const tokenResponse = await axios.post(
         twitchTokenURL,
         {
@@ -88,10 +81,10 @@ const TwitchAuth = ({ searchParams }) => {
       });
     } catch (error) {
       console.log(error);
-    }
+    } */
   };
 
-  const onTwitchOauthPasswordChange = (event) => {
+  /* const onTwitchOauthPasswordChange = (event) => {
     const { name, value } = event.target;
     setTwitchOauthPassword((prev) => ({
       ...prev,
@@ -99,7 +92,7 @@ const TwitchAuth = ({ searchParams }) => {
     }));
   };
 
-  const handleTwitchFirebaseAuth = async (event) => {
+  const handleTwitchAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
     if (
@@ -135,11 +128,11 @@ const TwitchAuth = ({ searchParams }) => {
     }
     setAuthHandlerLoading(false);
     window.close();
-  };
+  }; */
 
   return (
     <Flex w="90%" h="300" mt="10" mx="5" direction="column">
-      <form onSubmit={handleTwitchFirebaseAuth}>
+      <form /* onSubmit={handleTwitchAuth} */>
         <Text fontSize="2xl">
           For your security, please also{" "}
           {accountCreatedBefore ? "login with your" : "create a"} password.{" "}
@@ -150,7 +143,7 @@ const TwitchAuth = ({ searchParams }) => {
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onTwitchOauthPasswordChange}
+          /* onChange={onTwitchOauthPasswordChange} */
           key="twitchOauthPassword"
           placeholder="Password"
         />
@@ -160,7 +153,7 @@ const TwitchAuth = ({ searchParams }) => {
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onTwitchOauthPasswordChange}
+          /* onChange={onTwitchOauthPasswordChange} */
           key="twitchOauthPasswordAgain"
           placeholder="Password Again"
         />

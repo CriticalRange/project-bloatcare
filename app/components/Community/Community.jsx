@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { communitiesAtom } from "../../components/atoms/communitiesAtom";
 import CommunityHeader from "../../components/Community/CommunityHeader/CommunityHeader";
-import { auth, firestore } from "../../components/firebase/clientApp";
 import CommunityBody from "../../components/Community/CommunityBody/CommunityBody";
 import { useParams } from "next/navigation";
 import { Box, Button, Center, Flex, Text, useToast } from "@chakra-ui/react";
@@ -13,12 +12,12 @@ import {
   authModalAtom,
   createCommunityModalAtom,
 } from "../../components/atoms/modalAtoms";
-import { useAuthState } from "react-firebase-hooks/auth";
 import axios from "axios";
+import { userAtom } from "../atoms/authAtom";
 
 const Community = () => {
   const toast = useToast();
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
   const [communityDataState, setCommunityDataState] =
     useRecoilState(communitiesAtom);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -29,33 +28,6 @@ const Community = () => {
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const params = useParams();
   const communityIdParam = params.communityId;
-
-  const getCommunityDocuments = async () => {
-    try {
-      const communityInfoRequest = await axios.get(
-        `/api/communities/${communityIdParam}`
-      );
-      const response = communityInfoRequest.data.response;
-
-      if (response.length !== 0) {
-        setCommunityDataState((prev) => ({
-          ...prev,
-          communityInfo: response,
-        }));
-        setCommunityDataExists("yes");
-        return;
-      } else {
-        setCommunityDataExists("no");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getCommunityDocuments();
-    setPageLoaded(true);
-  }, []);
 
   return (
     <Box bgColor="gray.300">
@@ -68,7 +40,7 @@ const Community = () => {
           <Button
             aria-label="Create One button"
             onClick={() =>
-              user
+              user.length !== 0
                 ? setCreateCommunityModal((prev) => ({
                     ...prev,
                     openCreateCommunityModal: true,

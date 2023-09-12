@@ -16,14 +16,12 @@ import axios from "axios";
 import * as jose from "jose";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/authAtom";
 import {
   authModalAtom,
   emailConfirmationModalAtom,
 } from "../../../atoms/modalAtoms";
-import { auth } from "../../../firebase/clientApp";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -35,8 +33,6 @@ export default function SigninForm({ InitialFocusRef }) {
   });
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
   const [signInLoading, setSignInLoading] = useState(false);
   const [signInError, setSignInError] = useState({
     code: "",

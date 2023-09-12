@@ -4,56 +4,20 @@ import { Link } from "@chakra-ui/next-js";
 import { Box, Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import InfiniteScroll from "react-infinite-scroll-component";
-import usePosts from "../../../hooks/Posts/usePosts";
-import { auth } from "../../firebase/clientApp";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
 import dynamic from "next/dynamic";
+import { userAtom } from "../../atoms/authAtom";
 
 const Posts = () => {
-  const {
-    getPosts,
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-    loading,
-    hasMore,
-    setHasMore,
-  } = usePosts();
   const router = useRouter();
   const toast = useToast();
   const params = useParams();
   const communityIdParam = params.communityId;
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-
-  useEffect(() => {
-    setPostState((prev) => ({
-      ...prev,
-      posts: null,
-    }));
-    getPosts();
-    if (!user) {
-      return;
-    }
-    return;
-  }, [communityIdParam]);
-
-  const fetchMoreData = () => {
-    getPosts().then(() => {
-      // Check if there are more posts to fetch, if not, set hasMore to false
-      // This will disable further loading
-      if (postState.posts?.length === 0) {
-        setHasMore(false);
-      }
-    });
-  };
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -63,7 +27,8 @@ const Posts = () => {
   }; // scroll to top button action
 
   return (
-    <Box my="3" h={loading ? "1000px" : "inherit"} w="inherit">
+    <div>hi</div>
+    /* <Box my="3" h={loading ? "1000px" : "inherit"} w="inherit">
       <InfiniteScroll
         dataLength={postState.posts?.length || 0}
         next={fetchMoreData}
@@ -125,7 +90,7 @@ const Posts = () => {
           return <DynamicCommunityCards key={uniqueKey} post={post} />;
         })}
       </InfiniteScroll>
-    </Box>
+    </Box> */
   );
 };
 

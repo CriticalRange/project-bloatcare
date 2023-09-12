@@ -14,39 +14,12 @@ import {
 import { CustomRefreshIcon } from "../../Icons/Components/IconComponents";
 import CustomSortAzSvg from "../../Icons/Custom/CustomIcons/CustomSortAzSvg";
 import CustomSortZaSvg from "../../Icons/Custom/CustomIcons/CustomSortZaSvg";
-import useMainPosts from "../../../hooks/Posts/useMainPosts";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/authAtom";
 
 const MainSorter = () => {
-  const {
-    getPostsLogin,
-    getPostsNoLogin,
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-    loading,
-    hasMore,
-    setHasMore,
-    isLiked,
-    isDisliked,
-  } = useMainPosts();
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
 
-  const refreshMechanism = () => {
-    setPostState((prev) => ({
-      ...prev,
-      posts: [],
-    }));
-    if (!user) {
-      getPostsNoLogin();
-      return;
-    }
-    getPostsLogin();
-  };
   return (
     <Flex
       borderRadius="5px"
@@ -56,7 +29,10 @@ const MainSorter = () => {
       alignItems="center"
       justify="flex-end"
     >
-      <Button mr="2" aria-label="refresh button" onClick={refreshMechanism}>
+      <Button
+        mr="2"
+        aria-label="refresh button" /* onClick={refreshMechanism} */
+      >
         {" "}
         <Icon as={CustomRefreshIcon} w="8" h="10" />
       </Button>

@@ -1,7 +1,5 @@
 "use client";
 
-import { useRecoilState } from "recoil";
-import { userAtom } from "../../components/atoms/authAtom";
 import {
   Avatar,
   Box,
@@ -17,22 +15,29 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { profileInfoAtom } from "../../components/atoms/postsAtom";
-import UserPosts from "../../components/Profile/UserPosts";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { CustomUserEmptyIcon } from "../../components/Icons/Components/IconComponents";
 import UserCommunities from "../../components/Profile/UserCommunities";
 import UserFollowers from "../../components/Profile/UserFollowers";
+import UserPosts from "../../components/Profile/UserPosts";
+import { userAtom } from "../../components/atoms/authAtom";
+import { profileInfoAtom } from "../../components/atoms/postsAtom";
 
 const Profile = () => {
   const params = useParams();
+  // A way to get the userDisplayName parameter
   const userDisplayName = params.UserDisplayName;
+
+  // State
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [profileOwnerInfo, setProfileOwnerInfo] =
     useRecoilState(profileInfoAtom);
 
-  const getProfileOwnerData = async () => {
+  // Gets the Profile's owner's user Info
+  const getProfileOwnerInfo = async () => {
     await axios
       .get(`/api/users/${userDisplayName}`)
       .then(async (response) => {
@@ -42,7 +47,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    getProfileOwnerData();
+    getProfileOwnerInfo();
   }, []);
   return (
     <Flex direction="column">
@@ -64,8 +69,7 @@ const Profile = () => {
             position="absolute"
             left="3%"
             bottom="-12%"
-            name="Profile Picture"
-            src="/images/criticalrange.jpg"
+            icon={<CustomUserEmptyIcon w="10" h="10" />}
           />
         </Flex>
       </Center>
@@ -81,15 +85,29 @@ const Profile = () => {
               }
             </Text>
           )}
-          <Text fontSize="xs">1000 Reputation</Text>
+          <Text fontSize="xs">
+            {
+              // @ts-ignore
+              profileOwnerInfo?.Reputation || 1000
+            }{" "}
+            Reputation
+          </Text>
         </Flex>
         <Flex justify="flex-end" gap={2}>
-          <Show above="sm">
-            <Button>Follow</Button>
+          {userInfo.length !== 0 &&
+          // @ts-ignore
+          userInfo.Display_Name !== profileOwnerInfo?.Display_Name ? (
+            <Show above="sm">
+              <Button>Follow</Button>
+              <Button bgColor="black" color="white">
+                Message
+              </Button>
+            </Show>
+          ) : (
             <Button bgColor="black" color="white">
-              Message
+              Manage
             </Button>
-          </Show>
+          )}
         </Flex>
       </Flex>
       <Box mt="6">

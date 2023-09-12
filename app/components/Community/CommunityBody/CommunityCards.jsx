@@ -19,7 +19,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import usePosts from "../../../hooks/Posts/usePosts";
 import { MotionFadingImage } from "./MotionFadingImage";
 import {
   CustomCommentDotsIcon,
@@ -30,27 +29,8 @@ import {
 } from "../../Icons/Components/IconComponents";
 
 const CommunityCards = ({ post }) => {
-  const {
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-  } = usePosts();
   const [error, setError] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
-
-  const handleDelete = async () => {
-    try {
-      const success = await onDeletePost(post);
-      if (!success) {
-        throw new Error("There was an error while deleting the post");
-      }
-    } catch (error) {
-      setError(error.message);
-    }
-  };
 
   return (
     <AnimatePresence>
@@ -149,7 +129,7 @@ const CommunityCards = ({ post }) => {
                     icon={<CustomCommentDotsVerticalIcon />}
                   ></MenuButton>
                   <MenuList
-                    onClick={() => handleDelete()}
+                    /* onClick={() => handleDelete()} */
                     border="1px solid gray"
                     bg="#a60a0a"
                   >

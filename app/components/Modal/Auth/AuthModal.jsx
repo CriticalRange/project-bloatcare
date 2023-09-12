@@ -13,18 +13,17 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
-import { auth } from "../../firebase/clientApp";
 import ResetPasswordForm from "./Forms/ResetPasswordForm";
 import SigninForm from "./Forms/SigninForm";
 import SignupForm from "./Forms/SignupForm";
 import OAuthButtons from "./Oauth/OAuthButtons";
+import { userAtom } from "../../atoms/authAtom";
 
 export default function AuthModal() {
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
   const authModalInitialFocus = useRef(null);
 
   const handleAuthModalClose = () => {

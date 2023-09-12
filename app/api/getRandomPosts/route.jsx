@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 const db = require("../db");
 
+// GET Request for getRandomPosts api
 export async function GET(req) {
+  // Get communityIds, isAuthenticated and count from parameters
   const url = new URL(req.url);
   const communityIds = url.searchParams.get("communityIds");
   const isAuthenticated = url.searchParams.get("isAuthenticated");
   const count = Number(url.searchParams.get("count"));
 
+  // If any of those 3 is null, return
   if (count === null || communityIds === null || isAuthenticated === null) {
     return NextResponse.json(
       {
@@ -20,11 +23,13 @@ export async function GET(req) {
     );
   }
   try {
-    // @ts-ignore
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
+    // Get the communityIds as an array
     const communityIdsArray = communityIds.split(",");
 
+    // If not authenticated, get random posts. Else, get random posts with the included community IDs.
     const postSearchResult =
       isAuthenticated === "false"
         ? await pool.request().query`SELECT TOP (${count}) [post_id]
@@ -57,6 +62,7 @@ export async function GET(req) {
           ORDER BY NEWID()`
         : null;
 
+    // If no posts found witht the query, return.
     if (postSearchResult.recordset === undefined) {
       return NextResponse.json(
         {
@@ -70,6 +76,8 @@ export async function GET(req) {
         }
       );
     }
+
+    // Map the recordset and add it all to mappedRecordset
     const mappedRecordset = postSearchResult.recordset.map(
       (recordset, index) => {
         return {
@@ -87,6 +95,8 @@ export async function GET(req) {
         };
       }
     );
+
+    //Close the server connection for efficiency
     pool.close();
     return NextResponse.json(mappedRecordset, {
       status: 200,

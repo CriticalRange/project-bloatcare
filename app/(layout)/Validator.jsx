@@ -1,14 +1,14 @@
 "use client";
 
+import axios from "axios";
+import * as jose from "jose";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
-import * as jose from "jose";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { userAtom } from "../components/atoms/authAtom";
-import axios from "axios";
 
 const Validator = () => {
-  const [userData, setUserData] = useRecoilState(userAtom);
+  const setUserData = useSetRecoilState(userAtom);
   const accessSecret = new TextEncoder().encode(
     `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
   );
@@ -31,6 +31,7 @@ const Validator = () => {
       setUserData(decodedAccessToken.payload);
     } catch (error) {
       if (error.code === "ERR_JWT_EXPIRED") {
+        // If the access token expires, get a new access token using refresh token
         const refreshToken = Cookies.get("refreshToken");
         await axios
           .post("/api/auth/token", {

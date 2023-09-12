@@ -7,6 +7,11 @@ export const userAtom = atom({
   default: [],
 });
 
+export const userCommunityInfoAtom = atom({
+  key: "userCommunityInfoAtom",
+  default: {},
+});
+
 export const discordButtonLoading = atom({
   key: "discordButtonLoading",
   default: false,

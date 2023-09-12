@@ -1,14 +1,6 @@
 "use client";
 
 import { Box, Flex, IconButton, useToast } from "@chakra-ui/react";
-import {
-  useSignInWithFacebook,
-  useSignInWithGithub,
-  useSignInWithGoogle,
-  useSignInWithMicrosoft,
-  useSignInWithTwitter,
-  useSignInWithYahoo,
-} from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import {
   CustomAnimatedTwitchIcon,
@@ -26,7 +18,6 @@ import {
   socialOnboardingAtom,
 } from "../../../atoms/authAtom";
 import { twitchButtonLoading } from "../../../atoms/authAtom";
-import { auth } from "../../../firebase/clientApp";
 import Cookies from "js-cookie";
 import {
   SocialOnboardingModalAtom,
@@ -47,17 +38,6 @@ function OAuthButtons() {
   const [socialOnboardingModal, setSocialOnboardingModal] = useRecoilState(
     SocialOnboardingModalAtom
   );
-
-  const [signInWithYahoo, yahooUser, yahooLoading, yahooError] =
-    useSignInWithYahoo(auth);
-  const [signInWithGithub, githubUser, githubLoading, githubError] =
-    useSignInWithGithub(auth);
-  const [signInWithMicrosoft, microsoftUser, microsoftLoading, microsoftError] =
-    useSignInWithMicrosoft(auth);
-  const [signInWithTwitter, twitterUser, twitterLoading, twitterError] =
-    useSignInWithTwitter(auth);
-  const [signInWithFacebook, facebookUser, facebookLoading, facebookError] =
-    useSignInWithFacebook(auth);
 
   // Handle mechanisms
   const handleGoogleSignin = async () => {
@@ -123,21 +103,11 @@ function OAuthButtons() {
       setGoogleLoading(false);
     }
   };
-  const handleFacebookSignin = async () => {
-    await signInWithFacebook();
-  };
-  const handleGithubSignin = async () => {
-    await signInWithGithub();
-  };
-  const handleMicrosoftSignin = async () => {
-    await signInWithMicrosoft();
-  };
-  const handleTwitterSignin = async () => {
-    await signInWithTwitter();
-  };
-  const handleYahooSignin = async () => {
-    await signInWithYahoo();
-  };
+  const handleFacebookSignin = async () => {};
+  const handleGithubSignin = async () => {};
+  const handleMicrosoftSignin = async () => {};
+  const handleTwitterSignin = async () => {};
+  const handleYahooSignin = async () => {};
   const handleDiscordSignin = async () => {
     try {
       console.log("Handle discord sign in started.");
@@ -218,7 +188,7 @@ function OAuthButtons() {
         {" • "}
         <Box>
           <IconButton
-            isLoading={yahooLoading}
+            /* isLoading={yahooLoading} */
             onClick={handleYahooSignin}
             aria-label="Sign in with Yahoo"
             icon={<YahooIcon w="10" h="10" fill="#5f01d3" />}
@@ -227,7 +197,7 @@ function OAuthButtons() {
         {" • "}
         <Box>
           <IconButton
-            isLoading={githubLoading}
+            /* isLoading={githubLoading} */
             onClick={handleGithubSignin}
             aria-label="Sign in with Github"
             icon={
@@ -262,7 +232,7 @@ function OAuthButtons() {
       >
         <Box>
           <IconButton
-            isLoading={microsoftLoading}
+            /* isLoading={microsoftLoading} */
             onClick={handleMicrosoftSignin}
             aria-label="Sign in with Microsoft"
             icon={<MicrosoftIcon w="8" h="8" />}
@@ -271,7 +241,7 @@ function OAuthButtons() {
         {" • "}
         <Box>
           <IconButton
-            isLoading={twitterLoading}
+            /* isLoading={twitterLoading} */
             onClick={handleTwitterSignin}
             aria-label="Sign in with Twitter"
             icon={<TwitterIcon h="10" w="10" color="#1d9bf0" />}
@@ -280,7 +250,7 @@ function OAuthButtons() {
         {" • "}
         <Box>
           <IconButton
-            isLoading={facebookLoading}
+            /* isLoading={facebookLoading} */
             onClick={handleFacebookSignin}
             aria-label="Sign in with Facebook"
             icon={<FacebookIcon h="10" w="10" color="#1877f2" />}

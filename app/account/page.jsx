@@ -18,16 +18,13 @@ import {
   Text,
   Tooltip,
   useEditableControls,
-  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../components/firebase/clientApp";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../components/atoms/authAtom";
 
 function Account() {
-  const toast = useToast();
-  const [user, authLoading, error] = useAuthState(auth);
-  const [userIsLoaded, setUserLoaded] = useState(false);
+  const user = useRecoilValue(userAtom);
   const [showChangesPopup, setChangesPopup] = useState(false);
   const [editForm, setEditForm] = useState({
     username: "",
@@ -87,16 +84,20 @@ function Account() {
   };
 
   useEffect(() => {
-    setUserLoaded(true);
-    setEditForm({ username: user?.displayName, email: user?.email });
+    // @ts-ignore
+    setEditForm({ username: user?.Display_Name, email: user?.Email });
   }, []);
 
   return (
     <>
-      {userIsLoaded && !authLoading ? (
+      {user.length !== 0 ? (
         <Flex mt="10" direction="column">
           <Text fontSize="4xl" ml="3" mt="5">
-            Hello, {user?.displayName === null ? user.email : user?.displayName}
+            Hello,{" "}
+            {
+              // @ts-ignore
+              user?.Display_Name
+            }
           </Text>
           <Text fontSize="2xl" ml="3" mt="5">
             Let&apos;s quickly go over your details
@@ -135,7 +136,8 @@ function Account() {
                   ml="5"
                   placeholder="Not set. Click here to set it"
                   defaultValue={
-                    user?.displayName === null ? "" : user?.displayName
+                    // @ts-ignore
+                    user?.Display_Name === null ? "" : user?.Display_Name
                   }
                   fontSize="xl"
                   isPreviewFocusable={true}
@@ -169,7 +171,8 @@ function Account() {
                 </Text>
                 <Editable
                   ml="5"
-                  defaultValue={user?.email}
+                  // @ts-ignore
+                  defaultValue={user?.Email}
                   fontSize="xl"
                   isPreviewFocusable={true}
                   selectAllOnFocus={true}
