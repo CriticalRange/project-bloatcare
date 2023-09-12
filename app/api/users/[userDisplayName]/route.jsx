@@ -18,10 +18,13 @@ export async function GET(req, { params }) {
     //Close the server connection for efficiency
     pool.close();
 
-    // Parse the Metadata and Provider Data
+    // Some data needs to be parsed so parsing before serving it
     const parsedMetadata = JSON.parse(userSearchResult.recordset[0].Metadata);
     const parsedProviderData = JSON.parse(
       userSearchResult.recordset[0].Provider_Data
+    );
+    const parsedCommunities = JSON.parse(
+      userSearchResult.recordset[0].Communities
     );
 
     // Return all the infos with the parsed Metadata and Provider Data
@@ -38,6 +41,7 @@ export async function GET(req, { params }) {
         Phone_Number: userSearchResult.recordset[0].Phone_Number,
         Photo_URL: userSearchResult.recordset[0].Photo_URL,
         Uid: userSearchResult.recordset[0].Uid,
+        Communities: parsedCommunities,
       },
       {
         status: 200,

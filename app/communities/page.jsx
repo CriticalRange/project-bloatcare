@@ -4,6 +4,7 @@ import { Link } from "@chakra-ui/next-js";
 import {
   Box,
   Button,
+  Center,
   Flex,
   Heading,
   Stack,
@@ -14,83 +15,113 @@ import CommunityImage from "../components/Community/CommunityHeader/CommunityIma
 import { CustomUserSettingsIcon } from "../components/Icons/Components/IconComponents";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../components/atoms/authAtom";
+import { useEffect, useState } from "react";
+import { authModalAtom } from "../components/atoms/modalAtoms";
 
 const Communities = () => {
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [userCommunities, setUserCommunities] = useState([]);
+  const [communityListLoaded, setCommunityListLoaded] = useState(false);
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+
+  const getUserCommunityInfo = async () => {
+    if (userInfo.length !== 0) {
+      // @ts-ignore
+      const communityList = JSON.parse(userInfo.Communities);
+      setUserCommunities(communityList);
+      setCommunityListLoaded(true);
+    }
+  };
+
+  useEffect(() => {
+    getUserCommunityInfo();
+  }, [userInfo.length]);
 
   return (
-    <Flex
-      bg="white"
-      _dark={{ bg: "black" }}
-      w="full"
-      borderBottomLeftRadius="85"
-      borderBottomRightRadius="85"
-    >
-      <Flex flex="1" direction="column" align="center">
+    <Box>
+      <Flex direction="column">
         {/* <CommunitiesSearch /> */}
-        <Heading>Joined communities:</Heading>
-        <Flex mt="5">
-          <Stack
-            my="5"
-            spacing={2}
-            divider={
-              <StackDivider
-                borderColor="gray.500"
-                _dark={{ borderColor: "gray.200" }}
-              />
-            }
-          >
-            {/* {userInfo ? (
-              communityData.userSnippets.map((snippet) => {
-                if (snippet.isJoined === true) {
-                  return (
-                    <Flex
-                      key={snippet.communityId}
-                      direction="row"
-                      align="center"
-                    >
-                      <Link href={`communities/${snippet.communityId}`}>
-                        <Flex
-                          w={{ base: "400px", md: "600px" }}
-                          direction="row"
-                          align="center"
-                        >
-                          <Box mr="6">
-                            <CommunityImage />
-                          </Box>
-                          <Text
-                            maxW="340px"
-                            textOverflow="ellipsis"
-                            noOfLines={1}
-                            fontSize="3xl"
+        <Center>
+          <Heading mt="4">Joined communities:</Heading>
+        </Center>
+        {communityListLoaded ? (
+          <Flex mt="2" ml="4">
+            <Stack
+              spacing={2}
+              divider={
+                <StackDivider
+                  borderRadius="10"
+                  borderColor="gray.500"
+                  _dark={{ borderColor: "gray.200" }}
+                />
+              }
+            >
+              {userInfo.length !== 0 ? (
+                userCommunities.map((community) => {
+                  if (community.isJoined === true) {
+                    return (
+                      <Flex
+                        key={`${community.id}-${community.name}`}
+                        direction="row"
+                        align="center"
+                      >
+                        <Link href={`communities/${community.id}`}>
+                          <Flex
+                            w={{ base: "400px", md: "600px" }}
+                            direction="row"
+                            align="center"
                           >
-                            {snippet.communityId}
-                          </Text>
-                          <Flex flex="1" justify="flex-end">
-                            {snippet.isModerator === true ? (
-                              <CustomUserSettingsIcon w="10" h="10" />
-                            ) : null}
+                            <Box mr="4">
+                              <CommunityImage />
+                            </Box>
+                            <Text
+                              maxW="340px"
+                              textOverflow="ellipsis"
+                              noOfLines={1}
+                              fontSize="xl"
+                            >
+                              {community.name}
+                            </Text>
+                            <Flex justify="flex-end">
+                              {community.isModerator === true ? (
+                                <CustomUserSettingsIcon w="10" h="10" />
+                              ) : null}
+                            </Flex>
                           </Flex>
-                        </Flex>
-                      </Link>
-                    </Flex>
-                  );
-                } else {
-                  return null;
-                }
-              })
-            ) : (
-              <Flex>
-                You haven&apos;t joined any communities
-                <Link href="/communities/Dummy">
-                  <Button aria-label="Go to Dummy">Go to Dummy</Button>
-                </Link>
-              </Flex>
-            )} */}
-          </Stack>
-        </Flex>
+                        </Link>
+                      </Flex>
+                    );
+                  } else {
+                    return null;
+                  }
+                })
+              ) : (
+                <Flex flex="1">
+                  <Center gap={2}>
+                    <Text>
+                      Please sign in to be able to see your joined Communities
+                    </Text>
+                    <Button
+                      aria-label="Sign in"
+                      onClick={() =>
+                        setAuthModal((prev) => ({
+                          ...prev,
+                          openAuthModal: true,
+                        }))
+                      }
+                    >
+                      Sign in
+                    </Button>
+                  </Center>
+                </Flex>
+              )}
+            </Stack>
+          </Flex>
+        ) : (
+          <div>Loading...</div>
+        )}
       </Flex>
-    </Flex>
+    </Box>
   );
 };
 
