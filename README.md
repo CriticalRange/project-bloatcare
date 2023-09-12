@@ -13,6 +13,14 @@
 
 - Second, this is my first proper next.js project. So please be kind :)
 
+### Project Links
+
+- [Trello](https://trello.com/b/TmYqWX0I/bloatcare)
+
+- [SwaggerHub API Documentation](https://app.swaggerhub.com/apis-docs/CriticalRange/BloatCareApi/1.0.0#/)
+
+- [Next.js](https://nextjs.org/)
+
 ## Want to help develop this? (I would like to have some ideas from you)
 
 First, download the dependencies:
