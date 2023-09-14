@@ -1,31 +1,38 @@
 "use client";
 
-import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
+import { Button, Flex, IconButton, Text, useToast } from "@chakra-ui/react";
+import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
 import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
 import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
 import { userAtom } from "../../atoms/authAtom";
 import { userCommunityInfoAtom } from "../../atoms/communitiesAtom";
 import { communitiesAtom } from "../../atoms/communitiesAtom";
-import { communitySettingsModalAtom } from "../../atoms/modalAtoms";
+import {
+  authModalAtom,
+  communitySettingsModalAtom,
+} from "../../atoms/modalAtoms";
 import CommunityImage from "./CommunityImage";
 import { useEffect } from "react";
 
 const Header = () => {
-  const [user, setUser] = useRecoilState(userAtom);
+  const toast = useToast();
+
+  // States
+  const user = useRecoilValue(userAtom);
   const [userCommunityInfo, setUserCommunityInfo] = useRecoilState(
     userCommunityInfoAtom
   );
-  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
-  const [communitySettingsModal, setcommunitySettingsModal] = useRecoilState(
+  const communityData = useRecoilValue(communitiesAtom);
+  const setcommunitySettingsModal = useSetRecoilState(
     communitySettingsModalAtom
   );
+  const setAuthModal = useSetRecoilState(authModalAtom);
 
   const getUserCommunityInfo = () => {
+    // If user is authenticated gets the community info for the userP-Ü,İ
     if (user.authenticated) {
       user.Communities.map((value) => {
         if (value.name === communityData.CommunityName) {
-          console.log("Value is: ", value);
           setUserCommunityInfo({
             id: value.id,
             isJoined: value.isJoined,
@@ -37,6 +44,7 @@ const Header = () => {
     }
   };
 
+  // Only runs when user is changed
   useEffect(() => {
     getUserCommunityInfo();
   }, [user.authenticated]);
@@ -74,26 +82,23 @@ const Header = () => {
               </Text>
             </Flex>
             <Flex flex="1" mr="10" justify="flex-end" align="center">
-              {
-                // @ts-ignore
-                userCommunityInfo.isJoined ? (
-                  <>
-                    <CommunitySettingsModal />
-                    <IconButton
-                      onClick={() =>
-                        setcommunitySettingsModal((prev) => ({
-                          ...prev,
-                          openCommunitySettingsModal: true,
-                        }))
-                      }
-                      aria-label="Community Settings"
-                      mr="3"
-                      size="md"
-                      icon={<CustomCommunitySettingsIcon />}
-                    />
-                  </>
-                ) : null
-              }
+              {user.authenticated && userCommunityInfo.isJoined ? (
+                <>
+                  <CommunitySettingsModal />
+                  <IconButton
+                    onClick={() => {
+                      setcommunitySettingsModal((prev) => ({
+                        ...prev,
+                        openCommunitySettingsModal: true,
+                      }));
+                    }}
+                    aria-label="Community Settings"
+                    mr="3"
+                    size="md"
+                    icon={<CustomCommunitySettingsIcon />}
+                  />
+                </>
+              ) : null}
 
               <Button
                 aria-label={
@@ -103,23 +108,44 @@ const Header = () => {
                     ? "Joined"
                     : "Join"
                 }
-                bg="brand.primary"
-                _dark={{ bg: "black" }}
+                color="white"
+                bg="black"
+                _dark={{ bg: "white", color: "black" }}
                 _hover={{
                   bg: "brand.secondary",
                 }}
                 size="lg"
+                onClick={() => {
+                  !user.authenticated
+                    ? (setAuthModal((prev) => ({
+                        ...prev,
+                        openAuthModal: true,
+                      })),
+                      toast({
+                        title: "You are not logged in!",
+                        description:
+                          "You are not allowed to join communities unless you log in",
+                        status: "error",
+                        duration: 2500,
+                        position: "bottom-left",
+                        isClosable: true,
+                      }))
+                    : null;
+                }}
                 /* onClick={() => onJoinOrLeaveCommunity()}
                 isLoading={loading} */
               >
-                {
-                  // @ts-ignore
-                  userCommunityInfo.isJoined && user.authenticated ? (
+                {user.authenticated ? (
+                  userCommunityInfo.isJoined ? (
                     <Text fontSize="md">Joined</Text>
                   ) : (
                     <Text fontSize="md">Join</Text>
                   )
-                }
+                ) : (
+                  <Text fontSize="md" onClick={() => {}}>
+                    Join
+                  </Text>
+                )}
               </Button>
             </Flex>
           </Flex>

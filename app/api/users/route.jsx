@@ -129,29 +129,128 @@ export async function POST(req) {
 // PATCH Request for users API
 export async function PATCH(req) {
   const res = await req.json();
-  const { addedCommunity, Uid } = res;
+  const {
+    Communities,
+    Uid,
+    Disabled,
+    Display_Name,
+    Metadata,
+    Photo_URL,
+    Provider_Data,
+    Phone_Number,
+    Tokens_Valid_After_Time,
+  } = res;
+
+  if (!Uid) {
+    return NextResponse.json({
+      error: {
+        code: "REQUIRES_UID",
+        message:
+          "This PATCH Request at least requires 'Uid' in the request body",
+      },
+    });
+  }
 
   try {
     // @ts-ignore Connect to server
     const pool = await db.connect();
 
-    // Get the old communities and save
+    // Define new Parameters
+    let newCommunities,
+      NewDisabled,
+      NewDisplay_Name,
+      NewMetadata,
+      NewPhoto_URL,
+      NewProvider_Data,
+      NewPhone_Number,
+      NewTokens_Valid_After_Time;
+
+    // If there are new communities, merge the communities else Get the old communities and save
     const getUserCommunitiesQuery = await pool.request()
-      .query`SELECT [Communities] FROM [users] WHERE Uid = ${Uid}`;
+      .query`SELECT * FROM [users] WHERE Uid = ${Uid}`;
+
+    // Parsed Data
     const OldCommunities = JSON.parse(
       getUserCommunitiesQuery.recordset[0].Communities
     );
-
-    // Merge the old and new communities
-    const newCommunities = [
-      ...OldCommunities.map((oldCommunity) => oldCommunity),
-      addedCommunity,
+    const OldMetadata = [
+      JSON.parse(getUserCommunitiesQuery.recordset[0].Metadata),
     ];
+    console.log("OldMetadata is: ", OldMetadata);
+    const OldProviderData = JSON.parse(
+      getUserCommunitiesQuery.recordset[0].Provider_Data
+    );
+    // New Values
+
+    if (!Communities) {
+      newCommunities = JSON.stringify([
+        ...OldCommunities.map((OldCommunities) => OldCommunities),
+      ]);
+    } else {
+      // Merge the old and new communities
+      newCommunities = JSON.stringify([
+        ...OldCommunities.map((OldCommunities) => OldCommunities),
+        Communities,
+      ]);
+    }
+
+    if (Disabled) {
+      NewDisabled = Disabled;
+    } else {
+      NewDisabled = getUserCommunitiesQuery.recordset[0].Disabled;
+    }
+
+    if (Display_Name) {
+      NewDisplay_Name = Display_Name;
+    } else {
+      NewDisplay_Name = getUserCommunitiesQuery.recordset[0].Display_Name;
+    }
+
+    if (Metadata) {
+      NewMetadata = JSON.stringify([
+        ...OldMetadata.map((OldMetadata) => OldMetadata),
+        Metadata,
+      ]);
+    } else {
+      NewMetadata = JSON.stringify([
+        OldMetadata.map((OldMetadata) => OldMetadata),
+      ]);
+    }
+    console.log(NewMetadata);
+
+    if (Photo_URL) {
+      NewPhoto_URL = Photo_URL;
+    } else {
+      NewPhoto_URL = getUserCommunitiesQuery.recordset[0].Photo_URL;
+    }
+
+    if (Provider_Data) {
+      NewProvider_Data = JSON.stringify([
+        ...OldProviderData.map((OldProviderData) => OldProviderData),
+        Provider_Data,
+      ]);
+    } else {
+      NewProvider_Data = JSON.stringify([
+        ...OldProviderData.map((OldProviderData) => OldProviderData),
+      ]);
+    }
+
+    if (Phone_Number) {
+      NewPhone_Number = Phone_Number;
+    } else {
+      NewPhone_Number = getUserCommunitiesQuery.recordset[0].Phone_Number;
+    }
+
+    if (Tokens_Valid_After_Time) {
+      NewTokens_Valid_After_Time = Tokens_Valid_After_Time;
+    } else {
+      NewTokens_Valid_After_Time =
+        getUserCommunitiesQuery.recordset[0].Tokens_Valid_After_Time;
+    }
 
     // Add the new communities to user
-    const updateUserInfoQuery = `UPDATE [users] SET Communities = '${JSON.stringify(
-      newCommunities
-    )}' WHERE Uid = '${Uid}'`;
+    const updateUserInfoQuery = `UPDATE [users] SET Communities = '${newCommunities}', Disabled = '${NewDisabled}', Display_Name = '${NewDisplay_Name}', Metadata = '${NewMetadata}', Photo_Url = '${NewPhoto_URL}', Provider_Data = '${NewProvider_Data}', Phone_Number = '${NewPhone_Number}', Tokens_Valid_After_Time = '${NewTokens_Valid_After_Time}' WHERE Uid = '${Uid}'`;
+
     await pool.query(updateUserInfoQuery);
 
     return NextResponse.json({ update: "maybe" });

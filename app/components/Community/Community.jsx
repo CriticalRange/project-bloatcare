@@ -12,11 +12,13 @@ import {
   createCommunityModalAtom,
 } from "../../components/atoms/modalAtoms";
 import { userAtom } from "../atoms/authAtom";
-import { userCommunityInfoAtom } from "../../components/atoms/communitiesAtom";
 import useCommunityInfo from "../hooks/Community/useCommunityInfo";
+import CommunityPageLoading from "../Loading/Communities/CommunityPage/CommunityPageLoading";
 
 const Community = () => {
   const toast = useToast();
+
+  // States
   const [user, setUser] = useRecoilState(userAtom);
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -24,22 +26,21 @@ const Community = () => {
   const [communityCreateModal, setCreateCommunityModal] = useRecoilState(
     createCommunityModalAtom
   );
-  const [userCommunityInfo, setUserCommunityInfo] = useRecoilState(
-    userCommunityInfoAtom
-  );
   const { fetchCommunityInfo } = useCommunityInfo();
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const params = useParams();
   const communityIdParam = params.communityId;
 
   const getCommunityInfo = async () => {
+    // Fetches custom hook
     const response = await fetchCommunityInfo(communityIdParam);
-    console.log(response);
+    // We can find out if no community found bu just checking if response is undefined
     if (response === undefined) {
       setCommunityExists("no");
       setPageLoaded(true);
       return;
     }
+    // Update the community data with the new community info
     setCommunityData({
       CommunityCreatedAt: response.CommunityCreatedAt,
       CommunityDescription: response.CommunityDescription,
@@ -51,12 +52,13 @@ const Community = () => {
     setPageLoaded(true);
   };
 
+  // Runs for one time when page loads
   useEffect(() => {
     getCommunityInfo();
   }, []);
 
   return (
-    <Box bgColor="gray.300">
+    <Box>
       {pageLoaded && communityExists === "no" ? (
         <Flex my="10" direction="column">
           <Text fontSize="3xl" fontWeight="semibold">
@@ -91,12 +93,12 @@ const Community = () => {
           </Button>
         </Flex>
       ) : pageLoaded && communityExists === "yes" ? (
-        <>
+        <Box>
           <CommunityHeader />
           <CommunityBody />
-        </>
+        </Box>
       ) : (
-        <div>Loading...</div>
+        <CommunityPageLoading />
       )}
     </Box>
   );

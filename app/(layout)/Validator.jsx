@@ -18,7 +18,6 @@ const Validator = () => {
       if (!refreshToken) {
         return;
       }
-
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) {
         return;
@@ -28,6 +27,7 @@ const Validator = () => {
         accessSecret
       );
 
+      console.log("Decoded Access Token is: ", decodedAccessToken);
       const tempCommunities = localStorage.getItem("tempCommunities");
       if (!tempCommunities) {
         // @ts-ignore
@@ -105,6 +105,7 @@ const Validator = () => {
     } catch (error) {
       console.log(error);
       if (error.code === "ERR_JWT_EXPIRED") {
+        console.log("Token is expired, getting a new one");
         // If the access token expires, get a new access token using refresh token
         const refreshToken = Cookies.get("refreshToken");
         await axios
@@ -112,6 +113,7 @@ const Validator = () => {
             refresh_token: refreshToken,
           })
           .then(async (response) => {
+            console.log("Got a new one: ", response.data.access_token);
             Cookies.set("accessToken", response.data.access_token, {
               expires: 1 / 48,
               secure: true,
@@ -122,7 +124,38 @@ const Validator = () => {
               accessSecret
             );
             // @ts-ignore
-            setUserData(newAccessToken.payload);
+            setUserData({
+              authenticated: true,
+              Custom_Claims: newAccessToken.payload.Custom_Claims,
+              Disabled: !!newAccessToken.payload.Disabled,
+              // @ts-ignore
+              Display_Name: newAccessToken.payload.Display_Name,
+              // @ts-ignore
+              Email: newAccessToken.payload.Email,
+              // @ts-ignore
+              Email_Verified: newAccessToken.payload.Email_Verified,
+              // @ts-ignore
+              Metadata: JSON.parse(newAccessToken.payload.Metadata),
+              // @ts-ignore
+              Photo_Url: newAccessToken.payload.Photo_Url,
+              // @ts-ignore
+              Provider_Data: JSON.parse(newAccessToken.payload.Provider_Data),
+              // @ts-ignore
+              Uid: newAccessToken.payload.Uid,
+              // @ts-ignore
+              Password_Hash: newAccessToken.payload.Password_Hash,
+              // @ts-ignore
+              Phone_Number: newAccessToken.payload.Phone_Number,
+              // @ts-ignore
+              Password_Salt: newAccessToken.payload.Password_Salt,
+              // @ts-ignore
+              Tokens_Valid_After_Time:
+                newAccessToken.payload.Tokens_Valid_After_Time,
+              // @ts-ignore
+              Verification_Code: newAccessToken.payload.Verification_Code,
+              // @ts-ignore
+              Communities: tempCommunitiesParsed,
+            });
           });
       }
     }
