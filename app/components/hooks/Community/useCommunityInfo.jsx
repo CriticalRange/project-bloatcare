@@ -4,16 +4,16 @@ const useCommunityInfo = () => {
   const fetchCommunityInfo = async (communityId) => {
     try {
       if (communityId === undefined) {
-        throw new Error("USER_NOT_FOUND");
+        throw new Error("COMMUNITYID_NOT_FOUND");
       }
       const response = await axios
         .get(`/api/communities/${communityId}`)
         .then((response) => {
-          return response.data.Communities;
+          return response.data.response;
         });
       return response;
     } catch (error) {
-      console.log(error);
+      return error.response.data.error.message;
     }
   };
 

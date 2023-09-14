@@ -24,11 +24,6 @@ export const userAtom = atom({
   },
 });
 
-export const userCommunityInfoAtom = atom({
-  key: "userCommunityInfoAtom",
-  default: {},
-});
-
 export const socialOnboardingAtom = atom({
   key: "socialOnboardingAtom",
   default: {

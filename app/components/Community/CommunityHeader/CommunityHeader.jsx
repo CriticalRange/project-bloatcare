@@ -3,42 +3,43 @@
 import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
-import {
-  authModalAtom,
-  communitySettingsModalAtom,
-} from "../../atoms/modalAtoms";
-import CommunityImage from "./CommunityImage";
 import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
+import { userAtom } from "../../atoms/authAtom";
+import { userCommunityInfoAtom } from "../../atoms/communitiesAtom";
 import { communitiesAtom } from "../../atoms/communitiesAtom";
-import { userAtom, userCommunityInfoAtom } from "../../atoms/authAtom";
+import { communitySettingsModalAtom } from "../../atoms/modalAtoms";
+import CommunityImage from "./CommunityImage";
 import { useEffect } from "react";
 
 const Header = () => {
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [user, setUser] = useRecoilState(userAtom);
   const [userCommunityInfo, setUserCommunityInfo] = useRecoilState(
     userCommunityInfoAtom
   );
-  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const [communityDataState, setCommunityDataState] =
-    useRecoilState(communitiesAtom);
+  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
   const [communitySettingsModal, setcommunitySettingsModal] = useRecoilState(
     communitySettingsModalAtom
   );
 
-  useEffect(() => {
-    if (userInfo.length !== 0) {
-      const userCommunityInfo = [];
-      // @ts-ignore
-      const communities = Object.values(JSON.parse(userInfo.Communities));
-
-      for (const value of communities) {
-        if (value.name === communityDataState.communityInfo.Display_Name) {
-          userCommunityInfo.push(value);
+  const getUserCommunityInfo = () => {
+    if (user.authenticated) {
+      user.Communities.map((value) => {
+        if (value.name === communityData.CommunityName) {
+          console.log("Value is: ", value);
+          setUserCommunityInfo({
+            id: value.id,
+            isJoined: value.isJoined,
+            name: value.name,
+            isModerator: value.isModerator,
+          });
         }
-      }
-      setUserCommunityInfo(userCommunityInfo[0]);
+      });
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    getUserCommunityInfo();
+  }, [user.authenticated]);
 
   return (
     <Flex direction="row">
@@ -60,7 +61,7 @@ const Header = () => {
                 noOfLines={2}
                 textOverflow="ellipsis"
               >
-                {communityDataState.communityInfo.Display_Name}
+                {communityData.CommunityName}
               </Text>
               <Text
                 maxW="200px"
@@ -69,7 +70,7 @@ const Header = () => {
                 fontWeight="thin"
                 ml="3"
               >
-                {communityDataState.communityInfo.Display_Name}
+                {communityData.CommunityName}
               </Text>
             </Flex>
             <Flex flex="1" mr="10" justify="flex-end" align="center">
@@ -96,7 +97,7 @@ const Header = () => {
 
               <Button
                 aria-label={
-                  userInfo.length !== 0 &&
+                  user.authenticated &&
                   // @ts-ignore
                   userCommunityInfo.isJoined
                     ? "Joined"
@@ -113,7 +114,7 @@ const Header = () => {
               >
                 {
                   // @ts-ignore
-                  userCommunityInfo.isJoined && userInfo.length !== 0 ? (
+                  userCommunityInfo.isJoined && user.authenticated ? (
                     <Text fontSize="md">Joined</Text>
                   ) : (
                     <Text fontSize="md">Join</Text>

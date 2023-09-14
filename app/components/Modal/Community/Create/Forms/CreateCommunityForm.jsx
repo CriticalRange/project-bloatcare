@@ -145,6 +145,8 @@ const CreateCommunityForm = () => {
     }
 
     // Create the community
+
+    let addedCommunity;
     await axios
       .post("/api/communities", {
         communityName: createCommunityForm.title,
@@ -152,29 +154,35 @@ const CreateCommunityForm = () => {
         communityDesc: createCommunityForm.description,
       })
       .then((communityResponse) => {
-        // @ts-ignore
-        axios
-          .patch("/api/users", {
-            // @ts-ignore
-            Uid: user.Uid,
-            addedCommunity: {
-              name: createCommunityForm.title,
-              id: communityResponse.data.id,
-              isJoined: true,
-            },
-          })
-          .then((response) => {
-            setUser((prev) => ({
-              ...prev,
-              // finish here
-            }));
-            setButtonLoading(false);
-            router.push(`/communities/${createCommunityForm.title}`);
-            setCreateCommunityModal((prev) => ({
-              ...prev,
-              openCreateCommunityModal: false,
-            }));
-          });
+        (addedCommunity = {
+          name: createCommunityForm.title,
+          id: communityResponse.data.id,
+          isJoined: true,
+        }),
+          // @ts-ignore
+          axios
+            .patch("/api/users", {
+              // @ts-ignore
+              Uid: user.Uid,
+              addedCommunity,
+            })
+            .then((response) => {
+              setUser((prev) => ({
+                ...prev,
+                Communities: [...prev.Communities, addedCommunity],
+              }));
+              localStorage.setItem(
+                "tempCommunities",
+                JSON.stringify([...user.Communities, addedCommunity])
+              );
+              setButtonLoading(false);
+              router.push(`/communities/${createCommunityForm.title}`);
+              router.refresh();
+              setCreateCommunityModal((prev) => ({
+                ...prev,
+                openCreateCommunityModal: false,
+              }));
+            });
       });
   };
 

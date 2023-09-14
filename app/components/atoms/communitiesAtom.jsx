@@ -6,7 +6,11 @@ import { atom } from "recoil";
 export const communitiesAtom = atom({
   key: "communitiesAtom",
   default: {
-    communityInfo: {},
+    CommunityCreatedAt: "",
+    CommunityDescription: "",
+    CommunityId: "",
+    CommunityName: "",
+    CommunityType: "",
   },
 });
 
@@ -16,5 +20,16 @@ export const communityNameCheckerAtom = atom({
   default: {
     showCommunityNameChecker: false,
     remainingChars: "21",
+  },
+});
+
+// Atom for user's info on community
+export const userCommunityInfoAtom = atom({
+  key: "userCommunityInfoAtom",
+  default: {
+    name: "",
+    id: "",
+    isJoined: false,
+    isModerator: false,
   },
 });

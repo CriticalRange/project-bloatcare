@@ -32,17 +32,16 @@ export const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
 
 export const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
 
-// Bağlantı havuzunu oluştur
+// Create the connection pool
 const pool = new sql.ConnectionPool(sqlConfig);
 
-// Bağlantıyı aç ve bağlantı havuzunu döndür
+// Connect and return the connection pool
 async function connect() {
   try {
     await pool.connect();
-    console.log("Veritabanına başarıyla bağlandı.");
     return pool;
   } catch (err) {
-    console.error("Bağlantı hatası:", err);
+    console.error("Connection error:", err);
     throw err;
   }
 }

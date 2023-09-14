@@ -19,23 +19,19 @@ import { useEffect, useState } from "react";
 import { authModalAtom } from "../components/atoms/modalAtoms";
 
 const Communities = () => {
-  const [userInfo, setUserInfo] = useRecoilState(userAtom);
-  const [userCommunities, setUserCommunities] = useState([]);
+  const [user, setUser] = useRecoilState(userAtom);
   const [communityListLoaded, setCommunityListLoaded] = useState(false);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
 
   const getUserCommunityInfo = async () => {
-    if (userInfo.length !== 0) {
-      // @ts-ignore
-      const communityList = JSON.parse(userInfo.Communities);
-      setUserCommunities(communityList);
+    if (user.authenticated) {
       setCommunityListLoaded(true);
     }
   };
 
   useEffect(() => {
     getUserCommunityInfo();
-  }, [userInfo.length]);
+  }, [user.authenticated]);
 
   return (
     <Box>
@@ -56,8 +52,8 @@ const Communities = () => {
                 />
               }
             >
-              {userInfo.length !== 0 ? (
-                userCommunities.map((community) => {
+              {user.authenticated ? (
+                user.Communities.map((community) => {
                   if (community.isJoined === true) {
                     return (
                       <Flex
@@ -65,7 +61,7 @@ const Communities = () => {
                         direction="row"
                         align="center"
                       >
-                        <Link href={`communities/${community.id}`}>
+                        <Link href={`communities/${community.name}`}>
                           <Flex
                             w={{ base: "400px", md: "600px" }}
                             direction="row"

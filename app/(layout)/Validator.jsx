@@ -27,14 +27,88 @@ const Validator = () => {
         accessToken,
         accessSecret
       );
+
+      const tempCommunities = localStorage.getItem("tempCommunities");
+      if (!tempCommunities) {
+        // @ts-ignore
+        setUserData({
+          authenticated: true,
+          Custom_Claims: decodedAccessToken.payload.Custom_Claims,
+          Disabled: !!decodedAccessToken.payload.Disabled,
+          // @ts-ignore
+          Display_Name: decodedAccessToken.payload.Display_Name,
+          // @ts-ignore
+          Email: decodedAccessToken.payload.Email,
+          // @ts-ignore
+          Email_Verified: decodedAccessToken.payload.Email_Verified,
+          // @ts-ignore
+          Metadata: JSON.parse(decodedAccessToken.payload.Metadata),
+          // @ts-ignore
+          Photo_Url: decodedAccessToken.payload.Photo_Url,
+          // @ts-ignore
+          Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
+          // @ts-ignore
+          Uid: decodedAccessToken.payload.Uid,
+          // @ts-ignore
+          Password_Hash: decodedAccessToken.payload.Password_Hash,
+          // @ts-ignore
+          Phone_Number: decodedAccessToken.payload.Phone_Number,
+          // @ts-ignore
+          Password_Salt: decodedAccessToken.payload.Password_Salt,
+          // @ts-ignore
+          Tokens_Valid_After_Time:
+            decodedAccessToken.payload.Tokens_Valid_After_Time,
+          // @ts-ignore
+          Verification_Code: decodedAccessToken.payload.Verification_Code,
+          // @ts-ignore
+          Communities:
+            // @ts-ignore
+            JSON.parse(decodedAccessToken.payload.Communities),
+        });
+        return;
+      }
+      const tempCommunitiesParsed = JSON.parse(tempCommunities);
+
       // @ts-ignore
-      setUserData(decodedAccessToken.payload);
+      setUserData({
+        authenticated: true,
+        Custom_Claims: decodedAccessToken.payload.Custom_Claims,
+        Disabled: !!decodedAccessToken.payload.Disabled,
+        // @ts-ignore
+        Display_Name: decodedAccessToken.payload.Display_Name,
+        // @ts-ignore
+        Email: decodedAccessToken.payload.Email,
+        // @ts-ignore
+        Email_Verified: decodedAccessToken.payload.Email_Verified,
+        // @ts-ignore
+        Metadata: JSON.parse(decodedAccessToken.payload.Metadata),
+        // @ts-ignore
+        Photo_Url: decodedAccessToken.payload.Photo_Url,
+        // @ts-ignore
+        Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
+        // @ts-ignore
+        Uid: decodedAccessToken.payload.Uid,
+        // @ts-ignore
+        Password_Hash: decodedAccessToken.payload.Password_Hash,
+        // @ts-ignore
+        Phone_Number: decodedAccessToken.payload.Phone_Number,
+        // @ts-ignore
+        Password_Salt: decodedAccessToken.payload.Password_Salt,
+        // @ts-ignore
+        Tokens_Valid_After_Time:
+          decodedAccessToken.payload.Tokens_Valid_After_Time,
+        // @ts-ignore
+        Verification_Code: decodedAccessToken.payload.Verification_Code,
+        // @ts-ignore
+        Communities: tempCommunitiesParsed,
+      });
     } catch (error) {
+      console.log(error);
       if (error.code === "ERR_JWT_EXPIRED") {
         // If the access token expires, get a new access token using refresh token
         const refreshToken = Cookies.get("refreshToken");
         await axios
-          .post("/api/auth/token", {
+          .post("/auth/token", {
             refresh_token: refreshToken,
           })
           .then(async (response) => {
