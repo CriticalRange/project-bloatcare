@@ -160,7 +160,38 @@ export default function SignupForm() {
               sameSite: "strict",
             });
             // @ts-ignore
-            setUserInfo(accessData.payload);
+            setUserInfo({
+              authenticated: true,
+              Custom_Claims: accessData.payload.Custom_Claims,
+              Disabled: !!accessData.payload.Disabled,
+              // @ts-ignore
+              Display_Name: accessData.payload.Display_Name,
+              // @ts-ignore
+              Email: accessData.payload.Email,
+              // @ts-ignore
+              Email_Verified: accessData.payload.Email_Verified,
+              // @ts-ignore
+              Metadata: JSON.parse(accessData.payload.Metadata),
+              // @ts-ignore
+              Photo_Url: accessData.payload.Photo_Url,
+              // @ts-ignore
+              Provider_Data: JSON.parse(accessData.payload.Provider_Data),
+              // @ts-ignore
+              Uid: accessData.payload.Uid,
+              // @ts-ignore
+              Password_Hash: accessData.payload.Password_Hash,
+              // @ts-ignore
+              Phone_Number: accessData.payload.Phone_Number,
+              // @ts-ignore
+              Password_Salt: accessData.payload.Password_Salt,
+              // @ts-ignore
+              Tokens_Valid_After_Time:
+                accessData.payload.Tokens_Valid_After_Time,
+              // @ts-ignore
+              Verification_Code: accessData.payload.Verification_Code,
+              // @ts-ignore
+              Communities: JSON.parse(accessData.payload.Communities),
+            });
           })
           .catch((error) => {
             console.log(error);

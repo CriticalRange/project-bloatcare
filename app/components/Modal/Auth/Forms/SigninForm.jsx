@@ -20,6 +20,8 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/authAtom";
 import {
   authModalAtom,
+  // @ts-ignore
+  // @ts-ignore
   emailConfirmationModalAtom,
 } from "../../../atoms/modalAtoms";
 
@@ -31,7 +33,11 @@ export default function SigninForm({ InitialFocusRef }) {
     email: "",
     password: "",
   });
+  // @ts-ignore
+  // @ts-ignore
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  // @ts-ignore
+  // @ts-ignore
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [signInLoading, setSignInLoading] = useState(false);
   const [signInError, setSignInError] = useState({
@@ -39,6 +45,8 @@ export default function SigninForm({ InitialFocusRef }) {
     message: "",
   });
 
+  // @ts-ignore
+  // @ts-ignore
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
   const handleLogin = async (event) => {
@@ -92,8 +100,37 @@ export default function SigninForm({ InitialFocusRef }) {
             secure: true,
             sameSite: "strict",
           });
-          // @ts-ignore
-          setUserInfo(userData.payload);
+          setUserInfo({
+            authenticated: true,
+            Custom_Claims: userData.payload.Custom_Claims,
+            Disabled: !!userData.payload.Disabled,
+            // @ts-ignore
+            Display_Name: userData.payload.Display_Name,
+            // @ts-ignore
+            Email: userData.payload.Email,
+            // @ts-ignore
+            Email_Verified: userData.payload.Email_Verified,
+            // @ts-ignore
+            Metadata: JSON.parse(userData.payload.Metadata),
+            // @ts-ignore
+            Photo_Url: userData.payload.Photo_Url,
+            // @ts-ignore
+            Provider_Data: JSON.parse(userData.payload.Provider_Data),
+            // @ts-ignore
+            Uid: userData.payload.Uid,
+            // @ts-ignore
+            Password_Hash: userData.payload.Password_Hash,
+            // @ts-ignore
+            Phone_Number: userData.payload.Phone_Number,
+            // @ts-ignore
+            Password_Salt: userData.payload.Password_Salt,
+            // @ts-ignore
+            Tokens_Valid_After_Time: userData.payload.Tokens_Valid_After_Time,
+            // @ts-ignore
+            Verification_Code: userData.payload.Verification_Code,
+            // @ts-ignore
+            Communities: JSON.parse(userData.payload.Communities),
+          });
           setSignInLoading(false);
           toast({
             title: "Login success!",

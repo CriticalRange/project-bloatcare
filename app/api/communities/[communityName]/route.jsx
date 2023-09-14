@@ -5,7 +5,7 @@ const db = require("../../db");
 // GET Request for communities/[communityId] api
 export async function GET(req, { params }) {
   // Get the communityId from parameters
-  const communityId = params.communityId;
+  const communityName = params.communityName;
 
   try {
     // @ts-ignore Connect to server
@@ -14,7 +14,7 @@ export async function GET(req, { params }) {
     // Get the community info from SQL Server
     const communitySearchResult = await pool.request().query`SELECT *
       FROM communities
-      WHERE [Display_Name] = ${communityId}`;
+      WHERE [CommunityName] = ${communityName}`;
 
     //Close the server connection for efficiency
     pool.close();

@@ -56,7 +56,7 @@ const CommunitiesDropdown = () => {
     createCommunityModalAtom
   );
 
-  /* if (userInfo.length !== 0) {
+  /* if (userInfo.authenticated === true) {
     // @ts-ignore
     console.log(
       Object.values(JSON.parse(userInfo.Communities)).map((value) => value)
@@ -81,46 +81,46 @@ const CommunitiesDropdown = () => {
         >
           <MenuGroup title="Communities">
             <MenuList
-              overflow={userInfo.length !== 0 ? "scroll" : "hidden"}
+              overflow={userInfo.authenticated === true ? "scroll" : "hidden"}
               overflowX="hidden"
               bg="white"
-              h={userInfo.length !== 0 ? "300" : "inherit"}
+              h={userInfo.authenticated === true ? "300" : "inherit"}
               _dark={{ bg: "black" }}
             >
-              {userInfo.length !== 0 ? (
+              {userInfo.authenticated === true ? (
                 // @ts-ignore
-                Object.values(JSON.parse(userInfo?.Communities)).map(
-                  (value) => {
-                    return (
-                      <Link
-                        display={userInfo.length !== 0 ? "block" : "none"}
-                        key={`${value.name}-${value.id}`}
-                        href={`/communities/Template`}
+                Object.values(userInfo?.Communities).map((value) => {
+                  return (
+                    <Link
+                      display={
+                        userInfo.authenticated === true ? "block" : "none"
+                      }
+                      key={`${value.name}-${value.id}`}
+                      href={`/communities/${value.name}`}
+                    >
+                      <MenuItem
+                        bg="white"
+                        textColor="black"
+                        _dark={{ bg: "black", textColor: "white" }}
                       >
-                        <MenuItem
-                          bg="white"
-                          textColor="black"
-                          _dark={{ bg: "black", textColor: "white" }}
-                        >
-                          <Avatar
-                            icon={
-                              <Icon
-                                as={CustomAnimatedUserSvg}
-                                color="black"
-                                _dark={{ color: "white" }}
-                                w="8"
-                                h="8"
-                              />
-                            }
-                            bg="transparent"
-                            size="sm"
-                          />
-                          <Text ml="3">{value.name}</Text>
-                        </MenuItem>
-                      </Link>
-                    );
-                  }
-                )
+                        <Avatar
+                          icon={
+                            <Icon
+                              as={CustomAnimatedUserSvg}
+                              color="black"
+                              _dark={{ color: "white" }}
+                              w="8"
+                              h="8"
+                            />
+                          }
+                          bg="transparent"
+                          size="sm"
+                        />
+                        <Text ml="3">{value.name}</Text>
+                      </MenuItem>
+                    </Link>
+                  );
+                })
               ) : (
                 <MenuItem
                   bg="white"
@@ -154,7 +154,7 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black", textColor: "white" }}
               icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
               onClick={() => {
-                if (userInfo.length !== 0) {
+                if (userInfo.authenticated === true) {
                   redirectToNewPostPage();
                 } else {
                   {
@@ -183,7 +183,7 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black", textColor: "white" }}
               icon={<CustomAddCommunityIcon w="8" h="8" />}
               onClick={() => {
-                if (userInfo.length !== 0) {
+                if (userInfo.authenticated === true) {
                   setCreateCommunityModal((prev) => ({
                     ...prev,
                     openCreateCommunityModal: true,

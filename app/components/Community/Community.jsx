@@ -29,6 +29,8 @@ const Community = () => {
   const params = useParams();
   const communityIdParam = params.communityId;
 
+  useEffect(() => {}, []);
+
   return (
     <Box bgColor="gray.300">
       {pageLoaded && communityDataExists === "no" ? (

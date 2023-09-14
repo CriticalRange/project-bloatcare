@@ -32,7 +32,7 @@ const RightContent = () => {
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunitiesDropdown />
-      {userInfo.length !== 0 ? (
+      {userInfo.authenticated === true ? (
         <NavbarProfile />
       ) : (
         <Button

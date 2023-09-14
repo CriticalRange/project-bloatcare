@@ -25,6 +25,7 @@ export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
   const toast = useToast();
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const resetUserInfo = useResetRecoilState(userAtom);
 
   return (
     <Flex mr="2">
@@ -62,7 +63,7 @@ export default function NavbarProfile() {
             <Avatar
               src={
                 // @ts-ignore
-                userInfo.photoURL !== null
+                userInfo.photoURL !== ""
                   ? // @ts-ignore
                     userInfo.photoURL
                   : ""
@@ -102,8 +103,13 @@ export default function NavbarProfile() {
             onClick={async () => {
               document.cookie = "";
               Cookies.remove("accessToken");
+              Cookies.remove("refreshToken");
               resetCommunityState;
-              setUserInfo([]);
+              resetUserInfo;
+              setUserInfo((prev) => ({
+                ...prev,
+                authenticated: false,
+              }));
               toast({
                 title: "Successfully logged out!.",
                 description: "Logged out of your account.",

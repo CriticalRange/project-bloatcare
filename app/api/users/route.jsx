@@ -94,6 +94,9 @@ export async function POST(req) {
       await pool.query(userCreateQuery);
     });
 
+    //Close the server connection for efficiency
+    pool.close();
+
     // Sign new accessToken and refreshToken and send it to user
     const accessToken = await new jose.SignJWT(userInfo)
       .setProtectedHeader({ alg: accessAlg })
@@ -123,6 +126,96 @@ export async function POST(req) {
   }
 }
 
+// PATCH Request for users API
+export async function PATCH(req) {
+  const res = await req.json();
+  const { addedCommunity, Uid } = res;
+
+  try {
+    // @ts-ignore Connect to server
+    const pool = await db.connect();
+
+    // Get the old communities and save
+    const getUserCommunitiesQuery = await pool.request()
+      .query`SELECT [Communities] FROM [users] WHERE Uid = ${Uid}`;
+    const OldCommunities = JSON.parse(
+      getUserCommunitiesQuery.recordset[0].Communities
+    );
+
+    // Merge the old and new communities
+    const newCommunities = [
+      ...OldCommunities.map((oldCommunity) => oldCommunity),
+      addedCommunity,
+    ];
+
+    // Add the new communities to user
+    const updateUserInfoQuery = `UPDATE [users] SET Communities = '${JSON.stringify(
+      newCommunities
+    )}' WHERE Uid = '${Uid}'`;
+    await pool.query(updateUserInfoQuery);
+
+    return NextResponse.json({ update: "maybe" });
+  } catch (err) {
+    return NextResponse.json(
+      { error: { message: `${err}` } },
+      {
+        status: 400,
+      }
+    );
+  }
+}
+
+/* // PUT Request for users API
+export async function PUT(req) {
+  const res = await req.json();
+  const {
+    Communities,
+    Custom_Claims,
+    Display_Name,
+    Email,
+    Metadata,
+    Phone_Number,
+    Photo_URL,
+    Uid,
+    disabled,
+  } = res;
+
+  try {
+    // @ts-ignore Connect to server
+    const pool = await db.connect();
+
+    const newUserData = [
+      {
+        Communities: JSON.parse(Communities),
+        Custom_Claims: JSON.parse(Custom_Claims),
+        Display_Name: Display_Name,
+        Email: Email,
+        Metadata: JSON.parse(Metadata),
+        Phone_Number: Phone_Number,
+        Photo_URL: Photo_URL,
+        Uid: Uid,
+        disabled: disabled,
+      },
+    ];
+
+    newUserData.forEach((item) => {
+      console.log(item);
+    });
+    return NextResponse.json(
+      newUserData.forEach((item) => {
+        console.log(item);
+      })
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { error: { message: `${err}` } },
+      {
+        status: 400,
+      }
+    );
+  }
+} */
+
 // DELETE Request for users api
 export async function DELETE(req) {
   const url = new URL(req.url);
@@ -136,6 +229,9 @@ export async function DELETE(req) {
     // Make a request the delete the user with the userUid
     const userDeleteQuery = `DELETE FROM users WHERE [Uid] = '${userUid}'`;
     await pool.query(userDeleteQuery);
+
+    //Close the server connection for efficiency
+    pool.close();
 
     // Return success: true
     return NextResponse.json(

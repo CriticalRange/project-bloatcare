@@ -1,13 +1,13 @@
 import axios from "axios";
 
 const useCommunityInfo = () => {
-  const fetchUserCommunityInfo = async (userDisplayName) => {
+  const fetchCommunityInfo = async (communityId) => {
     try {
-      if (userDisplayName === undefined) {
+      if (communityId === undefined) {
         throw new Error("USER_NOT_FOUND");
       }
       const response = await axios
-        .get(`/api/users/${userDisplayName}`)
+        .get(`/api/communities/${communityId}`)
         .then((response) => {
           return response.data.Communities;
         });
@@ -18,7 +18,7 @@ const useCommunityInfo = () => {
   };
 
   return {
-    fetchUserCommunityInfo,
+    fetchCommunityInfo,
   };
 };
 

@@ -18,7 +18,6 @@ import {
   Text,
   Textarea,
   Tooltip,
-  chakra,
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
@@ -33,16 +32,15 @@ import {
   CustomUserEmptyIcon,
 } from "../../../../Icons/Components/IconComponents";
 import { useDebouncedCallback } from "use-debounce";
+import axios from "axios";
 import { userAtom } from "../../../../atoms/authAtom";
 
 const CreateCommunityForm = () => {
   const toast = useToast();
   const router = useRouter();
 
-  // Get the current user info
-  const [user, setUser] = useRecoilState(userAtom);
-
   // States
+  const [user, setUser] = useRecoilState(userAtom);
   const [communityNameChecker, setCommunityNameChecker] = useRecoilState(
     communityNameCheckerAtom
   );
@@ -64,6 +62,7 @@ const CreateCommunityForm = () => {
   const [checkboxSelectedOption, setCheckboxSelectedOption] =
     useState("Public");
 
+  // Title checker debounced for performance
   const debouncedTitle = useDebouncedCallback(async (value) => {
     if (value.length !== 0) {
       setTitleChecker((prev) => ({
@@ -71,6 +70,26 @@ const CreateCommunityForm = () => {
         titleLoading: true,
         titleInvalid: false,
       }));
+      // Validate the community name not taken
+      await axios
+        .get(`/api/communities/${createCommunityForm.title}`)
+        .then((response) => {
+          if (response.data.response === undefined) {
+            setTitleChecker((prev) => ({
+              ...prev,
+              titleInvalid: false,
+              titleLoading: false,
+              titleStatus: "available",
+            }));
+          } else {
+            setTitleChecker((prev) => ({
+              ...prev,
+              titleInvalid: false,
+              titleLoading: false,
+              titleStatus: "taken",
+            }));
+          }
+        });
     } else {
       console.log("Value length is 0");
       setTitleChecker((prev) => ({
@@ -125,11 +144,38 @@ const CreateCommunityForm = () => {
       return;
     }
 
-    // Validate the community name not taken
-
     // Create the community
-
-    // Create community snippets on user
+    await axios
+      .post("/api/communities", {
+        communityName: createCommunityForm.title,
+        communityType: checkboxSelectedOption,
+        communityDesc: createCommunityForm.description,
+      })
+      .then((communityResponse) => {
+        // @ts-ignore
+        axios
+          .patch("/api/users", {
+            // @ts-ignore
+            Uid: user.Uid,
+            addedCommunity: {
+              name: createCommunityForm.title,
+              id: communityResponse.data.id,
+              isJoined: true,
+            },
+          })
+          .then((response) => {
+            setUser((prev) => ({
+              ...prev,
+              // finish here
+            }));
+            setButtonLoading(false);
+            router.push(`/communities/${createCommunityForm.title}`);
+            setCreateCommunityModal((prev) => ({
+              ...prev,
+              openCreateCommunityModal: false,
+            }));
+          });
+      });
   };
 
   return (

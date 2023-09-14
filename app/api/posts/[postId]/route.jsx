@@ -11,7 +11,7 @@ export async function GET(req, { params }) {
     const pool = await db.connect();
 
     // Queries the post info with the postId
-    const userSearchResult = await await pool.request().query`SELECT *
+    const userSearchResult = await pool.request().query`SELECT *
           FROM posts
           WHERE post_id = ${postId}`;
 
