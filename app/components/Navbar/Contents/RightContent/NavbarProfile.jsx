@@ -104,6 +104,7 @@ export default function NavbarProfile() {
               document.cookie = "";
               Cookies.remove("accessToken");
               Cookies.remove("refreshToken");
+              localStorage.removeItem("tempCommunities");
               resetCommunityState;
               resetUserInfo;
               setUserInfo((prev) => ({

@@ -13,12 +13,13 @@ import {
 } from "../../atoms/modalAtoms";
 import CommunityImage from "./CommunityImage";
 import { useEffect } from "react";
+import axios from "axios";
 
 const Header = () => {
   const toast = useToast();
 
   // States
-  const user = useRecoilValue(userAtom);
+  const [user, setUser] = useRecoilState(userAtom);
   const [userCommunityInfo, setUserCommunityInfo] = useRecoilState(
     userCommunityInfoAtom
   );
@@ -27,21 +28,59 @@ const Header = () => {
     communitySettingsModalAtom
   );
   const setAuthModal = useSetRecoilState(authModalAtom);
-
   const getUserCommunityInfo = () => {
-    // If user is authenticated gets the community info for the userP-Ü,İ
+    // If user is authenticated gets the community info for the user
     if (user.authenticated) {
-      user.Communities.map((value) => {
-        if (value.name === communityData.CommunityName) {
-          setUserCommunityInfo({
-            id: value.id,
-            isJoined: value.isJoined,
-            name: value.name,
-            isModerator: value.isModerator,
-          });
-        }
+      const matchingCommunity = user.Communities.find((value) => {
+        return value.name === communityData.CommunityName;
+      });
+      if (!matchingCommunity) {
+        // adds community to user
+        setUser((prev) => ({
+          ...prev,
+          Communities: [
+            ...prev.Communities,
+            {
+              name: communityData.CommunityName,
+              isJoined: false,
+              isModerator: false,
+              id: communityData.CommunityId,
+            },
+          ],
+        }));
+      }
+      console.log(matchingCommunity);
+      setUserCommunityInfo({
+        id: matchingCommunity.id,
+        isJoined: matchingCommunity.isJoined,
+        name: matchingCommunity.name,
+        isModerator: matchingCommunity.isModerator,
       });
     }
+  };
+
+  const handleJoinCommunity = () => {
+    console.log("handleJoinCommunity");
+    // Make an axios post call to /api/joinCommunity
+    axios
+      .post("/api/joinCommunity", {
+        communityId: communityData.CommunityId,
+        Uid: user.Uid,
+      })
+      .then((response) => {
+        console.log(response);
+      });
+    // If user is authenticated joins the community
+    user.Communities.map((value) => {
+      if (value.name === communityData.CommunityName) {
+        setUserCommunityInfo({
+          id: value.id,
+          isJoined: value.isJoined,
+          name: value.name,
+          isModerator: value.isModerator,
+        });
+      } // if community doesn't exist
+    });
   };
 
   // Only runs when user is changed
@@ -102,9 +141,7 @@ const Header = () => {
 
               <Button
                 aria-label={
-                  user.authenticated &&
-                  // @ts-ignore
-                  userCommunityInfo.isJoined
+                  user.authenticated && userCommunityInfo.isJoined
                     ? "Joined"
                     : "Join"
                 }
@@ -130,10 +167,8 @@ const Header = () => {
                         position: "bottom-left",
                         isClosable: true,
                       }))
-                    : null;
+                    : handleJoinCommunity();
                 }}
-                /* onClick={() => onJoinOrLeaveCommunity()}
-                isLoading={loading} */
               >
                 {user.authenticated ? (
                   userCommunityInfo.isJoined ? (
@@ -142,9 +177,7 @@ const Header = () => {
                     <Text fontSize="md">Join</Text>
                   )
                 ) : (
-                  <Text fontSize="md" onClick={() => {}}>
-                    Join
-                  </Text>
+                  <Text fontSize="md">Join</Text>
                 )}
               </Button>
             </Flex>

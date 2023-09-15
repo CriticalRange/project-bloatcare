@@ -64,7 +64,6 @@ export default function SigninForm({ InitialFocusRef }) {
           Password: encodedPassword,
         })
         .then(async (response) => {
-          console.log(response);
           if (response.data.error !== undefined) {
             setSignInError({
               code: response.data.error.code,
@@ -120,6 +119,11 @@ export default function SigninForm({ InitialFocusRef }) {
             // @ts-ignore
             Communities: JSON.parse(userData.payload.Communities),
           });
+          localStorage.setItem(
+            "tempCommunities",
+            // @ts-ignore
+            userData.payload.Communities
+          );
           setSignInLoading(false);
           toast({
             title: "Login success!",

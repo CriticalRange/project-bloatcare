@@ -88,8 +88,10 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black" }}
             >
               {userInfo.authenticated === true ? (
-                // @ts-ignore
-                Object.values(userInfo?.Communities).map((value) => {
+                userInfo.Communities.map((value) => {
+                  if (value?.name === undefined) {
+                    return;
+                  }
                   return (
                     <Link
                       display={

@@ -192,6 +192,12 @@ export default function SignupForm() {
               // @ts-ignore
               Communities: JSON.parse(accessData.payload.Communities),
             });
+
+            localStorage.setItem(
+              "tempCommunities",
+              // @ts-ignore
+              JSON.parse(accessData.payload.Communities)
+            );
           })
           .catch((error) => {
             console.log(error);

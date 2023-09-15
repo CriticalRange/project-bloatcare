@@ -158,13 +158,14 @@ const CreateCommunityForm = () => {
           name: createCommunityForm.title,
           id: communityResponse.data.id,
           isJoined: true,
+          isModerator: true,
         }),
           // @ts-ignore
           axios
             .patch("/api/users", {
               // @ts-ignore
               Uid: user.Uid,
-              addedCommunity,
+              Communities: addedCommunity,
             })
             .then((response) => {
               setUser((prev) => ({

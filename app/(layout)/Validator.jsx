@@ -26,48 +26,19 @@ const Validator = () => {
         accessToken,
         accessSecret
       );
-
-      console.log("Decoded Access Token is: ", decodedAccessToken);
       const tempCommunities = localStorage.getItem("tempCommunities");
-      if (!tempCommunities) {
+
+      const communitiesArray = [
+        ...JSON.parse(tempCommunities),
         // @ts-ignore
-        setUserData({
-          authenticated: true,
-          Custom_Claims: decodedAccessToken.payload.Custom_Claims,
-          Disabled: !!decodedAccessToken.payload.Disabled,
-          // @ts-ignore
-          Display_Name: decodedAccessToken.payload.Display_Name,
-          // @ts-ignore
-          Email: decodedAccessToken.payload.Email,
-          // @ts-ignore
-          Email_Verified: decodedAccessToken.payload.Email_Verified,
-          // @ts-ignore
-          Metadata: JSON.parse(decodedAccessToken.payload.Metadata),
-          // @ts-ignore
-          Photo_Url: decodedAccessToken.payload.Photo_Url,
-          // @ts-ignore
-          Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
-          // @ts-ignore
-          Uid: decodedAccessToken.payload.Uid,
-          // @ts-ignore
-          Password_Hash: decodedAccessToken.payload.Password_Hash,
-          // @ts-ignore
-          Phone_Number: decodedAccessToken.payload.Phone_Number,
-          // @ts-ignore
-          Password_Salt: decodedAccessToken.payload.Password_Salt,
-          // @ts-ignore
-          Tokens_Valid_After_Time:
-            decodedAccessToken.payload.Tokens_Valid_After_Time,
-          // @ts-ignore
-          Verification_Code: decodedAccessToken.payload.Verification_Code,
-          // @ts-ignore
-          Communities:
-            // @ts-ignore
-            JSON.parse(decodedAccessToken.payload.Communities),
-        });
-        return;
-      }
-      const tempCommunitiesParsed = JSON.parse(tempCommunities);
+        ...JSON.parse(decodedAccessToken.payload.Communities),
+      ];
+
+      const resultArray = communitiesArray.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex((t) => t.name === item.name && t.id === item.id)
+      );
 
       // @ts-ignore
       setUserData({
@@ -99,8 +70,11 @@ const Validator = () => {
           decodedAccessToken.payload.Tokens_Valid_After_Time,
         // @ts-ignore
         Verification_Code: decodedAccessToken.payload.Verification_Code,
-        // @ts-ignore
-        Communities: tempCommunitiesParsed,
+        Communities:
+          tempCommunities !== null
+            ? resultArray
+            : // @ts-ignore
+              JSON.parse(decodedAccessToken.payload.Communities),
       });
     } catch (error) {
       console.log(error);
