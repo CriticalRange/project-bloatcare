@@ -18,12 +18,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/authAtom";
-import {
-  authModalAtom,
-  // @ts-ignore
-  // @ts-ignore
-  emailConfirmationModalAtom,
-} from "../../../atoms/modalAtoms";
+import { authModalAtom } from "../../../atoms/modalAtoms";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -33,20 +28,13 @@ export default function SigninForm({ InitialFocusRef }) {
     email: "",
     password: "",
   });
-  // @ts-ignore
-  // @ts-ignore
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  // @ts-ignore
-  // @ts-ignore
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [signInLoading, setSignInLoading] = useState(false);
   const [signInError, setSignInError] = useState({
     code: "",
     message: "",
   });
-
-  // @ts-ignore
-  // @ts-ignore
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
   const handleLogin = async (event) => {
@@ -54,11 +42,11 @@ export default function SigninForm({ InitialFocusRef }) {
 
     // Process sign in
     try {
+      setSignInLoading(true);
       setSignInError({
         code: "",
         message: "",
       });
-      setSignInLoading(true);
       const alg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
       const accessSecret = new TextEncoder().encode(
         `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
@@ -76,6 +64,7 @@ export default function SigninForm({ InitialFocusRef }) {
           Password: encodedPassword,
         })
         .then(async (response) => {
+          console.log(response);
           if (response.data.error !== undefined) {
             setSignInError({
               code: response.data.error.code,
@@ -146,6 +135,7 @@ export default function SigninForm({ InitialFocusRef }) {
           }));
         })
         .catch((error) => {
+          console.log(error);
           setSignInError(error.error);
           setSignInLoading(false);
         });
@@ -251,7 +241,11 @@ export default function SigninForm({ InitialFocusRef }) {
         {signInError?.code !== "" ? (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{signInError?.message}</AlertTitle>
+            <AlertTitle>
+              {signInError?.message !== undefined
+                ? signInError?.message
+                : "There was an error, please try again"}
+            </AlertTitle>
           </Alert>
         ) : null}
         <Button

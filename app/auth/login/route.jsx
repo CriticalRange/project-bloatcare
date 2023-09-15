@@ -109,7 +109,7 @@ export async function POST(req) {
       );
     }
   } catch (err) {
-    console.error(err);
+    console.error("There was an error logging in: ", err);
     return NextResponse.json(
       { error: { message: `${err}` } },
       {
