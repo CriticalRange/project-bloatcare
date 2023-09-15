@@ -12,7 +12,7 @@ import {
   communitySettingsModalAtom,
 } from "../../atoms/modalAtoms";
 import CommunityImage from "./CommunityImage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Header = () => {
@@ -23,12 +23,14 @@ const Header = () => {
   const [userCommunityInfo, setUserCommunityInfo] = useRecoilState(
     userCommunityInfoAtom
   );
+  const [localCommunityJoined, setLocalCommunityJoined] = useState(false);
+  const [localCommunityLoading, setLocalCommunityLoading] = useState(false);
   const communityData = useRecoilValue(communitiesAtom);
   const setcommunitySettingsModal = useSetRecoilState(
     communitySettingsModalAtom
   );
   const setAuthModal = useSetRecoilState(authModalAtom);
-  const getUserCommunityInfo = () => {
+  const getUserCommunityInfo = async () => {
     // If user is authenticated gets the community info for the user
     if (user.authenticated) {
       const matchingCommunity = user.Communities.find((value) => {
@@ -36,6 +38,7 @@ const Header = () => {
       });
       if (!matchingCommunity) {
         console.log("no matching community");
+        setLocalCommunityJoined(false);
         // adds community to user if not visited before
         const newCommunityData = {
           name: communityData.CommunityName,
@@ -43,6 +46,14 @@ const Header = () => {
           isModerator: false,
           id: communityData.CommunityId,
         };
+        await axios
+          .patch("/api/users", {
+            Uid: user.Uid,
+            Communities: newCommunityData,
+          })
+          .then((response) => {
+            console.log(response);
+          });
         // @ts-ignore
         setUser((prev) => ({
           ...prev,
@@ -57,6 +68,7 @@ const Header = () => {
         return;
       }
       console.log(matchingCommunity);
+      setLocalCommunityJoined(matchingCommunity.isJoined);
       setUserCommunityInfo({
         id: matchingCommunity.id,
         isJoined: matchingCommunity.isJoined,
@@ -66,28 +78,54 @@ const Header = () => {
     }
   };
 
-  const handleJoinCommunity = () => {
+  const handleJoinCommunity = async () => {
     console.log("handleJoinCommunity");
-    // Make an axios post call to /api/joinCommunity
-    axios
-      .post("/api/joinCommunity", {
-        communityId: communityData.CommunityId,
-        Uid: user.Uid,
-      })
-      .then((response) => {
-        console.log(response);
-      });
-    // If user is authenticated joins the community
-    user.Communities.map((value) => {
-      if (value.name === communityData.CommunityName) {
-        setUserCommunityInfo({
-          id: value.id,
-          isJoined: value.isJoined,
-          name: value.name,
-          isModerator: value.isModerator,
+    setLocalCommunityLoading(true);
+    try {
+      // Make an axios post call to /api/joinCommunity
+      await axios
+        .post("/api/joinCommunity", {
+          communityId: communityData.CommunityId,
+          Uid: user.Uid,
+        })
+        .then((response) => {
+          console.log(response);
         });
-      } // if community doesn't exist
-    });
+      // If user is authenticated joins the community
+      const updatedCommunities = user.Communities.map((value) => {
+        if (value.name === communityData.CommunityName) {
+          return {
+            ...value,
+            isJoined: !value.isJoined,
+          };
+        } else {
+          return value;
+        }
+      });
+      console.log("Update communities: ", updatedCommunities);
+
+      const tempCommunities = localStorage.getItem("tempCommunities");
+
+      console.log(
+        "Comms are: ",
+        JSON.parse(tempCommunities),
+        updatedCommunities
+      );
+      const resultArray = Object.assign(
+        JSON.parse(tempCommunities),
+        // @ts-ignore
+        updatedCommunities
+      );
+      console.log(resultArray);
+
+      // @ts-ignore
+      setUserCommunityInfo(updatedCommunities);
+      setLocalCommunityJoined(!localCommunityJoined);
+      setLocalCommunityLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLocalCommunityLoading(false);
+    }
   };
 
   // Only runs when user is changed
@@ -148,9 +186,7 @@ const Header = () => {
 
               <Button
                 aria-label={
-                  user.authenticated && userCommunityInfo.isJoined
-                    ? "Joined"
-                    : "Join"
+                  user.authenticated && localCommunityJoined ? "Joined" : "Join"
                 }
                 color="white"
                 bg="black"
@@ -159,6 +195,7 @@ const Header = () => {
                   bg: "brand.secondary",
                 }}
                 size="lg"
+                isLoading={localCommunityLoading}
                 onClick={() => {
                   !user.authenticated
                     ? (setAuthModal((prev) => ({
@@ -178,7 +215,7 @@ const Header = () => {
                 }}
               >
                 {user.authenticated ? (
-                  userCommunityInfo.isJoined ? (
+                  localCommunityJoined ? (
                     <Text fontSize="md">Joined</Text>
                   ) : (
                     <Text fontSize="md">Join</Text>

@@ -9,14 +9,12 @@ import { StrictMode } from "react";
 
 const Providers = ({ children }) => {
   return (
-    <StrictMode>
-      <RecoilRoot>
-        <CacheProvider>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-          <ChakraProvider theme={theme}>{children}</ChakraProvider>
-        </CacheProvider>
-      </RecoilRoot>
-    </StrictMode>
+    <RecoilRoot>
+      <CacheProvider>
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <ChakraProvider theme={theme}>{children}</ChakraProvider>
+      </CacheProvider>
+    </RecoilRoot>
   );
 };
 

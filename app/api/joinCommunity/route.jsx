@@ -7,6 +7,20 @@ export async function POST(req) {
   // Get the Uid, communityId from request body
   const { Uid, communityId } = res;
 
+  if (!Uid || !communityId) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "missing_uid_or_community_id",
+          message: "Uid or communityId is missing on the request body",
+        },
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
   try {
     // @ts-ignore Connect to server
     const pool = await db.connect();
@@ -39,7 +53,7 @@ export async function POST(req) {
 
     // Check if a community with matching ID exists
     const matchingIndex = parsedCommunities.findIndex(
-      (item) => item.name === "HiBrosd"
+      (item) => item.id === communityId
     );
     if (matchingIndex !== -1) {
       parsedCommunities[matchingIndex].isJoined =
