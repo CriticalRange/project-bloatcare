@@ -35,19 +35,26 @@ const Header = () => {
         return value.name === communityData.CommunityName;
       });
       if (!matchingCommunity) {
-        // adds community to user
+        console.log("no matching community");
+        // adds community to user if not visited before
+        const newCommunityData = {
+          name: communityData.CommunityName,
+          isJoined: false,
+          isModerator: false,
+          id: communityData.CommunityId,
+        };
+        // @ts-ignore
         setUser((prev) => ({
           ...prev,
-          Communities: [
-            ...prev.Communities,
-            {
-              name: communityData.CommunityName,
-              isJoined: false,
-              isModerator: false,
-              id: communityData.CommunityId,
-            },
-          ],
+          Communities: [...prev.Communities, newCommunityData],
         }));
+        setUserCommunityInfo({
+          id: newCommunityData.id,
+          isJoined: newCommunityData.isJoined,
+          name: newCommunityData.name,
+          isModerator: newCommunityData.isModerator,
+        });
+        return;
       }
       console.log(matchingCommunity);
       setUserCommunityInfo({
