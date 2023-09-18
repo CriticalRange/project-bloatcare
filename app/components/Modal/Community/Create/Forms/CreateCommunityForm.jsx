@@ -91,7 +91,6 @@ const CreateCommunityForm = () => {
           }
         });
     } else {
-      console.log("Value length is 0");
       setTitleChecker((prev) => ({
         ...prev,
         titleStatus: "unknown",
@@ -259,6 +258,7 @@ const CreateCommunityForm = () => {
                 isIndeterminate={false}
                 isChecked={checkboxSelectedOption === "Public"}
                 onChange={() => handleCheckboxChange("Public")}
+                name="publicCheckbox"
                 size="xl"
               >
                 <Tooltip
@@ -288,6 +288,7 @@ const CreateCommunityForm = () => {
                 isChecked={checkboxSelectedOption === "Restricted"}
                 onChange={() => handleCheckboxChange("Restricted")}
                 size="xl"
+                name="RestrictedCheckbox"
               >
                 <Tooltip
                   width={{ base: "200px", md: "350px" }}
@@ -317,6 +318,7 @@ const CreateCommunityForm = () => {
                 isChecked={checkboxSelectedOption === "Private"}
                 onChange={() => handleCheckboxChange("Private")}
                 size="xl"
+                name="PrivateCheckbox"
               >
                 <Tooltip
                   width={{ base: "200px", md: "350px" }}
