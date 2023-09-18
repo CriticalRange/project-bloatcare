@@ -84,7 +84,7 @@ export async function POST(req) {
     let params = {
       Source: "bloatcare@outlook.com",
       Destination: {
-        ToAddresses: ["bloatcare@outlook.com"],
+        ToAddresses: [userInfo.Email],
       },
       Message: {
         Body: {
