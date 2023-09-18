@@ -21,6 +21,7 @@ const SearchInput = () => {
           <SearchIcon color="gray.300" />
         </InputLeftElement>
         <Input
+          name="CommunitiesSearch"
           type="search"
           _placeholder={{
             color: "gray.500",

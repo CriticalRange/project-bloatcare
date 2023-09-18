@@ -105,12 +105,7 @@ const Header = () => {
       console.log("Update communities: ", updatedCommunities);
 
       const tempCommunities = localStorage.getItem("tempCommunities");
-
-      console.log(
-        "Comms are: ",
-        JSON.parse(tempCommunities),
-        updatedCommunities
-      );
+      // connect these two: JSON.parse(tempCommunities), updatedCommunities
       const resultArray = Object.assign(
         JSON.parse(tempCommunities),
         // @ts-ignore

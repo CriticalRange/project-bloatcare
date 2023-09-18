@@ -172,6 +172,7 @@ export default function SigninForm({ InitialFocusRef }) {
             placeholder="example@mail.com"
             overflowY="hidden"
             display="block"
+            autoComplete="true"
             w="full"
             h="12"
             borderRadius="0.375rem"

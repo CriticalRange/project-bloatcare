@@ -7,7 +7,7 @@ export const sqlConfig = {
   user: process.env.NEXT_PUBLIC_DB_USERNAME,
   password: process.env.NEXT_PUBLIC_DB_PASSWORD,
   server: process.env.NEXT_PUBLIC_DB_ADDRESS,
-  database: "bloatcare",
+  database: "BloatCare",
   pool: {
     max: 10,
     min: 0,
@@ -15,7 +15,7 @@ export const sqlConfig = {
   },
   options: {
     port: 1433,
-    encrypt: true, // for azure
+    encrypt: false, // for azure
     trustServerCertificate: true, // change to true for local dev / self-signed certs
   },
 };
@@ -39,6 +39,7 @@ const pool = new sql.ConnectionPool(sqlConfig);
 async function connect() {
   try {
     await pool.connect();
+    console.log("Successfully connected to the database");
     return pool;
   } catch (err) {
     console.error("Connection error:", err);

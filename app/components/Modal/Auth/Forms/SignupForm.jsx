@@ -359,6 +359,7 @@ export default function SignupForm() {
               <Input
                 maxLength={21}
                 my="2"
+                autoComplete="true"
                 name="username"
                 onKeyDown={(event) => {
                   if (event.code === "Space") event.preventDefault();
@@ -403,6 +404,7 @@ export default function SignupForm() {
           <FormControl isRequired>
             <FormLabel>Email</FormLabel>
             <Input
+              autoComplete="true"
               my="2"
               name="email"
               onKeyDown={(event) => {

@@ -90,12 +90,11 @@ export async function POST(req) {
       const userCreateQuery = `
       INSERT INTO [users] (Custom_Claims, Disabled, Display_Name, Email, Email_Verified, Metadata, Password_Hash, Password_Salt, Phone_Number, Photo_URL, Provider_Data, Tokens_Valid_After_Time, Uid, Communities) VALUES ('${item.Custom_Claims}', '${item.Disabled}', '${item.Display_Name}', '${item.Email}', '${item.Email_Verified}', '${item.Metadata}', '${item.Password_Hash}', '${item.Password_Salt}', '${item.Phone_Number}', '${item.Photo_URL}', '${item.Provider_Data}', '${item.Tokens_Valid_After_Time}', '${item.Uid}', '${item.Communities}')
       `;
+      console.log("Making new account...");
       // @ts-ignore
       await pool.query(userCreateQuery);
+      console.log("New account created");
     });
-
-    //Close the server connection for efficiency
-    pool.close();
 
     // Sign new accessToken and refreshToken and send it to user
     const accessToken = await new jose.SignJWT(userInfo)
@@ -106,6 +105,9 @@ export async function POST(req) {
       .setProtectedHeader({ alg: refreshAlg })
       .setExpirationTime("100d")
       .sign(db.refreshSecret);
+
+    /* //Close the server connection for efficiency
+    pool.close(); */
 
     return NextResponse.json(
       {

@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
 
 const db = require("../../api/db");
-const { EmailClient } = require("@azure/communication-email");
+const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+const { S3 } = require("@aws-sdk/client-s3");
 
 // POST Request for /auth/sendVerificationCode api
 export async function POST(req) {
   const res = await req.json();
   // Get the Email from request body
   const { Email } = res;
+  const SES_CONFIG = {
+    credentials: {
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_EMAILER_ACCESS_KEY,
+      secretAccessKey: process.env.NEXT_PUBLIC_AWS_EMAILER_SECRET_KEY,
+    },
+    region: process.env.NEXT_PUBLIC_AWS_EMAILER_REGION,
+  };
 
   try {
     // A function that generates random 6 pins
@@ -69,31 +77,102 @@ export async function POST(req) {
     WHERE Email = '${Email}'`;
     await pool.query(insertVerificationCodeQuery);
 
-    // The connection string to Azure Communications Service
-    const connectionString =
-      "endpoint=https://bloatcare.unitedstates.communication.azure.com/;accesskey=52oEsvMtBvR8t0oRnsIz0o18ohqJBtp66MAW4wGgD5Zq3h45NUcd0yvP1TJ+5dsU/eVR5o5iKSCv1EoLr6PM9Q==";
-
-    // Create the email client
-    const client = new EmailClient(connectionString);
+    // Create the aws ses client
+    const sesClient = new SESClient(SES_CONFIG);
 
     // Custom Email Message to send
-    const emailMessage = {
-      senderAddress:
-        "DoNotReply@d61d4759-24a6-49ec-b76b-953edd71bfc2.azurecomm.net",
-      content: {
-        subject: "BloatCare E-Mail Verification",
-        plainText: `Your E-Mail verification code is: ${JSON.stringify(
-          verificationCode
-        )}.`,
+    let params = {
+      Source: "bloatcare@outlook.com",
+      Destination: {
+        ToAddresses: ["bloatcare@outlook.com"],
       },
-      recipients: {
-        to: [{ address: `${Email}` }],
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Hello ${userInfo.Display_Name}!</title>
+                <style>
+                    body {
+                        background-color: #f4f4f4;
+                        font-family: Arial, sans-serif;
+                        text-align: center;
+                        margin: 0;
+                        padding: 0;
+                    }
+            
+                    .container {
+                        background-color: #ffffff;
+                        border-radius: 5px;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                        max-width: 400px;
+                        margin: 20px auto;
+                        padding: 20px;
+                    }
+            
+                    h1 {
+                        color: #333;
+                    }
+            
+                    p {
+                        font-size: 16px;
+                        margin-bottom: 20px;
+                    }
+            
+                    .verification-code {
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #007BFF;
+                    }
+            
+                    .social-links {
+                        margin-top: 20px;
+                    }
+            
+                    .social-links a {
+                        text-decoration: none;
+                        color: #007BFF;
+                        margin: 0 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>E-mail Verification Code</h1>
+                    <p>Your E-mail Verification Code is:</p>
+                    <p class="verification-code">${verificationCode}</p>
+                    <p>Please enter this verification code while creating your account to continue.</p>
+                    <div class="social-links">
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                        <a href="#">Instagram</a>
+                    </div>
+                </div>
+            </body>
+            </html>`,
+          },
+          Text: {
+            Charset: "UTF-8",
+            Data: `Your verification code is: ${JSON.stringify(
+              verificationCode
+            )}`,
+          },
+        },
+        Subject: {
+          Charset: "UTF-8",
+          Data: `BloatCare E-Mail Verification`,
+        },
       },
     };
-
-    // Send the email with the Verification Code
-    const poller = await client.beginSend(emailMessage);
-    const result = await poller.pollUntilDone();
+    console.log("Sending email");
+    // @ts-ignore Send the email with the Verification Code
+    const sendEmailCommand = new SendEmailCommand(params);
+    const result = await sesClient.send(sendEmailCommand);
+    console.log("Email sent");
 
     // Also return the verification code
     return NextResponse.json(
