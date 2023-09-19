@@ -15,10 +15,14 @@ import { postsState } from "../../atoms/postsAtom";
 import CommunityCards from "../CommunityBody/CommunityCards";
 
 const Posts = () => {
-  const router = useRouter();
   const toast = useToast();
+
+  // Next Navigation
+  const router = useRouter();
   const params = useParams();
   const communityIdParam = params.communityId;
+
+  // States
   const [user, setUser] = useRecoilState(userAtom);
   const [posts, setPosts] = useRecoilState(postsState);
   const [postsLoading, setPostsLoading] = useState(true);
@@ -33,7 +37,6 @@ const Posts = () => {
   }; // scroll to top button action
 
   const fetchCommunityPosts = async () => {
-    setPostsLoading(true);
     const communityId = params.communityId;
     try {
       const randomPostResponse = await getCommunityPosts(
@@ -45,16 +48,6 @@ const Posts = () => {
         setPosts((prev) => ({ ...prev, posts: [...prev.posts, post] }));
       });
       console.log("Random Post response is: ", randomPostResponse);
-      const mergedPostsArray = posts.posts.filter(
-        (item, index, self) =>
-          index ===
-          self.findIndex(
-            (t) =>
-              t.Post_Id === item.Post_Id &&
-              t.creatorDisplayName === item.creatorDisplayName
-          )
-      );
-      console.log("Merged Posts Array is: ", mergedPostsArray);
       setPostsLoading(false);
     } catch (error) {
       console.log(error);
@@ -73,50 +66,65 @@ const Posts = () => {
       ) : posts.posts.length === 0 ? (
         <Flex direction="column" justify="center" align="center">
           <Text fontSize="3xl" my="2">
-            Looks like no more post left.
+            Looks like there are no posts yet.
           </Text>
-          <Button aria-label="Go up" onClick={scrollToTop}>
-            Go up
+          <Button
+            aria-label="Create one button"
+            onClick={() =>
+              !user
+                ? (setAuthModal((prev) => ({
+                    ...prev,
+                    openAuthModal: true,
+                  })),
+                  toast({
+                    title: "You are not logged in!",
+                    description:
+                      "You are not allowed to create communities unless you log in",
+                    status: "error",
+                    duration: 2500,
+                    position: "bottom-left",
+                    isClosable: true,
+                  }))
+                : router.push(`/communities/${communityIdParam}/new`)
+            }
+          >
+            Create one
           </Button>
         </Flex>
       ) : (
-        posts.posts.map((post) => {
-          return (
-            <CommunityCards
-              post={post}
-              key={`${post.Post_Id}-${post.creatorDisplayName}`}
-            />
-          );
-        })
+        <InfiniteScroll
+          dataLength={posts.posts.length}
+          next={fetchCommunityPosts}
+          hasMore={true}
+          loader={<CommunityLoadingCard />}
+          endMessage={
+            <Flex direction="column" justify="center" align="center">
+              <Text fontSize="3xl" my="2">
+                Looks like no more post left.
+              </Text>
+              <Button aria-label="Go up" onClick={scrollToTop}>
+                Go up
+              </Button>
+            </Flex>
+          }
+          /* // below props only if you need pull down functionality
+          refreshFunction={this.refresh}
+          pullDownToRefresh
+          pullDownToRefreshThreshold={50}
+          pullDownToRefreshContent={
+            <h3 style={{ textAlign: "center" }}>
+              &#8595; Pull down to refresh
+            </h3>
+          }
+          releaseToRefreshContent={
+            <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
+          } */
+        >
+          {posts.posts.map((post) => (
+            <CommunityCards key={post.id} post={post} />
+          ))}
+        </InfiniteScroll>
       )}
-
-      {/* <Flex direction="column" justify="center" align="center">
-            <Text fontSize="3xl" my="2">
-              Looks like there are no posts yet.
-            </Text>
-            <Button
-              aria-label="Create one button"
-              onClick={() =>
-                !user
-                  ? (setAuthModal((prev) => ({
-                      ...prev,
-                      openAuthModal: true,
-                    })),
-                    toast({
-                      title: "You are not logged in!",
-                      description:
-                        "You are not allowed to create communities unless you log in",
-                      status: "error",
-                      duration: 2500,
-                      position: "bottom-left",
-                      isClosable: true,
-                    }))
-                  : router.push(`/communities/${communityIdParam}/new`)
-              }
-            >
-              Create one
-            </Button>
-          </Flex> */}
     </Box>
   );
 };
