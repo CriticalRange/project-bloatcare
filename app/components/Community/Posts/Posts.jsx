@@ -3,7 +3,7 @@
 import { Link } from "@chakra-ui/next-js";
 import { Box, Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 import { useRecoilState } from "recoil";
@@ -11,6 +11,8 @@ import { authModalAtom } from "../../atoms/modalAtoms";
 import dynamic from "next/dynamic";
 import { userAtom } from "../../atoms/authAtom";
 import useRandomPosts from "../../hooks/Posts/useRandomPosts";
+import { postsState } from "../../atoms/postsAtom";
+import CommunityCards from "../CommunityBody/CommunityCards";
 
 const Posts = () => {
   const router = useRouter();
@@ -18,8 +20,10 @@ const Posts = () => {
   const params = useParams();
   const communityIdParam = params.communityId;
   const [user, setUser] = useRecoilState(userAtom);
+  const [posts, setPosts] = useRecoilState(postsState);
+  const [postsLoading, setPostsLoading] = useState(true);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { getRandomPosts } = useRandomPosts();
+  const { getCommunityPosts } = useRandomPosts();
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -28,29 +32,64 @@ const Posts = () => {
     });
   }; // scroll to top button action
 
-  const fetchRandomPosts = async () => {
-    const communityIds = user.Communities.map((value) => value.name);
-    console.log("CommunityIds are (local): ", communityIds);
-    const randomPostResponse = await getRandomPosts(10, user.authenticated, communityIds);
-    console.log(randomPostResponse);
+  const fetchCommunityPosts = async () => {
+    setPostsLoading(true);
+    const communityId = params.communityId;
+    try {
+      const randomPostResponse = await getCommunityPosts(
+        10,
+        user.authenticated,
+        communityId
+      );
+      randomPostResponse.forEach((post) => {
+        setPosts((prev) => ({ ...prev, posts: [...prev.posts, post] }));
+      });
+      console.log("Random Post response is: ", randomPostResponse);
+      const mergedPostsArray = posts.posts.filter(
+        (item, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t.Post_Id === item.Post_Id &&
+              t.creatorDisplayName === item.creatorDisplayName
+          )
+      );
+      console.log("Merged Posts Array is: ", mergedPostsArray);
+      setPostsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setPostsLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (user.authenticated) {
-      fetchRandomPosts();
-    }
+    fetchCommunityPosts();
   }, []);
 
   return (
-    <Box my="3" /* h={loading ? "1000px" : "inherit"} */>
-      {/* <Flex direction="column" justify="center" align="center">
-              <Text fontSize="3xl" my="2">
-                Looks like no more post left.
-              </Text>
-              <Button aria-label="Go up" onClick={scrollToTop}>
-                Go up
-              </Button>
-            </Flex> */}
+    <Box my="3" h={postsLoading ? "1000px" : "inherit"}>
+      {postsLoading ? (
+        <CommunityLoadingCard />
+      ) : posts.posts.length === 0 ? (
+        <Flex direction="column" justify="center" align="center">
+          <Text fontSize="3xl" my="2">
+            Looks like no more post left.
+          </Text>
+          <Button aria-label="Go up" onClick={scrollToTop}>
+            Go up
+          </Button>
+        </Flex>
+      ) : (
+        posts.posts.map((post) => {
+          return (
+            <CommunityCards
+              post={post}
+              key={`${post.Post_Id}-${post.creatorDisplayName}`}
+            />
+          );
+        })
+      )}
+
       {/* <Flex direction="column" justify="center" align="center">
             <Text fontSize="3xl" my="2">
               Looks like there are no posts yet.
