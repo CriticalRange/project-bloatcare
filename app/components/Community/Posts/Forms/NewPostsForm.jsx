@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { userAtom } from "../../../atoms/authAtom";
+import axios from "axios";
 
 const NewPostsForm = () => {
   const params = useParams();
@@ -33,9 +34,33 @@ const NewPostsForm = () => {
     setNewPostFormInfo((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleNewPostForm = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      await axios
+        .post("/api/posts", {
+          title: newPostFormInfo.title,
+          description: newPostFormInfo.description,
+          communityId: communityIdParam,
+          creatorDisplayName: user.Display_Name,
+          creatorImage: user.Photo_Url,
+          creatorId: user.Uid,
+        })
+        .then((response) => {
+          console.log(response);
+          setLoading(false);
+          router.push(`/communities/${communityIdParam}`);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   return (
     <Box mx="2" my="1">
-      <form /* onSubmit={handleNewPostForm} */>
+      <form onSubmit={handleNewPostForm}>
         <label key="newPostTitle">
           <Flex direction="column">
             <Text my="2" fontSize="xl" fontWeight="bold">

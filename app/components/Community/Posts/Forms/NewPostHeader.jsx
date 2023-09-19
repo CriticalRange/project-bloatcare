@@ -35,18 +35,18 @@ const NewPostHeader = () => {
               : communityIdParam}
           </MenuButton>
           <MenuList>
-            {/* {user
-              ? communityData.userSnippets.map((snippet) => {
+            {user.authenticated
+              ? user.Communities.map((community) => {
                   return (
                     <Link
-                      key={snippet.communityId}
-                      href={`/communities/${snippet.communityId}/new`}
+                      key={`${community.name}-${community.id}`}
+                      href={`/communities/${community.name}/new`}
                     >
-                      <MenuItem>{snippet.communityId}</MenuItem>
+                      <MenuItem>{community.name}</MenuItem>
                     </Link>
                   );
                 })
-              : null} */}
+              : null}
           </MenuList>
         </Menu>
       </Box>

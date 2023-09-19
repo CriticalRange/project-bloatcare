@@ -10,6 +10,7 @@ import { useRecoilState } from "recoil";
 import { authModalAtom } from "../../atoms/modalAtoms";
 import dynamic from "next/dynamic";
 import { userAtom } from "../../atoms/authAtom";
+import useRandomPosts from "../../hooks/Posts/useRandomPosts";
 
 const Posts = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const Posts = () => {
   const communityIdParam = params.communityId;
   const [user, setUser] = useRecoilState(userAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const { getRandomPosts } = useRandomPosts();
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -26,31 +28,30 @@ const Posts = () => {
     });
   }; // scroll to top button action
 
+  const fetchRandomPosts = async () => {
+    const communityIds = user.Communities.map((value) => value.name);
+    console.log("CommunityIds are (local): ", communityIds);
+    const randomPostResponse = await getRandomPosts(10, user.authenticated, communityIds);
+    console.log(randomPostResponse);
+  };
+
+  useEffect(() => {
+    if (user.authenticated) {
+      fetchRandomPosts();
+    }
+  }, []);
+
   return (
-    <div>hi</div>
-    /* <Box my="3" h={loading ? "1000px" : "inherit"} w="inherit">
-      <InfiniteScroll
-        dataLength={postState.posts?.length || 0}
-        next={fetchMoreData}
-        hasMore={hasMore}
-        loader={loading && <CommunityLoadingCard />}
-        endMessage={
-          !loading &&
-          postState.posts &&
-          postState.posts?.length !== 0 && (
-            <Flex direction="column" justify="center" align="center">
+    <Box my="3" /* h={loading ? "1000px" : "inherit"} */>
+      {/* <Flex direction="column" justify="center" align="center">
               <Text fontSize="3xl" my="2">
                 Looks like no more post left.
               </Text>
               <Button aria-label="Go up" onClick={scrollToTop}>
                 Go up
               </Button>
-            </Flex>
-          )
-        }
-      >
-        {postState.posts?.length === 0 && !loading && !hasMore && (
-          <Flex direction="column" justify="center" align="center">
+            </Flex> */}
+      {/* <Flex direction="column" justify="center" align="center">
             <Text fontSize="3xl" my="2">
               Looks like there are no posts yet.
             </Text>
@@ -76,21 +77,8 @@ const Posts = () => {
             >
               Create one
             </Button>
-          </Flex>
-        )}
-        {postState.posts?.map((post, index) => {
-          const DynamicCommunityCards = dynamic(
-            () => import("../CommunityBody/CommunityCards"),
-            {
-              loading: () => <CommunityLoadingCard />,
-            }
-          );
-          // Generate a unique key for each post using post.id and communityData.communityId
-          const uniqueKey = `${post.id}-${post.createdAt}-${index}`;
-          return <DynamicCommunityCards key={uniqueKey} post={post} />;
-        })}
-      </InfiniteScroll>
-    </Box> */
+          </Flex> */}
+    </Box>
   );
 };
 

@@ -32,36 +32,18 @@ import { Link } from "@chakra-ui/next-js";
 
 const CommunitiesDropdown = () => {
   const toast = useToast();
+
+  // Next navigation
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
 
+  // States
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
-
-  const redirectToNewPostPage = () => {
-    const currentUrl = pathname;
-    if (currentUrl !== `/communities/${params.communityId}`) {
-      // Make a decent posts selection page later
-      return;
-    }
-
-    // Pushes to selected community
-    // @ts-ignore
-    const postsUrl = `/communities/${userInfo.Joined_Communities}/new`;
-    router.push(postsUrl);
-  };
-
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [createCommunityModal, setCreateCommunityModal] = useRecoilState(
     createCommunityModalAtom
   );
-
-  /* if (userInfo.authenticated === true) {
-    // @ts-ignore
-    console.log(
-      Object.values(JSON.parse(userInfo.Communities)).map((value) => value)
-    );
-  } */
 
   return (
     <Flex mr="2">
@@ -150,35 +132,35 @@ const CommunitiesDropdown = () => {
             </MenuList>
           </MenuGroup>
           <MenuGroup title="Create">
-            <MenuItem
-              bg="white"
-              textColor="black"
-              _dark={{ bg: "black", textColor: "white" }}
-              icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
-              onClick={() => {
-                if (userInfo.authenticated === true) {
-                  redirectToNewPostPage();
-                } else {
-                  {
-                    setAuthModalState({
-                      openAuthModal: true,
-                      authModalView: "signin",
-                    });
-                    toast({
-                      title: "You are not logged in!",
-                      description:
-                        "You are not allowed to create posts unless you log in",
-                      status: "error",
-                      duration: 2500,
-                      position: "bottom-left",
-                      isClosable: true,
-                    });
+            <Link href={`/communities/${params.communityId}/new`}>
+              <MenuItem
+                bg="white"
+                textColor="black"
+                _dark={{ bg: "black", textColor: "white" }}
+                icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
+                onClick={() => {
+                  if (!userInfo.authenticated) {
+                    {
+                      setAuthModalState({
+                        openAuthModal: true,
+                        authModalView: "signin",
+                      });
+                      toast({
+                        title: "You are not logged in!",
+                        description:
+                          "You are not allowed to create posts unless you log in",
+                        status: "error",
+                        duration: 2500,
+                        position: "bottom-left",
+                        isClosable: true,
+                      });
+                    }
                   }
-                }
-              }}
-            >
-              <Text>Create Post</Text>
-            </MenuItem>
+                }}
+              >
+                <Text>Create Post</Text>
+              </MenuItem>
+            </Link>
             <MenuItem
               bg="white"
               textColor="black"

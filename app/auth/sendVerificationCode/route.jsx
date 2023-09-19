@@ -95,6 +95,7 @@ export async function POST(req) {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
                 <title>Hello ${userInfo.Display_Name}!</title>
                 <style>
                     body {
@@ -146,11 +147,17 @@ export async function POST(req) {
                     <p>Your E-mail Verification Code is:</p>
                     <p class="verification-code">${verificationCode}</p>
                     <p>Please enter this verification code while creating your account to continue.</p>
-                    <div class="social-links">
-                        <a href="#">Facebook</a>
-                        <a href="#">Twitter</a>
-                        <a href="#">Instagram</a>
-                    </div>
+                  <div class="social-links">
+                    <a href="#" target="_blank" style="text-decoration: none; margin-right: 10px;">
+                     <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" target="_blank" style="text-decoration: none; margin-right: 10px;">
+                      <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" target="_blank" style="text-decoration: none;">
+                      <i class="fab fa-instagram"></i>
+                    </a>
+                  </div>
                 </div>
             </body>
             </html>`,
@@ -184,6 +191,7 @@ export async function POST(req) {
       }
     );
   } catch (err) {
+    console.log(err);
     return NextResponse.json({
       error: err,
     });

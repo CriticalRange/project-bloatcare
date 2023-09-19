@@ -10,11 +10,12 @@ export async function GET(req) {
   const count = Number(url.searchParams.get("count"));
 
   // If any of those 3 is null, return
-  if (count === null || communityIds === null || isAuthenticated === null) {
+  if (count === null || isAuthenticated === null) {
     return NextResponse.json(
       {
         error: {
-          requires: "count and isAuthenticated and communityIds",
+          requires:
+            "count and isAuthenticated (and communityIds if isAuthenticated is true)",
         },
       },
       {
@@ -27,40 +28,23 @@ export async function GET(req) {
     const pool = await db.connect();
 
     // Get the communityIds as an array
-    const communityIdsArray = communityIds.split(",");
+    const communityIdsArray =
+      communityIds !== null ? communityIds.split(",") : null;
 
     // If not authenticated, get random posts. Else, get random posts with the included community IDs.
-    const postSearchResult =
-      isAuthenticated === "false"
-        ? await pool.request().query`SELECT TOP (${count}) [post_id]
-        ,[createdAt]
-        ,[creatorImage]
-        ,[numberOfLikes]
-        ,[creatorId]
-        ,[description]
-        ,[numberOfDislikes]
-        ,[communityId]
-        ,[title]
-        ,[creatorDisplayName]
-        ,[numberOfComments]
+    const postSearchResult = !communityIdsArray
+      ? await pool.request()
+          .query`SELECT TOP (${count}) * FROM [dbo].[posts] ORDER BY NEWID()`
+      : isAuthenticated === "false"
+      ? await pool.request().query`SELECT TOP (${count}) *
         FROM [dbo].[posts]
         ORDER BY NEWID()`
-        : isAuthenticated === "true"
-        ? await pool.request().query`SELECT TOP (${count}) [post_id]
-          ,[createdAt]
-          ,[creatorImage]
-          ,[numberOfLikes]
-          ,[creatorId]
-          ,[description]
-          ,[numberOfDislikes]
-          ,[communityId]
-          ,[title]
-          ,[creatorDisplayName]
-          ,[numberOfComments]
+      : isAuthenticated === "true"
+      ? await pool.request().query`SELECT TOP (${count}) *
           FROM [dbo].[posts]
-          WHERE [communityId] IN (${communityIdsArray})
+          WHERE [Community_Id] IN (${communityIdsArray})
           ORDER BY NEWID()`
-        : null;
+      : null;
 
     // If no posts found witht the query, return.
     if (postSearchResult.recordset === undefined) {
@@ -82,16 +66,16 @@ export async function GET(req) {
       (recordset, index) => {
         return {
           Post_Id: recordset.Post_Id,
-          createdAt: recordset.createdAt,
-          creatorImage: recordset.creatorImage,
-          numberOfLikes: recordset.numberOfLikes,
-          creatorId: recordset.creatorId,
-          description: recordset.description,
-          numberOfDislikes: recordset.numberOfDislikes,
-          communityId: recordset.communityId,
-          title: recordset.title,
-          creatorDisplayName: recordset.creatorDisplayName,
-          numberOfComments: recordset.numberOfComments,
+          createdAt: recordset.Created_At,
+          creatorImage: recordset.Creator_Image,
+          numberOfLikes: recordset.Number_Of_Likes,
+          creatorId: recordset.Creator_Id,
+          description: recordset.Description,
+          numberOfDislikes: recordset.Number_Of_Dislikes,
+          communityId: recordset.Community_Id,
+          title: recordset.Title,
+          creatorDisplayName: recordset.Creator_Display_Name,
+          numberOfComments: recordset.Number_Of_Comments,
         };
       }
     );

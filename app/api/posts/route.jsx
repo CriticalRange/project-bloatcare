@@ -88,14 +88,14 @@ export async function POST(req) {
         communityId: res.communityId,
         title: res.title,
         creatorDisplayName: res.creatorDisplayName,
-        numberOfComments: res.numberOfComments,
+        numberOfComments: 0,
       },
     ];
 
     // Add everything inside the array above to query and run the query
     postCreateRequest.forEach(async (item) => {
       const postCreateQuery = `
-        INSERT INTO [posts] (post_id, createdAt, creatorImage, numberOfLikes, creatorId, description, numberOfDislikes, communityId, title, creatorDisplayName, numberOfComments)
+        INSERT INTO [posts] (Post_id, Created_At, Creator_Image, Number_Of_Likes, Creator_Id, description, Number_Of_Dislikes, Community_Id, title, Creator_Display_Name, Number_Of_Comments)
         VALUES ('${item.post_id}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
       `;
       // Sorguyu çalıştırın
