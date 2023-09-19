@@ -95,7 +95,7 @@ const Profile = () => {
           </Text>
         </Flex>
         <Flex justify="flex-end" gap={2}>
-          {userInfo.length !== 0 &&
+          {userInfo.authenticated &&
           // @ts-ignore
           userInfo.Display_Name !== profileOwnerInfo?.Display_Name ? (
             <Show above="sm">

@@ -18,15 +18,14 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
-import { MotionFadingImage } from "./MotionFadingImage";
 import {
   CustomCommentDotsIcon,
-  CustomThumbsUpIcon,
-  CustomThumbsDownIcon,
-  CustomCommentsIcon,
   CustomCommentDotsVerticalIcon,
+  CustomCommentsIcon,
+  CustomThumbsDownIcon,
+  CustomThumbsUpIcon,
 } from "../../Icons/Components/IconComponents";
+import { MotionFadingImage } from "./MotionFadingImage";
 
 const CommunityCards = ({ post }) => {
   const [error, setError] = useState(false);

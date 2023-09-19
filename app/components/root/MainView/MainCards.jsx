@@ -21,7 +21,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
+import { MotionFadingImage } from "../../Posts/Card/MotionFadingImage";
 import {
   CustomCommentDotsIcon,
   CustomThumbsUpIcon,

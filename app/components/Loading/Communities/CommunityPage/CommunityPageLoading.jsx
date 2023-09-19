@@ -1,14 +1,12 @@
 import {
-  Flex,
   Button,
-  Text,
-  SkeletonText,
+  Flex,
   SkeletonCircle,
+  SkeletonText,
+  Text,
 } from "@chakra-ui/react";
-import React from "react";
-import CommunityImage from "../../../Community/CommunityHeader/CommunityImage";
-import CommunitySorter from "../../../Community/CommunityBody/CommunitySorter";
-import Posts from "../../../Community/Posts/Posts";
+import CommunitySorter from "../../../Posts/Card/CommunitySorter";
+import Posts from "../../../Posts/Posts";
 
 const CommunityPageLoading = () => {
   return (

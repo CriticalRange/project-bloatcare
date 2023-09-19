@@ -16,13 +16,11 @@ import {
   Text,
 } from "@chakra-ui/react";
 import {
-  CustomCommentDotsVerticalIcon,
-  CustomThumbsUpIcon,
-  CustomThumbsDownIcon,
   CustomCommentDotsIcon,
-  CustomThumbsUpOutlineIcon,
+  CustomCommentDotsVerticalIcon,
   CustomThumbsDownOutlineIcon,
-} from "../../Icons/Components/IconComponents";
+  CustomThumbsUpOutlineIcon,
+} from "../../../Icons/Components/IconComponents";
 
 const CommunityLoadingCard = () => {
   return (

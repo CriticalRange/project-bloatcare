@@ -17,16 +17,14 @@ import {
   CustomAnimatedRemoveIcon,
   CustomExternalLinkIcon,
 } from "../../../Icons/Components/IconComponents";
-import { selectedFileAtom } from "../../../atoms/postsAtom";
-import { Link } from "@chakra-ui/next-js";
-import { confirmationModalAtom } from "../../../atoms/modalAtoms";
 import ConfirmationModal from "../../../Modal/Confirmation/ConfirmationModal";
+import { confirmationModalAtom } from "../../../atoms/modalAtoms";
+import { selectedFileAtom } from "../../../atoms/postsAtom";
 
 const NewPostsMedia = () => {
   const toast = useToast();
   const inputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useRecoilState(selectedFileAtom);
-  const [hoverPreview, setHoverPreview] = useState(false);
   const [confirmationModal, setConfirmationModal] = useRecoilState(
     confirmationModalAtom
   );

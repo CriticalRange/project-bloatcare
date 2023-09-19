@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { userAtom } from "../components/atoms/authAtom";
+import { userAtom } from "../../components/atoms/authAtom";
 
 function Account() {
   const user = useRecoilValue(userAtom);
@@ -90,7 +90,7 @@ function Account() {
 
   return (
     <>
-      {user.length !== 0 ? (
+      {!user.authenticated ? (
         <Flex mt="10" direction="column">
           <Text fontSize="4xl" ml="3" mt="5">
             Hello,{" "}

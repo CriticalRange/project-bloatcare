@@ -82,6 +82,7 @@ export async function GET(req) {
 
     //Close the server connection for efficiency
     pool.close();
+
     return NextResponse.json(mappedRecordset, {
       status: 200,
     });

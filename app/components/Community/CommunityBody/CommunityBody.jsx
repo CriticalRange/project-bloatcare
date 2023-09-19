@@ -3,8 +3,8 @@
 import { Button, Flex, IconButton, Text, useColorMode } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { communitiesAtom } from "../../atoms/communitiesAtom";
-import Posts from "../Posts/Posts";
-import CommunitySorter from "./CommunitySorter";
+import Posts from "../../Posts/Posts";
+import CommunitySorter from "../../Posts/Card/CommunitySorter";
 import { postsState } from "../../atoms/postsAtom";
 import { Link } from "@chakra-ui/next-js";
 import { useParams } from "next/navigation";

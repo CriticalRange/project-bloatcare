@@ -19,7 +19,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useDebouncedCallback } from "use-debounce";
-import { MotionFadingImage } from "../../Community/CommunityBody/MotionFadingImage";
+import { MotionFadingImage } from "../../Posts/Card/MotionFadingImage";
 import {
   CustomCommentDotsIcon,
   CustomCommentDotsVerticalIcon,

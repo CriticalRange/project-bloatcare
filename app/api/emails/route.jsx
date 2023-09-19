@@ -31,6 +31,7 @@ export async function POST(req) {
       );
     }
 
+    // If found, set available to false
     return NextResponse.json(
       {
         available: false,

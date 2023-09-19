@@ -98,7 +98,7 @@ export async function POST(req) {
         INSERT INTO [posts] (Post_id, Created_At, Creator_Image, Number_Of_Likes, Creator_Id, description, Number_Of_Dislikes, Community_Id, title, Creator_Display_Name, Number_Of_Comments)
         VALUES ('${item.post_id}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
       `;
-      // Sorguyu çalıştırın
+      // Run the query
       await pool.query(postCreateQuery);
     });
 

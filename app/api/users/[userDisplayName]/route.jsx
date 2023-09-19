@@ -38,6 +38,9 @@ export async function GET(req, { params }) {
         Metadata: {
           ...parsedMetadata,
         },
+        Provider_Data: {
+          ...parsedProviderData,
+        },
         Phone_Number: userSearchResult.recordset[0].Phone_Number,
         Photo_URL: userSearchResult.recordset[0].Photo_URL,
         Uid: userSearchResult.recordset[0].Uid,

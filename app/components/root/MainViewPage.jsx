@@ -2,11 +2,11 @@
 
 import { Box, Flex, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import CommunityLoadingCard from "../Community/CommunityBody/CommunityLoadingCard";
+import CommunityLoadingCard from "../Loading/Posts/Cards/PostCardLoading";
 import MainSorter from "./MainView/MainSorter";
 import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
 import { useEffect, useState } from "react";
-import SplashScreen from "./splash/SplashScreen";
+import SplashScreen from "../Loading/splash/SplashScreen";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../atoms/authAtom";
 

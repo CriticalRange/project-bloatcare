@@ -1,18 +1,16 @@
 "use client";
 
-import { Link } from "@chakra-ui/next-js";
 import { Box, Button, Flex, Text, useToast } from "@chakra-ui/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import CommunityLoadingCard from "../CommunityBody/CommunityLoadingCard";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../atoms/modalAtoms";
-import dynamic from "next/dynamic";
-import { userAtom } from "../../atoms/authAtom";
-import useRandomPosts from "../../hooks/Posts/useRandomPosts";
-import { postsState } from "../../atoms/postsAtom";
-import CommunityCards from "../CommunityBody/CommunityCards";
+import CommunityCards from "./Card/PostCard";
+import CommunityLoadingCard from "../Loading/Posts/Cards/PostCardLoading";
+import { userAtom } from "../atoms/authAtom";
+import { authModalAtom } from "../atoms/modalAtoms";
+import { postsState } from "../atoms/postsAtom";
+import useRandomPosts from "../hooks/Posts/useRandomPosts";
 
 const Posts = () => {
   const toast = useToast();
