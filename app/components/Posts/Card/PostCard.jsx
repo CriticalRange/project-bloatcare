@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CustomCommentDotsIcon,
   CustomCommentDotsVerticalIcon,
@@ -29,6 +29,29 @@ import { MotionFadingImage } from "./MotionFadingImage";
 
 const CommunityCards = ({ post }) => {
   const [hasEnteredView, setHasEnteredView] = useState(false);
+  const [newNumberOfLikes, setNewNumberOfLikes] = useState(post.numberOfLikes);
+  const [newNumberOfDislikes, setNewNumberOfDislikes] = useState(
+    post.numberOfDislikes
+  );
+
+  const handleOverMillion = () => {
+    if (post.numberOfLikes >= 1000000) {
+      setNewNumberOfLikes((post.numberOfLikes / 1000000).toFixed(1) + "M");
+    } else {
+      setNewNumberOfLikes(post.numberOfLikes.toLocaleString());
+    }
+    if (post.numberOfDislikes >= 1000000) {
+      setNewNumberOfDislikes(
+        (post.numberOfDislikes / 1000000).toFixed(1) + "M"
+      );
+    } else {
+      setNewNumberOfDislikes(post.numberOfDislikes.toLocaleString());
+    }
+  };
+
+  useEffect(() => {
+    handleOverMillion();
+  }, []);
 
   return (
     <AnimatePresence>
@@ -91,9 +114,9 @@ const CommunityCards = ({ post }) => {
                     icon={<CustomThumbsUpIcon />}
                   ></IconButton>{" "}
                   <Text ml="2" mr="2">
-                    {post.numberOfLikes}
+                    {newNumberOfLikes}
                   </Text>
-                  •<Text ml="2">{post.numberOfDislikes}</Text>
+                  •<Text ml="2">{newNumberOfDislikes}</Text>
                   <IconButton
                     ml="2"
                     aria-label="Dislikes"

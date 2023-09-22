@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Button, Flex, Text, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Link,
+  Text,
+  useColorMode,
+} from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -12,6 +20,7 @@ import { communitiesAtom } from "../../atoms/communitiesAtom";
 import { postsState } from "../../atoms/postsAtom";
 import useRandomPosts from "../../hooks/Posts/useRandomPosts";
 import PostNotFound from "./PostNotFound";
+import { CustomAnimatedArrowRightIcon } from "../../Icons/Components/IconComponents";
 
 const CommunityBody = ({ communityExists }) => {
   const params = useParams();
@@ -57,51 +66,66 @@ const CommunityBody = ({ communityExists }) => {
   }, []);
 
   return (
-    <>
+    <Box>
       {communityExists === "unknown" ? (
         <CommunityLoadingCard />
       ) : communityExists === "no" ? (
         <PostNotFound />
       ) : communityExists === "yes" ? (
-        <Box my="3" h={postsLoading ? "1000px" : "inherit"}>
-          <InfiniteScroll
-            dataLength={posts.posts.length}
-            next={fetchCommunityPosts}
-            hasMore={true}
-            loader={<CommunityLoadingCard />}
-            endMessage={
-              <Flex direction="column" justify="center" align="center">
-                <Text fontSize="3xl" my="2">
-                  Looks like no more post left.
-                </Text>
-                <Button aria-label="Go up" onClick={scrollToTop}>
-                  Go up
-                </Button>
-              </Flex>
-            }
-            /* // below props only if you need pull down functionality
-          refreshFunction={this.refresh}
-          pullDownToRefresh
-          pullDownToRefreshThreshold={50}
-          pullDownToRefreshContent={
-            <h3 style={{ textAlign: "center" }}>
-              &#8595; Pull down to refresh
-            </h3>
-          }
-          releaseToRefreshContent={
-            <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
-          } */
-          >
-            {posts.posts.map((post) => (
-              <CommunityCards
-                key={`${post.id}-${post.createdAt}-${post.creatorDisplayName}`}
-                post={post}
+        posts.isEmpty ? (
+          <Flex flex="1" mt="10" direction={{ base: "column", md: "row" }}>
+            <Text fontSize="3xl">No posts created by anyone... yet</Text>
+            <Link href={`/communities/${communityIdParam}/new`}>
+              <Text fontSize="2xl">Be the first</Text>
+              <IconButton
+                aria-label="Be the first"
+                icon={<CustomAnimatedArrowRightIcon w="8" h="8" />}
               />
-            ))}
-          </InfiniteScroll>
-        </Box>
+            </Link>
+          </Flex>
+        ) : (
+          <Flex flex="1" direction="column">
+            <Box my="3" h={postsLoading ? "1000px" : "inherit"}>
+              <InfiniteScroll
+                dataLength={posts.posts.length}
+                next={fetchCommunityPosts}
+                hasMore={true}
+                loader={<CommunityLoadingCard />}
+                endMessage={
+                  <Flex direction="column" justify="center" align="center">
+                    <Text fontSize="3xl" my="2">
+                      Looks like no more post left.
+                    </Text>
+                    <Button aria-label="Go up" onClick={scrollToTop}>
+                      Go up
+                    </Button>
+                  </Flex>
+                }
+                /* // below props only if you need pull down functionality
+            refreshFunction={this.refresh}
+            pullDownToRefresh
+            pullDownToRefreshThreshold={50}
+            pullDownToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>
+                &#8595; Pull down to refresh
+              </h3>
+            }
+            releaseToRefreshContent={
+              <h3 style={{ textAlign: "center" }}>&#8593; Release to refresh</h3>
+            } */
+              >
+                {posts.posts.map((post) => (
+                  <CommunityCards
+                    key={`${post.id}-${post.createdAt}-${post.creatorDisplayName}`}
+                    post={post}
+                  />
+                ))}
+              </InfiniteScroll>
+            </Box>
+          </Flex>
+        )
       ) : null}
-    </>
+    </Box>
   );
 };
 
