@@ -45,7 +45,6 @@ const Posts = () => {
       randomPostResponse.forEach((post) => {
         setPosts((prev) => ({ ...prev, posts: [...prev.posts, post] }));
       });
-      console.log("Random Post response is: ", randomPostResponse);
       setPostsLoading(false);
     } catch (error) {
       console.log(error);

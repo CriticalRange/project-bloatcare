@@ -15,9 +15,6 @@ export async function GET(req, { params }) {
           FROM posts
           WHERE post_id = ${postId}`;
 
-    //Close the server connection for efficiency
-    pool.close();
-
     // if post is not found
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(

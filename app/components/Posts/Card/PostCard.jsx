@@ -61,7 +61,7 @@ const CommunityCards = ({ post }) => {
                 <Text size="sm">
                   By {post.creatorDisplayName}
                   {" • "}
-                  {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
+                  {moment(new Date(post.createdAt * 1000)).fromNow()}
                 </Text>
               </Flex>
               <Flex flex="1" direction="row" justify="flex-end">

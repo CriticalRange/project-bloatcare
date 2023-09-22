@@ -16,9 +16,6 @@ export async function GET(req, { params }) {
       FROM communities
       WHERE [CommunityName] = ${communityName}`;
 
-    //Close the server connection for efficiency
-    pool.close();
-
     return NextResponse.json({
       response: communitySearchResult.recordset[0],
     });

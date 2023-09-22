@@ -3,7 +3,7 @@
 import { Box, Center, Divider, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BloatcareIcon,
   CustomAnimatedLoadingSpinnerIcon,
@@ -11,6 +11,13 @@ import {
 } from "../../components/Icons/Components/IconComponents";
 
 const GoogleAuthPage = () => {
+  // States
+  const [socialInfo, setSocialInfo] = useState({
+    Email: "",
+    Display_Name: "",
+    Photo_URL: "",
+  });
+
   // Getting the access token from the URL
   const url = window.location.hash.substring(1);
   const hashParams = new URLSearchParams(url);
@@ -26,8 +33,14 @@ const GoogleAuthPage = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
+        setSocialInfo({
+          Display_Name: response.data.name,
+          Email: response.data.email,
+          Photo_URL: response.data.picture,
+        });
+
         // Return the userInfo to popup opener
-        window.opener.postMessage(
+        /* window.opener.postMessage(
           {
             userInfo: {
               Email: response.data.email,
@@ -36,13 +49,18 @@ const GoogleAuthPage = () => {
             },
           },
           window.opener.location.href
-        );
+        ); */
       })
       .catch((error) => {
         console.log(error);
         // Close the popup
         window.close();
       });
+    await axios.post("/auth/socialLogin", {
+      Email: socialInfo.Email,
+      Display_Name: socialInfo.Display_Name,
+      Photo_URL: socialInfo.Photo_URL,
+    });
   };
 
   // Make the request when page loads

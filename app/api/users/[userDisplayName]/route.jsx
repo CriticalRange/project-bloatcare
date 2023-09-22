@@ -15,9 +15,6 @@ export async function GET(req, { params }) {
       FROM users
       WHERE [Display_Name] = ${userDisplayName}`;
 
-    //Close the server connection for efficiency
-    pool.close();
-
     // Some data needs to be parsed so parsing before serving it
     const parsedMetadata = JSON.parse(userSearchResult.recordset[0].Metadata);
     const parsedProviderData = JSON.parse(

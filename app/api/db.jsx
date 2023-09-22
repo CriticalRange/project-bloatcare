@@ -39,7 +39,6 @@ const pool = new sql.ConnectionPool(sqlConfig);
 async function connect() {
   try {
     await pool.connect();
-    console.log("Successfully connected to the database");
     return pool;
   } catch (err) {
     console.error("Connection error:", err);

@@ -11,7 +11,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         error: {
-          code: "missing_uid_or_community_id",
+          code: "missing_uid_or_communityId",
           message: "Uid or communityId is missing on the request body",
         },
       },
@@ -79,9 +79,6 @@ export async function POST(req) {
     await pool.request().query`UPDATE [dbo].[users]
       SET [Communities] = ${JSON.stringify(parsedCommunities)}
       WHERE [Uid] = ${Uid}`;
-
-    //Close the server connection for efficiency
-    pool.close();
 
     return NextResponse.json({
       success: true,

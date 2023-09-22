@@ -16,9 +16,6 @@ export async function POST(req) {
       FROM [dbo].[users]
       WHERE [Email] = ${Email}`;
 
-    //Close the server connection for efficiency
-    pool.close();
-
     // If email can't be found, it will count as available
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(

@@ -23,13 +23,3 @@ export const userAtom = atom({
     Communities: [],
   },
 });
-
-export const socialOnboardingAtom = atom({
-  key: "socialOnboardingAtom",
-  default: {
-    provider: "",
-    receivedToken: "",
-    tokenExpiresAt: "",
-    userInfo: {},
-  },
-});

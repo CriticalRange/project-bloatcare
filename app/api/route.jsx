@@ -7,8 +7,6 @@ export async function GET(req) {
     // @ts-ignore Start the server
     const pool = await db.connect();
 
-    // Close the server immediately and check for errors
-    pool.close();
     return new NextResponse(
       "API is operational, documentation is here: https://app.swaggerhub.com/apis/CriticalRange/BloatCareApi/1.0.0",
       {

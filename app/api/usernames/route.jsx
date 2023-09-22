@@ -16,9 +16,6 @@ export async function POST(req) {
       FROM [dbo].[users]
       WHERE [Display_Name] = ${Username}`;
 
-    //Close the server connection for efficiency
-    pool.close();
-
     if (userSearchResult.recordset[0] === undefined) {
       return NextResponse.json(
         {

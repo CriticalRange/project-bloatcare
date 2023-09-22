@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+
 const db = require("../db");
-const sql = require("mssql");
 
 // GET Request for posts api
 export async function GET(req) {
@@ -10,27 +10,14 @@ export async function GET(req) {
     const pool = await db.connect();
 
     // Queries all the posts (should be changed later or maybe completely removed)
-    const postSearchResult = await pool.request().query`SELECT [post_id]
-    ,[createdAt]
-    ,[creatorImage]
-    ,[numberOfLikes]
-    ,[creatorId]
-    ,[description]
-    ,[numberOfDislikes]
-    ,[communityId]
-    ,[title]
-    ,[creatorDisplayName]
-    ,[numberOfComments]
+    const postSearchResult = await pool.request().query`SELECT *
     FROM [dbo].[posts]`;
-
-    //Close the server connection for efficiency
-    pool.close();
 
     // Map the recordsets and return it all to user
     const mappedRecordset = postSearchResult.recordset.map(
       (recordset, index) => {
         return {
-          Post_Id: recordset.Post_Id,
+          postId: recordset.postId,
           createdAt: recordset.createdAt,
           creatorImage: recordset.creatorImage,
           numberOfLikes: recordset.numberOfLikes,
@@ -78,7 +65,7 @@ export async function POST(req) {
     // Get all the requests into an array
     const postCreateRequest = [
       {
-        post_id: newPostId,
+        postId: newPostId,
         createdAt: utcSecondsSinceEpoch,
         creatorImage: res.creatorImage,
         numberOfLikes: 0,
@@ -95,8 +82,8 @@ export async function POST(req) {
     // Add everything inside the array above to query and run the query
     postCreateRequest.forEach(async (item) => {
       const postCreateQuery = `
-        INSERT INTO [posts] (Post_id, Created_At, Creator_Image, Number_Of_Likes, Creator_Id, description, Number_Of_Dislikes, Community_Id, title, Creator_Display_Name, Number_Of_Comments)
-        VALUES ('${item.post_id}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
+        INSERT INTO [posts] (postId, createdAt, creatorImage, numberOfLikes, creatorId, description, numberOfDislikes, communityId, title, creatorDisplayName, numberOfComments)
+        VALUES ('${item.postId}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
       `;
       // Run the query
       await pool.query(postCreateQuery);

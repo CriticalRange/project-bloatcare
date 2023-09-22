@@ -13,7 +13,6 @@ import {
   TwitterIcon,
   YahooIcon,
 } from "../../../Icons/Components/IconComponents";
-import { socialOnboardingAtom } from "../../../atoms/authAtom";
 import Cookies from "js-cookie";
 import {
   SocialOnboardingModalAtom,
@@ -24,8 +23,6 @@ import { useState } from "react";
 function OAuthButtons() {
   // States
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [socialOnboarding, setSocialOnboarding] =
-    useRecoilState(socialOnboardingAtom);
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [socialOnboardingModal, setSocialOnboardingModal] = useRecoilState(
     SocialOnboardingModalAtom
@@ -60,10 +57,6 @@ function OAuthButtons() {
 
         // Pop-up'tan gelen mesajda token varsa alın
         if (event.data.userInfo) {
-          setSocialOnboarding((prev) => ({
-            ...prev,
-            userInfo: event.data.userInfo,
-          }));
           console.log(event.data.userInfo);
           popupWindow.close();
         }
@@ -73,10 +66,6 @@ function OAuthButtons() {
       const interval = window.setInterval(() => {
         if (popupWindow.closed) {
           console.log("Google popup closed.");
-          setSocialOnboarding((prev) => ({
-            ...prev,
-            provider: "google",
-          }));
           setGoogleLoading(false);
           setAuthModalState((prev) => ({
             ...prev,

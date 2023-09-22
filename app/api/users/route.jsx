@@ -106,9 +106,6 @@ export async function POST(req) {
       .setExpirationTime("100d")
       .sign(db.refreshSecret);
 
-    /* //Close the server connection for efficiency
-    pool.close(); */
-
     return NextResponse.json(
       {
         access_token: accessToken,
@@ -293,9 +290,6 @@ export async function DELETE(req) {
     // Make a request the delete the user with the userUid
     const userDeleteQuery = `DELETE FROM users WHERE [Uid] = '${userUid}'`;
     await pool.query(userDeleteQuery);
-
-    //Close the server connection for efficiency
-    pool.close();
 
     // Return success: true
     return NextResponse.json(
