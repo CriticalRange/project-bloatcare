@@ -102,16 +102,18 @@ const Header = () => {
           return value;
         }
       });
-      console.log("Update communities: ", updatedCommunities);
 
+      console.log("Updated communities: ", updatedCommunities);
       const tempCommunities = localStorage.getItem("tempCommunities");
-      // connect these two: JSON.parse(tempCommunities), updatedCommunities
+      console.log("Temp:", tempCommunities);
       const resultArray = Object.assign(
         JSON.parse(tempCommunities),
         // @ts-ignore
         updatedCommunities
       );
-      console.log(resultArray);
+      console.log("To be saved to temp: ", resultArray);
+      localStorage.setItem("tempCommunities", JSON.stringify(resultArray));
+      console.log(localStorage.getItem("tempCommunities"));
 
       // @ts-ignore
       setUserCommunityInfo(updatedCommunities);

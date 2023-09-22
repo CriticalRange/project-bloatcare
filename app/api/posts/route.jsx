@@ -54,19 +54,17 @@ export async function POST(req) {
     const pool = await db.connect();
 
     // Uid
-    const newPostId = uuidv4();
+    const newPostId = `post_${uuidv4()}`;
 
     // Date
     const now = new Date();
-    const utcMilllisecondsSinceEpoch =
-      now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
+    const dateGetter = new Date(now.getTime());
 
     // Get all the requests into an array
     const postCreateRequest = [
       {
         postId: newPostId,
-        createdAt: utcSecondsSinceEpoch,
+        createdAt: dateGetter,
         creatorImage: res.creatorImage,
         numberOfLikes: 0,
         creatorId: res.creatorId,

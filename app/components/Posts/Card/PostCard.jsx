@@ -28,7 +28,6 @@ import {
 import { MotionFadingImage } from "./MotionFadingImage";
 
 const CommunityCards = ({ post }) => {
-  const [error, setError] = useState(false);
   const [hasEnteredView, setHasEnteredView] = useState(false);
 
   return (
@@ -61,7 +60,7 @@ const CommunityCards = ({ post }) => {
                 <Text size="sm">
                   By {post.creatorDisplayName}
                   {" • "}
-                  {moment(new Date(post.createdAt * 1000)).fromNow()}
+                  {moment(new Date(JSON.parse(post.createdAt))).fromNow()}
                 </Text>
               </Flex>
               <Flex flex="1" direction="row" justify="flex-end">
@@ -94,7 +93,7 @@ const CommunityCards = ({ post }) => {
                   <Text ml="2" mr="2">
                     {post.numberOfLikes}
                   </Text>
-                  •<Text ml="2">10</Text>
+                  •<Text ml="2">{post.numberOfDislikes}</Text>
                   <IconButton
                     ml="2"
                     aria-label="Dislikes"
