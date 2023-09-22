@@ -6,7 +6,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import CommunitySorter from "../../../Posts/Card/CommunitySorter";
-import Posts from "../../../Posts/Posts";
 
 const CommunityPageLoading = () => {
   return (
@@ -72,9 +71,7 @@ const CommunityPageLoading = () => {
               </Text>
               <CommunitySorter />
             </Flex>
-            <Flex flex="1" direction="column">
-              <Posts />
-            </Flex>
+            <Flex flex="1" direction="column"></Flex>
           </Flex>
         </Flex>
       </Flex>

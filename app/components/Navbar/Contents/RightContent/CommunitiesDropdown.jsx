@@ -74,6 +74,12 @@ const CommunitiesDropdown = () => {
                   if (value?.name === undefined) {
                     return;
                   }
+                  if (value.id === "Unknown") {
+                    return;
+                  }
+                  if (value.isJoined === false) {
+                    return;
+                  }
                   return (
                     <Link
                       display={
