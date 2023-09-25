@@ -2,20 +2,16 @@
 
 import { Box, Flex, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
-import CommunityLoadingCard from "../Loading/Posts/Cards/PostCardLoading";
-import MainSorter from "./MainView/MainSorter";
-import MainViewCommunityCard from "./MainView/MainViewCommunityCard";
 import { useEffect, useState } from "react";
+import CommunityLoadingCard from "../Loading/Posts/Cards/PostCardLoading";
 import SplashScreen from "../Loading/splash/SplashScreen";
-import { useRecoilValue } from "recoil";
-import { userAtom } from "../atoms/authAtom";
+import MainSorter from "./MainView/MainSorter";
+import CommunitiesSection from "./MainView/CommunitiesSection/CommunitiesSection";
+import MainPostsPage from "./MainView/MainPostPage";
 
 const MainViewPage = () => {
   // Dynamically loading post modal and post page to decrease initial page load time
   const DynamicPostModal = dynamic(() => import("../Modal/Posts/PostModal"));
-  const DynamicMainPostPage = dynamic(() => import("./MainView/MainPostPage"), {
-    loading: () => <CommunityLoadingCard />,
-  });
 
   // Gets the local storage splash shown as initial value
   const [showSplash, setShowSplash] = useState(
@@ -41,14 +37,10 @@ const MainViewPage = () => {
       ) : (
         <Box>
           <Flex direction="row">
-            <Flex
-              w={{ base: "100%", md: "60%" }}
-              ml={{ base: "0%", md: "2%" }}
-              direction="column"
-            >
+            <Box w={{ base: "100%", md: "60%" }} ml={{ base: "0%", md: "2%" }}>
               <MainSorter />
-              <DynamicMainPostPage />
-            </Flex>{" "}
+              <MainPostsPage />
+            </Box>{" "}
             <Flex
               w={{ base: "0%", md: "35%" }}
               mt="1"
@@ -57,16 +49,9 @@ const MainViewPage = () => {
               align="center"
             >
               <Text display={{ base: "none", md: "block" }} fontSize="3xl">
-                Communities (Beta)
+                Bloat Communities (Beta)
               </Text>
-              {/* For now stacking the cards */}
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
-              <MainViewCommunityCard />
+              <CommunitiesSection />
             </Flex>
             <DynamicPostModal />
           </Flex>

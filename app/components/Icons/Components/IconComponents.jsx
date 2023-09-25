@@ -98,7 +98,7 @@ export const CustomExternalLinkIcon = createIcon({
 export const CustomAnimatedRemoveIcon = createIcon({
   displayName: "CustomAnimatedRemoveIcon",
   viewBox: "0 0 24 24",
-  path: <CustomAnimatedRemoveSvg color="white" />,
+  path: <CustomAnimatedRemoveSvg />,
 });
 
 export const CustomFormIcon = createIcon({

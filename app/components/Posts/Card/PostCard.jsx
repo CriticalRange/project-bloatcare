@@ -19,15 +19,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import moment from "moment/moment";
 import { useEffect, useState } from "react";
 import {
+  CustomAnimatedRemoveIcon,
+  CustomAnimatedShareIcon,
   CustomCommentDotsIcon,
   CustomCommentDotsVerticalIcon,
   CustomCommentsIcon,
+  CustomDeleteIcon,
   CustomThumbsDownIcon,
   CustomThumbsUpIcon,
 } from "../../Icons/Components/IconComponents";
 import { MotionFadingImage } from "./MotionFadingImage";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../../atoms/authAtom";
 
-const CommunityCards = ({ post }) => {
+const PostCards = ({ post }) => {
+  const user = useRecoilValue(userAtom);
   const [hasEnteredView, setHasEnteredView] = useState(false);
   const [newNumberOfLikes, setNewNumberOfLikes] = useState(post.numberOfLikes);
   const [newNumberOfDislikes, setNewNumberOfDislikes] = useState(
@@ -66,7 +72,7 @@ const CommunityCards = ({ post }) => {
         exit={{ opacity: 1, scale: 1 }}
         onViewportEnter={() => setHasEnteredView(true)}
       >
-        <Card w="full" bg="transparent" border="4px solid gray">
+        <Card w="full" bg="transparent" boxShadow="0px 5px 4px">
           <CardHeader>
             <Flex
               direction="row"
@@ -76,16 +82,11 @@ const CommunityCards = ({ post }) => {
               flexWrap="wrap"
             >
               <Avatar name={post.creatorDisplayName} src={post.creatorImage} />
-              <Flex direction="column">
-                <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
-                  {post.title}
-                </Text>
-                <Text size="sm">
-                  By {post.creatorDisplayName}
-                  {" • "}
-                  {moment(new Date(JSON.parse(post.createdAt))).fromNow()}
-                </Text>
-              </Flex>
+              <Text size="sm">
+                By {post.creatorDisplayName}
+                {" • "}
+                {moment(new Date(JSON.parse(post.createdAt))).fromNow()}
+              </Text>
               <Flex flex="1" direction="row" justify="flex-end">
                 <IconButton
                   variant="ghost"
@@ -95,10 +96,15 @@ const CommunityCards = ({ post }) => {
                 />
               </Flex>
             </Flex>
+            <Flex direction="column">
+              <Text fontSize="3xl" color="black" _dark={{ color: "white" }}>
+                {post.title}
+              </Text>
+            </Flex>
           </CardHeader>
           <CardBody>
             <Text>{post.description}</Text>
-            <MotionFadingImage key={post.id} post={post} />
+            <MotionFadingImage key={post.postId} post={post} />
           </CardBody>
           <CardFooter>
             <Flex
@@ -152,9 +158,22 @@ const CommunityCards = ({ post }) => {
                   <MenuList
                     /* onClick={() => handleDelete()} */
                     border="1px solid gray"
-                    bg="#a60a0a"
                   >
-                    <MenuItem bg="#a60a0a">Delete</MenuItem>
+                    {user.Display_Name === post.creatorDisplayName ? (
+                      <MenuItem>
+                        <Flex direction="row" align="center">
+                          <CustomDeleteIcon w="8" h="8" fill="red" mr="2" />
+                        </Flex>
+                        Delete
+                      </MenuItem>
+                    ) : null}
+
+                    <MenuItem>
+                      <Flex direction="row" align="center">
+                        <CustomAnimatedShareIcon w="8" h="8" mr="2" />
+                        Share
+                      </Flex>
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </Flex>
@@ -166,4 +185,4 @@ const CommunityCards = ({ post }) => {
   );
 };
 
-export default CommunityCards;
+export default PostCards;

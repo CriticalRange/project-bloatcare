@@ -10,7 +10,7 @@ export async function GET(req) {
   const isAuthenticated = url.searchParams.get("isAuthenticated");
   const count = Number(url.searchParams.get("count"));
 
-  // If any of those 3 is null, return
+  // If any of those 2 are null, return
   if (count === null || isAuthenticated === null) {
     return NextResponse.json(
       {
@@ -36,11 +36,11 @@ export async function GET(req) {
     const postSearchResult =
       communityIdsArray === null
         ? await pool.request()
-            .query`SELECT TOP (${count}) * FROM [dbo].[posts] ORDER BY NEWID()`
+            .query`SELECT TOP (${count}) * FROM [dbo].[posts] TABLESAMPLE(10 PERCENT)`
         : await pool.request().query`SELECT TOP (${count}) *
           FROM [dbo].[posts]
           WHERE [communityId] IN (${communityIdsArray})
-          ORDER BY NEWID()`;
+          TABLESAMPLE(10 PERCENT)`;
 
     // If no posts found witht the query, return.
     if (postSearchResult.recordset === undefined) {
@@ -80,6 +80,7 @@ export async function GET(req) {
       status: 200,
     });
   } catch (err) {
+    console.log(err);
     return NextResponse.json(
       { error: { message: `${err}` } },
       {

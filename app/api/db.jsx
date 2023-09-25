@@ -9,9 +9,9 @@ export const sqlConfig = {
   server: process.env.NEXT_PUBLIC_DB_ADDRESS,
   database: "BloatCare",
   pool: {
-    max: 10,
+    max: 20,
     min: 0,
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 50000,
   },
   options: {
     port: 1433,
@@ -39,6 +39,7 @@ const pool = new sql.ConnectionPool(sqlConfig);
 async function connect() {
   try {
     await pool.connect();
+    console.log("Connected to database");
     return pool;
   } catch (err) {
     console.error("Connection error:", err);

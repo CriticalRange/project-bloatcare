@@ -17,8 +17,24 @@ const useCommunityInfo = () => {
     }
   };
 
+  const fetchRandomCommunities = async (count, isAuthenticated) => {
+    try {
+      const response = await axios
+        .get(
+          `/api/getRandomCommunities?count=${count}&isAuthenticated=${isAuthenticated}`
+        )
+        .then((response) => {
+          return response.data;
+        });
+      return response;
+    } catch (error) {
+      return error.response.data.error.message;
+    }
+  };
+
   return {
     fetchCommunityInfo,
+    fetchRandomCommunities,
   };
 };
 

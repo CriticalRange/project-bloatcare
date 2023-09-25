@@ -22,7 +22,7 @@ import {
   CustomThumbsUpOutlineIcon,
 } from "../../../Icons/Components/IconComponents";
 
-const CommunityLoadingCard = () => {
+const PostCardLoading = () => {
   return (
     <Card w="full" bg="transparent" boxShadow="0px 2px">
       <CardHeader>
@@ -130,4 +130,4 @@ const CommunityLoadingCard = () => {
   );
 };
 
-export default CommunityLoadingCard;
+export default PostCardLoading;

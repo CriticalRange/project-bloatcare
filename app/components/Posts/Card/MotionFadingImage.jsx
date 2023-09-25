@@ -28,7 +28,7 @@ export const MotionFadingImage = ({ post }) => {
           mt="2"
           mb="4"
           borderRadius="13"
-          src={post.imageURL ? post.imageURL : ""}
+          src={post.imageURL !== null ? post.imageURL : ""}
           alt={post.title}
           onLoad={() => setIsLoaded(true)}
         />

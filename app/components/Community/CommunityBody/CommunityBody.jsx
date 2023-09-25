@@ -18,7 +18,7 @@ import CommunityCards from "../../Posts/Card/PostCard";
 import { userAtom } from "../../atoms/authAtom";
 import { communitiesAtom } from "../../atoms/communitiesAtom";
 import { postsState } from "../../atoms/postsAtom";
-import useRandomPosts from "../../hooks/Posts/useRandomPosts";
+import usePostInfo from "../../hooks/Posts/usePostInfo";
 import PostNotFound from "./PostNotFound";
 import { CustomAnimatedArrowRightIcon } from "../../Icons/Components/IconComponents";
 
@@ -34,7 +34,7 @@ const CommunityBody = ({ communityExists }) => {
   const [user, setUser] = useRecoilState(userAtom);
   const [posts, setPosts] = useRecoilState(postsState);
 
-  const { getCommunityPosts } = useRandomPosts();
+  const { getCommunityPosts } = usePostInfo();
 
   const scrollToTop = () => {
     window.scrollTo({
