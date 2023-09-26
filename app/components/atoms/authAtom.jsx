@@ -6,6 +6,7 @@ export const userAtom = atom({
   key: "userAtom",
   default: {
     authenticated: false,
+    authType: "",
     Custom_Claims: {},
     Disabled: false,
     Display_Name: "",

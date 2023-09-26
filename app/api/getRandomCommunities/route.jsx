@@ -30,7 +30,6 @@ export async function GET(req) {
     const communitiesSearchResult = await pool.request()
       .query`SELECT TOP (${count}) * FROM [dbo].[communities] ORDER BY NEWID()`;
 
-    console.log(communitiesSearchResult);
     // If no posts found witht the query, return.
     if (communitiesSearchResult.recordset === undefined) {
       return NextResponse.json(

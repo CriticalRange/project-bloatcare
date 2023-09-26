@@ -137,6 +137,7 @@ export default function SignupForm() {
           .sign(accessSecret);
         await axios
           .post("/api/users", {
+            Auth_Type: "password",
             Display_Name: signupForm.username,
             Email: signupForm.email,
             Password: encodedPassword,
@@ -162,6 +163,7 @@ export default function SignupForm() {
             // @ts-ignore
             setUserInfo({
               authenticated: true,
+              authType: "password",
               Custom_Claims: accessData.payload.Custom_Claims,
               Disabled: !!accessData.payload.Disabled,
               // @ts-ignore

@@ -65,7 +65,7 @@ export default function NavbarProfile() {
                 // @ts-ignore
                 userInfo.photoURL !== ""
                   ? // @ts-ignore
-                    userInfo.photoURL
+                    `${userInfo.photoURL}`
                   : ""
               }
             />
@@ -110,6 +110,7 @@ export default function NavbarProfile() {
               setUserInfo((prev) => ({
                 ...prev,
                 authenticated: false,
+                authType: "",
               }));
               toast({
                 title: "Successfully logged out!.",

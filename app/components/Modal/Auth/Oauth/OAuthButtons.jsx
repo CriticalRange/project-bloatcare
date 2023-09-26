@@ -1,5 +1,6 @@
 "use client";
 
+// @ts-ignore
 import { Box, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import {
@@ -9,6 +10,7 @@ import {
   GithubIcon,
   GoogleIcon,
   MicrosoftIcon,
+  // @ts-ignore
   TwitchIcon,
   TwitterIcon,
   YahooIcon,
@@ -18,12 +20,18 @@ import {
   SocialOnboardingModalAtom,
   authModalAtom,
 } from "../../../atoms/modalAtoms";
+import * as jose from "jose";
 import { useState } from "react";
+import { userAtom } from "../../../atoms/authAtom";
 
 function OAuthButtons() {
   // States
+  // @ts-ignore
+  const [user, setUser] = useRecoilState(userAtom);
   const [googleLoading, setGoogleLoading] = useState(false);
+  // @ts-ignore
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
+  // @ts-ignore
   const [socialOnboardingModal, setSocialOnboardingModal] = useRecoilState(
     SocialOnboardingModalAtom
   );
@@ -48,16 +56,62 @@ function OAuthButtons() {
       const popupWindow = window.open(googleAuthUrl, "_blank", options);
 
       // Pop-up'tan gelen mesajları dinle
-      window.addEventListener("message", function (event) {
-        /* // Bu kontrol, güvenlik amacıyla eklenmiştir. Sadece güvenilir kaynaklardan gelen mesajları kabul edin.
-        if (event.origin !== `${this.window.location.origin}/auth/google`) {
+      window.addEventListener("message", async function (event) {
+        // This control is for security. Only trusted sources can be accepted.
+        /* if (event.origin !== `${this.window.location.origin}/auth/google`) {
           console.log("returning...");
           return;
         } */
-
-        // Pop-up'tan gelen mesajda token varsa alın
+        // If the token exists in the message data, take it
         if (event.data.userInfo) {
           console.log(event.data.userInfo);
+          // Secret key
+          const accessSecret = new TextEncoder().encode(
+            `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
+          );
+          const decodedAccessToken = await jose.jwtVerify(
+            event.data.userInfo.accessToken,
+            accessSecret
+          );
+          console.log("Decoded access token: ", decodedAccessToken);
+
+          Cookies.set("accessToken", event.data.userInfo.accessToken, {
+            expires: 1 / 48,
+            secure: true,
+            sameSite: "strict",
+          });
+
+          Cookies.set("refreshToken", event.data.userInfo.refreshToken, {
+            expires: 100,
+            secure: true,
+            sameSite: "strict",
+          });
+
+          // set user using the decoded access token
+          // @ts-ignore
+          setUser((prev) => ({
+            authenticated: true,
+            authType: "Google",
+            Custom_Claims: decodedAccessToken.payload.Custom_Claims,
+            // @ts-ignore
+            Communities: JSON.parse(decodedAccessToken.payload.Communities),
+            Disabled: !!decodedAccessToken.payload.disabled,
+            Display_Name: decodedAccessToken.payload.Display_Name,
+            Email: decodedAccessToken.payload.Email,
+            Email_Verified: decodedAccessToken.payload.Email_Verified,
+            // @ts-ignore
+            Metadata: JSON.parse(decodedAccessToken.payload.Metadata),
+            Password_Hash: decodedAccessToken.payload.Password_Hash,
+            Password_Salt: decodedAccessToken.payload.Password_Salt,
+            Phone_Number: decodedAccessToken.payload.Phone_Number,
+            Uid: decodedAccessToken.payload.Uid,
+            Photo_Url: decodedAccessToken.payload.Photo_Url,
+            // @ts-ignore
+            Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
+            Tokens_Valid_After_Time:
+              decodedAccessToken.payload.Tokens_Valid_After_Time,
+            Verification_Code: decodedAccessToken.payload.Verification_Code,
+          }));
           popupWindow.close();
         }
       });
@@ -81,6 +135,7 @@ function OAuthButtons() {
         }
       }, 500);
     } catch (error) {
+      console.log(error);
       setGoogleLoading(false);
     }
   };

@@ -60,6 +60,7 @@ export default function SigninForm({ InitialFocusRef }) {
 
       await axios
         .post("/auth/login", {
+          Auth_Type: "password",
           Email: loginForm.email,
           Password: encodedPassword,
         })
@@ -90,6 +91,7 @@ export default function SigninForm({ InitialFocusRef }) {
           });
           setUserInfo({
             authenticated: true,
+            authType: "password",
             Custom_Claims: userData.payload.Custom_Claims,
             Disabled: !!userData.payload.Disabled,
             // @ts-ignore

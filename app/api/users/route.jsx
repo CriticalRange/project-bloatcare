@@ -39,16 +39,19 @@ export async function POST(req) {
     const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
 
     // Password
+    let hash;
+    let salt;
     const decodedPassword = await jose.jwtVerify(res.Password, db.accessSecret);
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(`${decodedPassword.payload.Password}`, salt);
+    salt = bcrypt.genSaltSync(10);
+    hash = bcrypt.hashSync(`${decodedPassword.payload.Password}`, salt);
 
     // User Uid
-    const newUserUid = uuidv4();
+    const newUserUid = `user_${uuidv4()}`;
 
     // Make a request array that contains new user information
     const userCreateRequest = [
       {
+        Auth_Type: res.Auth_Type,
         Custom_Claims: JSON.stringify({}),
         Disabled: 0,
         Display_Name: res.Display_Name,
@@ -95,6 +98,7 @@ export async function POST(req) {
       await pool.query(userCreateQuery);
       console.log("New account created");
     });
+    console.log(userInfo);
 
     // Sign new accessToken and refreshToken and send it to user
     const accessToken = await new jose.SignJWT(userInfo)
@@ -110,6 +114,7 @@ export async function POST(req) {
       {
         access_token: accessToken,
         refresh_token: refreshToken,
+        userUid: newUserUid,
       },
       {
         status: 200,

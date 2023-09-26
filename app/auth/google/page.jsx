@@ -1,8 +1,9 @@
 "use client";
 
-import { Box, Center, Divider, Flex } from "@chakra-ui/react";
+import { Center, Divider, Flex } from "@chakra-ui/react";
 import axios from "axios";
 import { motion } from "framer-motion";
+// @ts-ignore
 import React, { useEffect, useState } from "react";
 import {
   BloatcareIcon,
@@ -11,13 +12,6 @@ import {
 } from "../../components/Icons/Components/IconComponents";
 
 const GoogleAuthPage = () => {
-  // States
-  const [socialInfo, setSocialInfo] = useState({
-    Email: "",
-    Display_Name: "",
-    Photo_URL: "",
-  });
-
   // Getting the access token from the URL
   const url = window.location.hash.substring(1);
   const hashParams = new URLSearchParams(url);
@@ -27,46 +21,69 @@ const GoogleAuthPage = () => {
   const userInfoUrl = "https://www.googleapis.com/oauth2/v2/userinfo";
 
   const getUserInfo = async () => {
-    // Try to make a GET request to the endpoint with the accessToken
-    await axios
-      .get(userInfoUrl, {
+    try {
+      const socialInfo = await axios.get(userInfoUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setSocialInfo({
-          Display_Name: response.data.name,
-          Email: response.data.email,
-          Photo_URL: response.data.picture,
-        });
-
-        // Return the userInfo to popup opener
-        /* window.opener.postMessage(
-          {
-            userInfo: {
-              Email: response.data.email,
-              Display_Name: response.data.name,
-              Photo_URL: response.data.picture,
-            },
-          },
-          window.opener.location.href
-        ); */
-      })
-      .catch((error) => {
-        console.log(error);
-        // Close the popup
-        window.close();
       });
-    await axios.post("/auth/socialLogin", {
-      Email: socialInfo.Email,
-      Display_Name: socialInfo.Display_Name,
-      Photo_URL: socialInfo.Photo_URL,
-    });
+      console.log("Social info is: ", socialInfo);
+      await axios
+        .post("/auth/login", {
+          Auth_Type: "google",
+          // @ts-ignore
+          Email: socialInfo.data.email,
+          // @ts-ignore
+          Display_Name: socialInfo.data.name,
+          // @ts-ignore
+          Photo_URL: socialInfo.data.picture,
+          // @ts-ignore
+          Email_Verified: socialInfo.data.Verified_Email,
+          // @ts-ignore
+          GoogleId: socialInfo.data.id,
+          // @ts-ignore
+          locale: socialInfo.data.locale,
+        })
+        .then((response) => {
+          // Return the userInfo to popup opener
+          window.opener.postMessage(
+            {
+              userInfo: {
+                Auth_Type: "google",
+                // @ts-ignore
+                Email: socialInfo.data.email,
+                // @ts-ignore
+                Display_Name: socialInfo.data.name,
+                // @ts-ignore
+                Photo_URL: socialInfo.data.picture,
+                // @ts-ignore
+                Email_Verified: socialInfo.data.verified_email,
+                // @ts-ignore
+                GoogleId: socialInfo.data.id,
+                // @ts-ignore
+                locale: socialInfo.data.locale,
+                accessToken: response.data.accessToken,
+                refreshToken: response.data.refreshToken,
+              },
+            },
+            window.opener.location.href
+          );
+          // Close the popup
+          window.close();
+        });
+    } catch (error) {
+      window.opener.postMessage(
+        {
+          error: error,
+        },
+        window.opener.location.href
+      );
+    }
+    // Try to make a GET request to the endpoint with the accessToken
   };
 
   // Make the request when page loads
   useEffect(() => {
     getUserInfo();
-  });
+  }, []);
 
   return (
     <motion.div

@@ -4,11 +4,11 @@ import axios from "axios";
 import * as jose from "jose";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { userAtom } from "../components/atoms/authAtom";
 
 const Validator = () => {
-  const setUserData = useSetRecoilState(userAtom);
+  const [userData, setUserData] = useRecoilState(userAtom);
   const accessSecret = new TextEncoder().encode(
     `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
   );
@@ -135,6 +135,9 @@ const Validator = () => {
     }
   };
   useEffect(() => {
+    if (!userData.authenticated) {
+      return;
+    }
     getUserData();
   }, []);
 
