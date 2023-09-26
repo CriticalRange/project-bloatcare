@@ -1,23 +1,25 @@
 "use client";
 
 import { Button, Flex, IconButton, Text, useToast } from "@chakra-ui/react";
-import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
 import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
 import { userAtom } from "../../atoms/authAtom";
-import { userCommunityInfoAtom } from "../../atoms/communitiesAtom";
-import { communitiesAtom } from "../../atoms/communitiesAtom";
+import {
+  communitiesAtom,
+  userCommunityInfoAtom,
+} from "../../atoms/communitiesAtom";
 import {
   authModalAtom,
   communitySettingsModalAtom,
 } from "../../atoms/modalAtoms";
 import CommunityImage from "./CommunityImage";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import CommunityNotFound from "./CommunityNotFound";
-import CommunityPageLoading from "../../Loading/Communities/CommunityPage/CommunityPageLoading";
+import CommunityCardLoading from "../../Loading/Communities/Cards/CommunityCardLoading";
 
-const Header = ({ communityExists }) => {
+const Header = () => {
   const toast = useToast();
 
   // States
@@ -130,7 +132,7 @@ const Header = ({ communityExists }) => {
 
   return (
     <>
-      {communityExists === "yes" ? (
+      {communityData.communityLoaded ? (
         <Flex direction="row">
           <Flex
             _dark={{ bg: "customGray" }}
@@ -237,11 +239,9 @@ const Header = ({ communityExists }) => {
             </Flex>
           </Flex>
         </Flex>
-      ) : communityExists === "no" ? (
-        <CommunityNotFound />
-      ) : communityExists === "unknown" ? (
-        <CommunityPageLoading />
-      ) : null}
+      ) : (
+        <CommunityCardLoading />
+      )}
     </>
   );
 };

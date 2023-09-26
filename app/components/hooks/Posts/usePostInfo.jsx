@@ -6,7 +6,6 @@ const usePostInfo = () => {
       const response = await axios.get(
         `/api/getRandomPosts?count=${count}&isAuthenticated=${isAuthenticated}&communityIds=${communityId}`
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       console.log(error);

@@ -10,6 +10,7 @@ import PostCards from "../../Posts/Card/PostCard";
 import { userAtom } from "../../atoms/authAtom";
 import { postsState } from "../../atoms/postsAtom";
 import usePostInfo from "../../hooks/Posts/usePostInfo";
+import MainSorter from "./MainSorter";
 
 const MainPostsPage = () => {
   const { getHomePosts } = usePostInfo();
@@ -20,7 +21,6 @@ const MainPostsPage = () => {
   const [user, setUser] = useRecoilState(userAtom);
   const [communityExists, setCommunityExists] = useState("unknown");
   const [posts, setPosts] = useRecoilState(postsState);
-  const [postsLoaded, setPostsLoaded] = useState(false);
 
   const getFirstPosts = async () => {
     // Getst the posts when page loads
@@ -32,20 +32,20 @@ const MainPostsPage = () => {
     const response = await getHomePosts(10, user.authenticated);
     // We can find out if no community found bu just checking if response is undefined
     if (response === undefined) {
-      setPostsLoaded(true);
       setPosts((prev) => ({
         isEmpty: true,
         posts: [],
         selectedPost: null,
+        isLoaded: true,
       }));
       return;
     }
     // Update the posts atom with the new posts
-    setPostsLoaded(true);
     setPosts((prev) => ({
       isEmpty: false,
       posts: [...prev.posts, ...response],
       selectedPost: null,
+      isLoaded: true,
     }));
   };
 
@@ -54,11 +54,11 @@ const MainPostsPage = () => {
     const response = await getHomePosts(10, user.authenticated);
     // We can find out if no community found bu just checking if response is undefined
     if (response === undefined) {
-      setPostsLoaded(true);
       setPosts((prev) => ({
         isEmpty: true,
         posts: [],
         selectedPost: null,
+        isLoaded: true,
       }));
       return;
     }
@@ -67,6 +67,7 @@ const MainPostsPage = () => {
       isEmpty: false,
       posts: [...prev.posts, ...response],
       selectedPost: null,
+      isLoaded: true,
     }));
   };
 
@@ -77,22 +78,25 @@ const MainPostsPage = () => {
 
   return (
     <>
-      {!postsLoaded ? (
+      {!posts.isLoaded ? (
         <PostCardLoading />
       ) : (
-        <InfiniteScroll
-          dataLength={posts.posts.length}
-          next={getNewPosts}
-          hasMore={true}
-          loader={<PostCardLoading />}
-        >
-          {posts.posts.map((post, index) => (
-            <PostCards
-              key={`${post.postId}-${post.createdAt}-${index}`}
-              post={post}
-            />
-          ))}
-        </InfiniteScroll>
+        <>
+          <MainSorter />
+          <InfiniteScroll
+            dataLength={posts.posts.length}
+            next={getNewPosts}
+            hasMore={true}
+            loader={<PostCardLoading />}
+          >
+            {posts.posts.map((post, index) => (
+              <PostCards
+                key={`${post.postId}-${post.createdAt}-${index}`}
+                post={post}
+              />
+            ))}
+          </InfiniteScroll>
+        </>
       )}
     </>
   );

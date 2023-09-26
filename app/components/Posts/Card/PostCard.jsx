@@ -55,6 +55,10 @@ const PostCards = ({ post }) => {
     }
   };
 
+  const handlePostDelete = async () => {
+    console.log("Post delete starts");
+  };
+
   useEffect(() => {
     handleOverMillion();
   }, []);
@@ -72,7 +76,7 @@ const PostCards = ({ post }) => {
         exit={{ opacity: 1, scale: 1 }}
         onViewportEnter={() => setHasEnteredView(true)}
       >
-        <Card w="full" bg="transparent" boxShadow="0px 5px 4px">
+        <Card w="full" bg="transparent" boxShadow="0px 4px 2px">
           <CardHeader>
             <Flex
               direction="row"
@@ -155,13 +159,14 @@ const PostCards = ({ post }) => {
                     aria-label="See menu"
                     icon={<CustomCommentDotsVerticalIcon />}
                   ></MenuButton>
-                  <MenuList
-                    /* onClick={() => handleDelete()} */
-                    border="1px solid gray"
-                  >
+                  <MenuList border="1px solid gray">
                     {user.Display_Name === post.creatorDisplayName ? (
                       <MenuItem>
-                        <Flex direction="row" align="center">
+                        <Flex
+                          direction="row"
+                          align="center"
+                          onClick={() => handlePostDelete()}
+                        >
                           <CustomDeleteIcon w="8" h="8" fill="red" mr="2" />
                         </Flex>
                         Delete

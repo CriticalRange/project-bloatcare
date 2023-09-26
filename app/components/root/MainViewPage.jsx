@@ -3,9 +3,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import CommunityLoadingCard from "../Loading/Posts/Cards/PostCardLoading";
 import SplashScreen from "../Loading/splash/SplashScreen";
-import MainSorter from "./MainView/MainSorter";
 import CommunitiesSection from "./MainView/CommunitiesSection/CommunitiesSection";
 import MainPostsPage from "./MainView/MainPostPage";
 
@@ -38,7 +36,6 @@ const MainViewPage = () => {
         <Box>
           <Flex direction="row">
             <Box w={{ base: "100%", md: "60%" }} ml={{ base: "0%", md: "2%" }}>
-              <MainSorter />
               <MainPostsPage />
             </Box>{" "}
             <Flex

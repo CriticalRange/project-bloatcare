@@ -18,7 +18,6 @@ const Community = () => {
 
   // States
   const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
-  const [communityExists, setCommunityExists] = useState("unknown");
   const [posts, setPosts] = useRecoilState(postsState);
 
   const getCommunityInfo = async () => {
@@ -26,7 +25,6 @@ const Community = () => {
     const response = await fetchCommunityInfo(communityIdParam);
     // We can find out if no community found bu just checking if response is undefined
     if (response === undefined) {
-      setCommunityExists("no");
       return;
     }
     // Update the community data with the new community info
@@ -36,13 +34,8 @@ const Community = () => {
       CommunityId: response.CommunityId,
       CommunityName: response.CommunityName,
       CommunityType: response.CommunityType,
+      communityLoaded: true,
     });
-    setCommunityExists("yes");
-    setPosts((prev) => ({
-      isEmpty: false,
-      posts: [],
-      selectedPost: null,
-    }));
   };
 
   // Runs for one time when page loads
@@ -52,8 +45,8 @@ const Community = () => {
 
   return (
     <Box>
-      <CommunityHeader communityExists={communityExists} />
-      <CommunityBody communityExists={communityExists} />
+      <CommunityHeader />
+      <CommunityBody />
     </Box>
   );
 };

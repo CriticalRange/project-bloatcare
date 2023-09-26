@@ -107,16 +107,15 @@ export async function POST(req) {
 
 // DELETE Request for posts api
 export async function DELETE(req) {
-  const url = new URL(req.url);
-  // Get the post id from search parameters
-  const postId = url.searchParams.get("postId");
+  const res = await req.json();
+  const { postId } = res;
 
   try {
     // @ts-ignore Connect to server
     const pool = await db.connect();
 
     // Run the query that deletes the post with the postId
-    const deleteQuery = `DELETE FROM posts WHERE [post_id] = '${postId}'`;
+    const deleteQuery = `DELETE FROM posts WHERE [postId] = '${postId}'`;
     await pool.query(deleteQuery);
 
     return NextResponse.json(
@@ -124,7 +123,7 @@ export async function DELETE(req) {
         success: "true",
       },
       {
-        status: 200,
+        status: 202,
       }
     );
   } catch (err) {

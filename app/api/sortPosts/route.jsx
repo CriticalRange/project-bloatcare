@@ -1,22 +1,22 @@
 import { NextResponse } from "next/server";
 
 const db = require("../db");
+const sql = require("mssql");
 
 // GET Request for getRandomPosts api
 export async function GET(req) {
   // Get communityIds, isAuthenticated and count from parameters
   const url = new URL(req.url);
   const communityIds = url.searchParams.get("communityIds");
-  const isAuthenticated = url.searchParams.get("isAuthenticated");
+  const sort_type = url.searchParams.get("sortType");
   const count = Number(url.searchParams.get("count"));
 
   // If any of those 2 are null, return
-  if (count === null || isAuthenticated === null) {
+  if (sort_type === null || count === null || communityIds === null) {
     return NextResponse.json(
       {
         error: {
-          requires:
-            "count and isAuthenticated (and communityIds if isAuthenticated is true)",
+          requires: "sortType, count and communityIds on the query string",
         },
       },
       {
@@ -29,19 +29,20 @@ export async function GET(req) {
     const pool = await db.connect();
 
     // Get the communityIds as an array
-    const communityIdsArray =
-      communityIds !== null ? communityIds.split(",") : null;
+    const communityIdsArray = communityIds.split(",");
     console.log(communityIdsArray);
+    console.log(sort_type);
 
     // If not authenticated, get random posts. Else, get random posts with the included community IDs.
-    const postSearchResult =
-      communityIdsArray === null
-        ? await pool.request()
-            .query`SELECT TOP (${count}) * FROM [dbo].[posts] TABLESAMPLE(10 PERCENT)`
-        : await pool.request().query`SELECT TOP (${count}) *
-          FROM [dbo].[posts]
-          TABLESAMPLE(10 PERCENT)
-          WHERE [communityId] IN (${communityIdsArray})`;
+    const postSearchResult = await pool
+      .request()
+      .input("count", sql.Int, count)
+      .input("communityIds", sql.NVarChar, communityIdsArray.join(","))
+      .input("sortType", sql.NVarChar, sort_type).query`SELECT TOP (@count) *
+    FROM [dbo].[posts]
+    WHERE [communityId] IN (SELECT value FROM STRING_SPLIT(@communityIds, ','))
+    ORDER BY [numberOfLikes] @sortType
+`;
 
     // If no posts found witht the query, return.
     if (postSearchResult.recordset === undefined) {

@@ -33,6 +33,7 @@ export const postsState = atom({
     selectedPost: null,
     posts: [],
     isEmpty: false,
+    isLoaded: false,
   },
 });
 

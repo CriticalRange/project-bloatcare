@@ -11,6 +11,7 @@ export const communitiesAtom = atom({
     CommunityId: "",
     CommunityName: "",
     CommunityType: "",
+    communityLoaded: false,
   },
 });
 
