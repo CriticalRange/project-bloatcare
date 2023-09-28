@@ -8,39 +8,57 @@ import { useRecoilState } from "recoil";
 import { userAtom } from "../components/atoms/authAtom";
 
 const Validator = () => {
+  // Validates the user using tempCommunities from localStorage, accessToken and refreshToken from Cookies via Cookie.js
+
+  // States
   const [userData, setUserData] = useRecoilState(userAtom);
+
+  // Access token secret key
   const accessSecret = new TextEncoder().encode(
     `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
   );
   const getUserData = async () => {
     try {
+      // Check if access token or refresh token is empty (meaning the user is not logged in)
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
         return;
       }
+
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) {
         return;
       }
+
       const decodedAccessToken = await jose.jwtVerify(
         accessToken,
         accessSecret
       );
+
+      // Get the tempCommunities from localStorage
       const tempCommunities = localStorage.getItem("tempCommunities");
 
-      const communitiesArray = [
-        ...JSON.parse(tempCommunities),
-        // @ts-ignore
-        ...JSON.parse(decodedAccessToken.payload.Communities),
-      ];
+      // If it exists put it besides the decoded access token
+      const communitiesArray =
+        tempCommunities !== null
+          ? [
+              ...JSON.parse(tempCommunities),
+              // @ts-ignore
+              ...JSON.parse(decodedAccessToken.payload.Communities),
+            ]
+          : [
+              // @ts-ignore
+              ...JSON.parse(decodedAccessToken.payload.Communities),
+            ];
 
+      // This is for making sure there are no duplicates
       const resultArray = communitiesArray.filter(
         (item, index, self) =>
           index ===
           self.findIndex((t) => t.name === item.name && t.id === item.id)
       );
 
-      // @ts-ignore
+      // Set the user data with the decoded access token and tempCommunities
       setUserData({
         authenticated: true,
         Custom_Claims: decodedAccessToken.payload.Custom_Claims,
@@ -54,7 +72,7 @@ const Validator = () => {
         // @ts-ignore
         Metadata: JSON.parse(decodedAccessToken.payload.Metadata),
         // @ts-ignore
-        Photo_Url: decodedAccessToken.payload.Photo_Url,
+        Photo_Url: decodedAccessToken.payload.Photo_URL,
         // @ts-ignore
         Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
         // @ts-ignore
@@ -77,9 +95,7 @@ const Validator = () => {
               JSON.parse(decodedAccessToken.payload.Communities),
       });
     } catch (error) {
-      console.log(error);
       if (error.code === "ERR_JWT_EXPIRED") {
-        console.log("Token is expired, getting a new one");
         // If the access token expires, get a new access token using refresh token
         const refreshToken = Cookies.get("refreshToken");
         await axios
@@ -87,7 +103,6 @@ const Validator = () => {
             refresh_token: refreshToken,
           })
           .then(async (response) => {
-            console.log("Got a new one: ", response.data.access_token);
             Cookies.set("accessToken", response.data.access_token, {
               expires: 1 / 48,
               secure: true,
@@ -97,7 +112,8 @@ const Validator = () => {
               response.data.access_token,
               accessSecret
             );
-            // @ts-ignore
+
+            // Set the user data with the new access token and tempCommunities
             setUserData({
               authenticated: true,
               Custom_Claims: newAccessToken.payload.Custom_Claims,
@@ -134,10 +150,9 @@ const Validator = () => {
       }
     }
   };
+
+  // Run it when the page loads
   useEffect(() => {
-    if (!userData.authenticated) {
-      return;
-    }
     getUserData();
   }, []);
 

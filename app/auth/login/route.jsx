@@ -183,8 +183,8 @@ export async function POST(req) {
 
         return NextResponse.json(
           {
-            access_token: accessToken,
-            refresh_token: refreshToken,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
             userUid: newUserUid,
           },
           {

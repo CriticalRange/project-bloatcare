@@ -22,6 +22,7 @@ import { emailConfirmationModalAtom } from "../../../../atoms/modalAtoms";
 import Cookies from "js-cookie";
 import * as jose from "jose";
 import axios from "axios";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../../../Icons/Components/IconComponents";
 
 const EmailConfirmationModal = () => {
   const toast = useToast();
@@ -131,10 +132,20 @@ const EmailConfirmationModal = () => {
               </Alert>
             ) : null}
             <Button
-              isLoading={emailConfirmationLoading}
+              isDisabled={emailConfirmationLoading}
               onClick={handleEmailVerification}
             >
-              Submit
+              {emailConfirmationLoading ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </Flex>
         </ModalBody>

@@ -79,7 +79,7 @@ export default function SigninForm() {
           _hover={{
             bg: "#60a5fa",
           }}
-          /* isLoading={sending} */
+          /* isDisabled={sending} */
         >
           Reset Password
         </Button>

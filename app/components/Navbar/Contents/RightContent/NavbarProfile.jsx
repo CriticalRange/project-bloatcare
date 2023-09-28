@@ -15,8 +15,12 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useRecoilState, useResetRecoilState } from "recoil";
-import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import {
+  CustomExitIcon,
+  CustomUserEmptyIcon,
+  CustomUserSettingsIcon,
+} from "../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
 import Cookies from "js-cookie";
 import { userAtom } from "../../../atoms/authAtom";
@@ -37,12 +41,6 @@ export default function NavbarProfile() {
           _dark={{
             textColor: "white",
           }}
-          icon={
-            // @ts-ignore
-            userInfo.photoURL === null ? (
-              <CustomUserEmptyIcon w="8" h="8" />
-            ) : null
-          }
           textOverflow="ellipsis"
         >
           <Stack gap={2} align="center" direction="row" mx="3">
@@ -53,22 +51,10 @@ export default function NavbarProfile() {
                 maxWidth="100"
                 className="notranslate"
               >
-                {
-                  // @ts-ignore
-                  userInfo.Display_Name
-                }
+                {userInfo.Display_Name}
               </Text>
             </Hide>
-
-            <Avatar
-              src={
-                // @ts-ignore
-                userInfo.photoURL !== ""
-                  ? // @ts-ignore
-                    `${userInfo.photoURL}`
-                  : ""
-              }
-            />
+            <Avatar src={`${userInfo.Photo_Url}`} />
           </Stack>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
@@ -79,21 +65,42 @@ export default function NavbarProfile() {
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
             >
-              Account
+              <Flex direction="row" align="center">
+                <Avatar
+                  icon={
+                    <CustomUserSettingsIcon
+                      color="black"
+                      _dark={{ color: "white" }}
+                    />
+                  }
+                  w="8"
+                  h="8"
+                  backgroundColor="transparent"
+                />
+                <Text ml="2">Account</Text>
+              </Flex>
             </MenuItem>
           </Link>
-          <Link
-            href={`/profile/${
-              // @ts-ignore
-              userInfo.Display_Name
-            }`}
-          >
+          <Link href={`/profile/${userInfo.Display_Name}`}>
             <MenuItem
               bg="white"
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
             >
-              Profile
+              <Flex direction="row" align="center">
+                <Avatar
+                  icon={
+                    <CustomUserEmptyIcon
+                      color="black"
+                      _dark={{ color: "white" }}
+                    />
+                  }
+                  w="8"
+                  h="8"
+                  backgroundColor="transparent"
+                />
+                <Text ml="2">Profile</Text>
+              </Flex>
             </MenuItem>
           </Link>
           <MenuItem
@@ -122,7 +129,17 @@ export default function NavbarProfile() {
               });
             }}
           >
-            Sign out
+            <Flex direction="row" align="center">
+              <Avatar
+                icon={
+                  <CustomExitIcon color="black" _dark={{ color: "white" }} />
+                }
+                w="8"
+                h="8"
+                backgroundColor="transparent"
+              />
+              <Text ml="2">Sign out</Text>
+            </Flex>
           </MenuItem>
         </MenuList>
       </Menu>

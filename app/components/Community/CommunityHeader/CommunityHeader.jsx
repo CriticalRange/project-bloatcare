@@ -4,7 +4,10 @@ import { Button, Flex, IconButton, Text, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { CustomCommunitySettingsIcon } from "../../Icons/Components/IconComponents";
+import {
+  CustomAnimatedLoadingSpinnerIcon,
+  CustomCommunitySettingsIcon,
+} from "../../Icons/Components/IconComponents";
 import CommunitySettingsModal from "../../Modal/Community/Settings/CommunitySettingsModal";
 import { userAtom } from "../../atoms/authAtom";
 import {
@@ -205,7 +208,7 @@ const Header = () => {
                       bg: "brand.secondary",
                     }}
                     size="lg"
-                    isLoading={localCommunityLoading}
+                    isDisabled={localCommunityLoading}
                     onClick={() => {
                       !user.authenticated
                         ? (setAuthModal((prev) => ({
@@ -224,7 +227,16 @@ const Header = () => {
                         : handleJoinCommunity();
                     }}
                   >
-                    {user.authenticated ? (
+                    {" "}
+                    {localCommunityLoading ? (
+                      <CustomAnimatedLoadingSpinnerIcon
+                        w="10"
+                        h="10"
+                        top="50%"
+                        left="50%"
+                        transform="translate(15%, 15%)"
+                      />
+                    ) : user.authenticated ? (
                       localCommunityJoined ? (
                         <Text fontSize="md">Joined</Text>
                       ) : (

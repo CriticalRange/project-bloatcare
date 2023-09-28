@@ -18,6 +18,7 @@ import PasswordChecker, {
 } from "../../components/Modal/Auth/Forms/Checkers/PasswordChecker";
 import { passwordCheckerAtom } from "../../components/atoms/passwordsAtom";
 import { useRecoilState } from "recoil";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../components/Icons/Components/IconComponents";
 
 const DiscordAuth = ({ searchParams }) => {
   const toast = useToast();
@@ -263,11 +264,23 @@ const DiscordAuth = ({ searchParams }) => {
         <PasswordChecker />
         <Button
           aria-label={accountCreatedBefore ? "Login button" : "Signup button"}
-          isLoading={authHandlerLoading}
+          isDisabled={authHandlerLoading}
           type="submit"
           mt="4"
         >
-          {accountCreatedBefore ? "Login" : "Signup"}
+          {authHandlerLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : accountCreatedBefore ? (
+            "Login"
+          ) : (
+            "Signup"
+          )}
         </Button>
       </form>
     </Flex>

@@ -31,7 +31,6 @@ export async function GET(req) {
     // Get the communityIds as an array
     const communityIdsArray =
       communityIds !== null ? communityIds.split(",") : null;
-    console.log(communityIdsArray);
 
     // If not authenticated, get random posts. Else, get random posts with the included community IDs.
     const postSearchResult =

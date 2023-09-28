@@ -517,10 +517,20 @@ export default function SignupForm() {
           w="full"
           margin="auto"
           marginTop="2"
-          isLoading={createUserLoading}
           isDisabled={!isFormValid}
         >
-          Signup
+          {" "}
+          {createUserLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Signup"
+          )}
         </Button>
       </form>
     </Flex>

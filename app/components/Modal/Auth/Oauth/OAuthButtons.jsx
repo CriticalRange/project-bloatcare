@@ -1,9 +1,10 @@
 "use client";
 
 // @ts-ignore
-import { Box, Flex, IconButton, useToast } from "@chakra-ui/react";
+import { Box, Center, Flex, IconButton, useToast } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import {
+  CustomAnimatedLoadingSpinnerIcon,
   CustomAnimatedTwitchIcon,
   DiscordIcon,
   FacebookIcon,
@@ -26,21 +27,41 @@ import { userAtom } from "../../../atoms/authAtom";
 
 function OAuthButtons() {
   // States
-  // @ts-ignore
+  const initialLoadingState = {
+    google: false,
+    yahoo: false,
+    github: false,
+    discord: false,
+    twitch: false,
+    twitter: false,
+    microsoft: false,
+  };
+
+  const [loadingStates, setLoadingStates] = useState(initialLoadingState);
+
+  // Updates states easily
+  const updateLoadingState = (provider, isLoading) => {
+    setLoadingStates((prevLoadingStates) => ({
+      ...prevLoadingStates,
+      [provider]: isLoading,
+    }));
+  };
   const [user, setUser] = useRecoilState(userAtom);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  // @ts-ignore
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
-  // @ts-ignore
   const [socialOnboardingModal, setSocialOnboardingModal] = useRecoilState(
     SocialOnboardingModalAtom
+  );
+
+  // Access token secret key
+  const accessSecret = new TextEncoder().encode(
+    `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
   );
 
   // Handle mechanisms
   const handleGoogleSignin = async () => {
     try {
-      console.log("Handle google sign in started.");
-      setGoogleLoading(true);
+      // Popup Setup
+      updateLoadingState("google", true);
       const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
       const googleRedirectUri = `${window.location.origin}/auth/google`;
       const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${encodeURIComponent(
@@ -48,33 +69,32 @@ function OAuthButtons() {
       )}&redirect_uri=${encodeURIComponent(
         googleRedirectUri
       )}&scope=profile%20email&response_type=token`;
-      const width = 600; // Popup pencerenin genişliği
-      const height = 600; // Popup pencerenin yüksekliği
+      const width = 600; // The width of the popup window
+      const height = 600; // The heigth of the popup window
       const left = window.innerWidth / 2 - width / 2;
       const top = window.innerHeight / 2 - height / 2;
       const options = `width=${width}, height=${height}, top=${top}, left=${left}, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no`;
+
+      // Open the popup
       const popupWindow = window.open(googleAuthUrl, "_blank", options);
 
-      // Pop-up'tan gelen mesajları dinle
+      // Listen to the event messages from the popup
       window.addEventListener("message", async function (event) {
         // This control is for security. Only trusted sources can be accepted.
         /* if (event.origin !== `${this.window.location.origin}/auth/google`) {
           console.log("returning...");
           return;
         } */
+
         // If the token exists in the message data, take it
         if (event.data.userInfo) {
-          console.log(event.data.userInfo);
-          // Secret key
-          const accessSecret = new TextEncoder().encode(
-            `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
-          );
+          // Decode the access token
           const decodedAccessToken = await jose.jwtVerify(
             event.data.userInfo.accessToken,
             accessSecret
           );
-          console.log("Decoded access token: ", decodedAccessToken);
 
+          // Set the cookies
           Cookies.set("accessToken", event.data.userInfo.accessToken, {
             expires: 1 / 48,
             secure: true,
@@ -87,8 +107,7 @@ function OAuthButtons() {
             sameSite: "strict",
           });
 
-          // set user using the decoded access token
-          // @ts-ignore
+          // @ts-ignore Set user using the decoded access token
           setUser((prev) => ({
             authenticated: true,
             authType: "Google",
@@ -105,7 +124,7 @@ function OAuthButtons() {
             Password_Salt: decodedAccessToken.payload.Password_Salt,
             Phone_Number: decodedAccessToken.payload.Phone_Number,
             Uid: decodedAccessToken.payload.Uid,
-            Photo_Url: decodedAccessToken.payload.Photo_Url,
+            Photo_Url: decodedAccessToken.payload.Photo_URL,
             // @ts-ignore
             Provider_Data: JSON.parse(decodedAccessToken.payload.Provider_Data),
             Tokens_Valid_After_Time:
@@ -113,30 +132,24 @@ function OAuthButtons() {
             Verification_Code: decodedAccessToken.payload.Verification_Code,
           }));
           popupWindow.close();
+          setAuthModalState((prev) => ({
+            ...prev,
+            openAuthModal: false,
+          }));
         }
       });
 
       // Check if the popup is closed every 500ms
       const interval = window.setInterval(() => {
         if (popupWindow.closed) {
-          console.log("Google popup closed.");
-          setGoogleLoading(false);
-          setAuthModalState((prev) => ({
-            ...prev,
-            openAuthModal: false,
-          }));
-          setSocialOnboardingModal((prev) => ({
-            ...prev,
-            openSocialOnboardingModal: true,
-          }));
+          updateLoadingState("google", false);
 
           // Clear the interval once the popup is closed
           window.clearInterval(interval);
         }
       }, 500);
     } catch (error) {
-      console.log(error);
-      setGoogleLoading(false);
+      updateLoadingState("google", false);
     }
   };
   const handleFacebookSignin = async () => {};
@@ -211,46 +224,92 @@ function OAuthButtons() {
       >
         <Box>
           <IconButton
-            isLoading={googleLoading}
             onClick={handleGoogleSignin}
+            isDisabled={loadingStates.google}
             aria-label="Sign in with Google"
-            icon={<GoogleIcon w="10" h="10" />}
-          ></IconButton>
+            icon={
+              loadingStates.google ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <GoogleIcon w="10" h="10" />
+              )
+            }
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={yahooLoading} */
+            /* isDisabled={loadingStates.yahoo} */
             onClick={handleYahooSignin}
             aria-label="Sign in with Yahoo"
-            icon={<YahooIcon w="10" h="10" fill="#5f01d3" />}
-          ></IconButton>
+            icon={
+              loadingStates.yahoo ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <YahooIcon w="10" h="10" fill="#5f01d3" />
+              )
+            }
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={githubLoading} */
+            /* isDisabled={loadingStates.github} */
             onClick={handleGithubSignin}
             aria-label="Sign in with Github"
             icon={
-              <GithubIcon
-                w="10"
-                h="10"
-                fill="black"
-                _dark={{ fill: "white" }}
-                fillRule="evenodd"
-                clipRule="evenodd"
-              />
+              loadingStates.github ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <GithubIcon
+                  w="10"
+                  h="10"
+                  fill="black"
+                  _dark={{ fill: "white" }}
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                />
+              )
             }
-          ></IconButton>
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={discordLoading} */
+            /* isDisabled={loadingStates.discord} */
             onClick={handleDiscordSignin}
             aria-label="Sign in with Discord"
-            icon={<DiscordIcon h="10" w="10" color="#5562ea" />}
+            icon={
+              loadingStates.discord ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <DiscordIcon h="10" w="10" color="#5562ea" />
+              )
+            }
           />
         </Box>
       </Flex>
@@ -264,38 +323,86 @@ function OAuthButtons() {
       >
         <Box>
           <IconButton
-            /* isLoading={microsoftLoading} */
+            /* isDisabled={loadingStates.microsoft} */
             onClick={handleMicrosoftSignin}
             aria-label="Sign in with Microsoft"
-            icon={<MicrosoftIcon w="8" h="8" />}
-          ></IconButton>
+            icon={
+              loadingStates.microsoft ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <MicrosoftIcon w="8" h="8" />
+              )
+            }
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={twitterLoading} */
+            /* isDisabled={loadingStates.twitter} */
             onClick={handleTwitterSignin}
             aria-label="Sign in with Twitter"
-            icon={<TwitterIcon h="10" w="10" color="#1d9bf0" />}
-          ></IconButton>
+            icon={
+              loadingStates.twitter ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <TwitterIcon h="10" w="10" color="#1d9bf0" />
+              )
+            }
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={facebookLoading} */
+            /* isDisabled={loadingStates.facebook} */
             onClick={handleFacebookSignin}
             aria-label="Sign in with Facebook"
-            icon={<FacebookIcon h="10" w="10" color="#1877f2" />}
-          ></IconButton>
+            icon={
+              loadingStates.facebook ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <FacebookIcon h="10" w="10" color="#1877f2" />
+              )
+            }
+          />
         </Box>
         {" • "}
         <Box>
           <IconButton
-            /* isLoading={twitchLoading} */
+            /* isDisabled={loadingStates.twitch} */
             onClick={handleTwitchSignin}
             aria-label="Sign in with Twitch"
-            icon={<CustomAnimatedTwitchIcon w="10" h="10" fill="#a970ff" />}
-          ></IconButton>
+            icon={
+              loadingStates.twitch ? (
+                <CustomAnimatedLoadingSpinnerIcon
+                  w="10"
+                  h="10"
+                  top="50%"
+                  left="50%"
+                  transform="translate(15%, 15%)"
+                />
+              ) : (
+                <CustomAnimatedTwitchIcon w="10" h="10" fill="#a970ff" />
+              )
+            }
+          />
         </Box>
       </Flex>
     </Flex>

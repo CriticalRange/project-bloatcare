@@ -40,6 +40,7 @@ import CustomAnimatedSearchSvg from "../Custom/CustomAnimatedIcons/CustomAnimate
 import CustomAnimatedShareSvg from "../Custom/CustomAnimatedIcons/CustomAnimatedShareSvg";
 import CustomDeleteSvg from "../Custom/CustomIcons/CustomDeleteSvg";
 import CustomShareSvg from "../Custom/CustomIcons/CustomShareSvg";
+import CustomExitSvg from "../Custom/CustomIcons/CustomExitSvg";
 
 export const CustomAnimatedLoadingSpinnerIcon = createIcon({
   displayName: "CustomAnimatedLoadingSpinnerIcon",
@@ -49,7 +50,7 @@ export const CustomAnimatedLoadingSpinnerIcon = createIcon({
 
 export const CustomUserSettingsIcon = createIcon({
   displayName: "CustomUserSettingsIcon",
-  viewBox: "0 0 32 32",
+  viewBox: "0 0 24 24",
   path: <CustomUserSettingsSvg />,
 });
 
@@ -196,7 +197,7 @@ export const CustomPLusIcon = createIcon({
 
 export const CustomUserEmptyIcon = createIcon({
   displayName: "CustomUserEmptyIcon",
-  viewBox: "0 0 32 32",
+  viewBox: "0 0 24 24",
   path: <CustomUserEmptySvg />,
 });
 
@@ -281,4 +282,10 @@ export const CustomShareIcon = createIcon({
   displayName: "CustomShareIcon",
   viewBox: "0 0 24 24",
   path: <CustomShareSvg />,
+});
+
+export const CustomExitIcon = createIcon({
+  displayName: "CustomExitIcon",
+  viewBox: "0 0 24 24",
+  path: <CustomExitSvg />,
 });

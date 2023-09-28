@@ -3,6 +3,7 @@
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../components/Icons/Components/IconComponents";
 
 const TwitchAuth = ({ searchParams }) => {
   const [twitchOauthPassword, setTwitchOauthPassword] = useState({
@@ -158,12 +159,22 @@ const TwitchAuth = ({ searchParams }) => {
           placeholder="Password Again"
         />
         <Button
-          isLoading={authHandlerLoading}
+          isDisabled={authHandlerLoading}
           aria-label="Apply"
           type="submit"
           mt="4"
         >
-          Apply
+          {authHandlerLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Apply"
+          )}
         </Button>
       </form>
     </Flex>

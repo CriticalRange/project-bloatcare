@@ -15,6 +15,7 @@ import { useRecoilState } from "recoil";
 import { selectedFileAtom } from "../../../atoms/postsAtom";
 import { userAtom } from "../../../atoms/authAtom";
 import axios from "axios";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../../Icons/Components/IconComponents";
 
 const NewPostsForm = () => {
   const params = useParams();
@@ -91,8 +92,18 @@ const NewPostsForm = () => {
         </label>
         {/* <label><TagsSystem /></label> */}
         <Center my="3">
-          <Button aria-label="Create" type="submit" isLoading={loading}>
-            Create
+          <Button aria-label="Create" type="submit" isDisabled={loading}>
+            {loading ? (
+              <CustomAnimatedLoadingSpinnerIcon
+                w="10"
+                h="10"
+                top="50%"
+                left="50%"
+                transform="translate(15%, 15%)"
+              />
+            ) : (
+              "Create"
+            )}
           </Button>
         </Center>
       </form>

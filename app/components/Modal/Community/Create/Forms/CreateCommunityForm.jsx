@@ -9,7 +9,6 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -25,6 +24,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { communityNameCheckerAtom } from "../../../../atoms/communitiesAtom";
 import { createCommunityModalAtom } from "../../../../atoms/modalAtoms";
+import { Icon } from "@iconify/react";
 import {
   CustomAnimatedLoadingSpinnerIcon,
   CustomEyeOpen,
@@ -271,8 +271,7 @@ const CreateCommunityForm = () => {
                   aria-label="Public tooltip"
                   label="Public - Your community is visible to everyone"
                 >
-                  <Icon
-                    as={CustomUserEmptyIcon}
+                  <CustomUserEmptyIcon
                     fill="black"
                     _dark={{ fill: "white" }}
                     height="12"
@@ -302,11 +301,10 @@ const CreateCommunityForm = () => {
                     level of restriction."
                 >
                   <Icon
-                    as={CustomEyeOpen}
+                    icon="line-md:watch-off-loop"
                     fill="black"
-                    _dark={{ fill: "white" }}
-                    height="12"
-                    width="12"
+                    height="40"
+                    width="40"
                   />
                 </Tooltip>
               </Checkbox>
@@ -332,8 +330,7 @@ const CreateCommunityForm = () => {
                   aria-label="Private tooltip"
                   label="Private - Only people with access rights can see your community"
                 >
-                  <Icon
-                    as={CustomLockIcon}
+                  <CustomLockIcon
                     fill="colors.black"
                     _dark={{ fill: "white" }}
                     height="12"
@@ -375,7 +372,6 @@ const CreateCommunityForm = () => {
           titleChecker.titleInvalid ||
           titleChecker.titleStatus === "unknown"
         }
-        isLoading={buttonLoading}
         my="4"
         bg="colors.brand.primary"
         color="white"
@@ -385,7 +381,17 @@ const CreateCommunityForm = () => {
         }}
         type="submit"
       >
-        Create
+        {buttonLoading ? (
+          <CustomAnimatedLoadingSpinnerIcon
+            w="10"
+            h="10"
+            top="50%"
+            left="50%"
+            transform="translate(15%, 15%)"
+          />
+        ) : (
+          "Create"
+        )}
       </Button>
     </form>
   );

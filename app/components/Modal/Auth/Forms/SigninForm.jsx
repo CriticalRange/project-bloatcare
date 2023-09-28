@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../../../atoms/authAtom";
 import { authModalAtom } from "../../../atoms/modalAtoms";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../../Icons/Components/IconComponents";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -269,9 +270,19 @@ export default function SigninForm({ InitialFocusRef }) {
           _hover={{
             bg: "#60a5fa",
           }}
-          isLoading={signInLoading}
+          isDisabled={signInLoading}
         >
-          Login
+          {signInLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Login"
+          )}
         </Button>
       </form>
     </Flex>
