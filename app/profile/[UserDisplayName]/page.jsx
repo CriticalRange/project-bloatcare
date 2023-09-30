@@ -24,7 +24,7 @@ import UserCommunities from "../../components/Profile/Tabs/UserCommunities";
 import UserFollowers from "../../components/Profile/Tabs/UserFollowers";
 import UserPosts from "../../components/Profile/Tabs/UserPosts";
 import { userAtom } from "../../components/atoms/authAtom";
-import { profileInfoAtom } from "../../components/atoms/postsAtom";
+import { profileInfoAtom } from "../../components/atoms/authAtom";
 
 const Profile = () => {
   const params = useParams();
@@ -32,6 +32,7 @@ const Profile = () => {
   const userDisplayName = params.UserDisplayName;
 
   // State
+  // @ts-ignore
   const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [profileOwnerInfo, setProfileOwnerInfo] =
     useRecoilState(profileInfoAtom);
@@ -41,7 +42,9 @@ const Profile = () => {
     await axios
       .get(`/api/users/${userDisplayName}`)
       .then(async (response) => {
-        setProfileOwnerInfo(response.data);
+        console.log("Repsonse: ", response.data);
+        console.log("User: ", userInfo);
+        setProfileOwnerInfo({ ...response.data });
       })
       .catch((error) => console.log(error));
   };
@@ -49,6 +52,7 @@ const Profile = () => {
   useEffect(() => {
     getProfileOwnerInfo();
   }, []);
+  console.log("User outside: ", userInfo);
 
   return (
     <Flex direction="column">
@@ -65,49 +69,71 @@ const Profile = () => {
           borderRadius="10"
           position="relative"
         >
-          <Avatar
-            size="lg"
-            position="absolute"
-            left="3%"
-            bottom="-12%"
-            icon={<CustomUserEmptyIcon w="10" h="10" />}
-          />
+          {
+            // @ts-ignore
+            profileOwnerInfo.Photo_URL === "" ? (
+              <Avatar
+                size="lg"
+                position="absolute"
+                left="3%"
+                bottom="-12%"
+                icon={<CustomUserEmptyIcon w="10" h="10" />}
+              />
+            ) : (
+              <Avatar
+                size="lg"
+                position="absolute"
+                left="3%"
+                bottom="-12%"
+                // @ts-ignore
+                src={profileOwnerInfo.Photo_URL}
+              />
+            )
+          }
         </Flex>
       </Center>
       <Flex direction="row" mx="10%">
         <Flex flex="1" direction="column" ml="18">
-          {profileOwnerInfo.length === 0 ? (
+          {!profileOwnerInfo.authenticated ? (
             <SkeletonText noOfLines={1} skeletonHeight={6} width="40" />
           ) : (
             <Text fontSize="2xl" fontWeight="bold">
               {
                 // @ts-ignore
-                profileOwnerInfo?.Display_Name
+                profileOwnerInfo.Display_Name
               }
             </Text>
           )}
           <Text fontSize="xs">
             {
               // @ts-ignore
-              profileOwnerInfo?.Reputation || 1000
+              profileOwnerInfo.Reputation || 1000
             }{" "}
             Reputation
           </Text>
         </Flex>
         <Flex justify="flex-end" gap={2}>
-          {userInfo.authenticated &&
-          // @ts-ignore
-          userInfo.Display_Name !== profileOwnerInfo?.Display_Name ? (
+          {userInfo.authenticated ? (
+            // @ts-ignore
+            userInfo.Uid !== profileOwnerInfo.Uid ? (
+              <Show above="sm">
+                <Button>Follow</Button>
+                <Button bgColor="black" color="white">
+                  Message
+                </Button>
+              </Show>
+            ) : (
+              <Button bgColor="black" color="white">
+                Manage
+              </Button>
+            )
+          ) : (
             <Show above="sm">
               <Button>Follow</Button>
               <Button bgColor="black" color="white">
                 Message
               </Button>
             </Show>
-          ) : (
-            <Button bgColor="black" color="white">
-              Manage
-            </Button>
           )}
         </Flex>
       </Flex>

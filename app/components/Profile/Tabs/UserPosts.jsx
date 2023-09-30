@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { profileInfoAtom } from "../../atoms/postsAtom";
+import { profileInfoAtom } from "../../atoms/authAtom";
 import { Box, Text } from "@chakra-ui/react";
 
 const UserPosts = () => {
@@ -13,7 +13,7 @@ const UserPosts = () => {
           // @ts-ignore
           profileOwnerInfo.Display_Name
         }
-        &apos; posts
+        &apos;s posts
       </Text>
     </Box>
   );

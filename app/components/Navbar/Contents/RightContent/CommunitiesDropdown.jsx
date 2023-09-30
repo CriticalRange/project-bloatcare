@@ -70,14 +70,14 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black" }}
             >
               {userInfo.authenticated === true ? (
-                userInfo.Communities.map((value) => {
-                  if (value?.name === undefined) {
+                userInfo.Communities.map((community) => {
+                  if (community.name === undefined) {
                     return;
                   }
-                  if (value.id === "Unknown") {
+                  if (community.id === "Unknown") {
                     return;
                   }
-                  if (value.isJoined === false) {
+                  if (community.isJoined === false) {
                     return;
                   }
                   return (
@@ -85,8 +85,8 @@ const CommunitiesDropdown = () => {
                       display={
                         userInfo.authenticated === true ? "block" : "none"
                       }
-                      key={`${value.name}-${value.id}`}
-                      href={`/communities/${value.name}`}
+                      key={`${community.name}-${community.id}`}
+                      href={`/communities/${community.name}`}
                     >
                       <MenuItem
                         bg="white"
@@ -106,7 +106,7 @@ const CommunitiesDropdown = () => {
                           bg="transparent"
                           size="sm"
                         />
-                        <Text ml="3">{value.name}</Text>
+                        <Text ml="3">{community.name}</Text>
                       </MenuItem>
                     </Link>
                   );
@@ -138,42 +138,42 @@ const CommunitiesDropdown = () => {
             </MenuList>
           </MenuGroup>
           <MenuGroup title="Create">
-            <Link href={`/communities/${params.communityId}/new`}>
-              <MenuItem
-                bg="white"
-                textColor="black"
-                _dark={{ bg: "black", textColor: "white" }}
-                icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
-                onClick={() => {
-                  if (!userInfo.authenticated) {
-                    {
-                      setAuthModalState({
-                        openAuthModal: true,
-                        authModalView: "signin",
-                      });
-                      toast({
-                        title: "You are not logged in!",
-                        description:
-                          "You are not allowed to create posts unless you log in",
-                        status: "error",
-                        duration: 2500,
-                        position: "bottom-left",
-                        isClosable: true,
-                      });
-                    }
+            <MenuItem
+              bg="white"
+              textColor="black"
+              _dark={{ bg: "black", textColor: "white" }}
+              icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
+              onClick={() => {
+                if (!userInfo.authenticated) {
+                  {
+                    setAuthModalState({
+                      openAuthModal: true,
+                      authModalView: "signin",
+                    });
+                    toast({
+                      title: "You are not logged in!",
+                      description:
+                        "You are not allowed to create posts unless you log in",
+                      status: "error",
+                      duration: 2500,
+                      position: "bottom-left",
+                      isClosable: true,
+                    });
                   }
-                }}
-              >
-                <Text>Create Post</Text>
-              </MenuItem>
-            </Link>
+                } else {
+                  router.push(`/communities/${params.communityId}/new`);
+                }
+              }}
+            >
+              <Text>Create Post</Text>
+            </MenuItem>
             <MenuItem
               bg="white"
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
               icon={<CustomAddCommunityIcon w="8" h="8" />}
               onClick={() => {
-                if (userInfo.authenticated === true) {
+                if (userInfo.authenticated) {
                   setCreateCommunityModal((prev) => ({
                     ...prev,
                     openCreateCommunityModal: true,

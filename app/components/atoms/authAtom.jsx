@@ -24,3 +24,21 @@ export const userAtom = atom({
     Communities: [],
   },
 });
+
+export const profileInfoAtom = atom({
+  key: "profileInfoAtom",
+  default: {
+    Custom_Claims: {},
+    Disabled: false,
+    Display_Name: "",
+    Email: "",
+    Photo_URL: "",
+    Metadata: {},
+    Photo_Url: "",
+    Provider_Data: {},
+    Uid: "",
+    Phone_Number: "",
+    Communities: [],
+    disabled: false,
+  },
+});

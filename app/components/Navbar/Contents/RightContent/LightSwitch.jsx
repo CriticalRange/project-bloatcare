@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, IconButton, useColorMode } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, useColorMode } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 
 const LightSwitch = () => {
@@ -8,14 +8,14 @@ const LightSwitch = () => {
   const switchKey = colorMode === "light" ? "light" : "dark"; // Dinamik bir key oluşturun
 
   return (
-    <Flex>
-      <IconButton
+    <Box>
+      <Button
         key={switchKey}
         mr="2"
-        isRound
         onClick={toggleColorMode}
         aria-label="Change theme"
-        icon={
+      >
+        {
           <Icon
             icon={
               colorMode === "light"
@@ -26,8 +26,8 @@ const LightSwitch = () => {
             height="24"
           />
         }
-      />{" "}
-    </Flex>
+      </Button>
+    </Box>
   );
 };
 
