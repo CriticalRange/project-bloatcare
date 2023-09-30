@@ -9,23 +9,20 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
-import { auth } from "../../../firebase/clientApp";
 
 export default function SigninForm() {
-  // Hooks
   const [resetPasswordForm, setResetPasswordForm] = useState({
     email: "",
   });
   const [resetPasswordResult, setResetPasswordResult] = useState(null);
-  const [sendPasswordResetEmail, sending, error] =
-    useSendPasswordResetEmail(auth);
+  /* const [sendPasswordResetEmail, sending, error] =
+    useSendPasswordResetEmail(auth); */
 
   const handlePasswordReset = async (event) => {
     event.preventDefault();
 
-    const result = await sendPasswordResetEmail(resetPasswordForm.email);
-    setResetPasswordResult(result);
+    /* const result = await sendPasswordResetEmail(resetPasswordForm.email);
+    setResetPasswordResult(result); */
   };
 
   const onFormInfoChange = (event) => {
@@ -82,7 +79,7 @@ export default function SigninForm() {
           _hover={{
             bg: "#60a5fa",
           }}
-          isLoading={sending}
+          /* isDisabled={sending} */
         >
           Reset Password
         </Button>

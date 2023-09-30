@@ -6,18 +6,13 @@ import { atom } from "recoil";
 export const communitiesAtom = atom({
   key: "communitiesAtom",
   default: {
-    communityId: "",
-    isModerator: false,
-    isJoined: false,
-    imageURL: "",
-    userSnippets: [],
+    CommunityCreatedAt: "",
+    CommunityDescription: "",
+    CommunityId: "",
+    CommunityName: "",
+    CommunityType: "",
+    communityLoaded: false,
   },
-});
-
-// Atom for community loading
-export const communityLoading = atom({
-  key: "communityLoading",
-  default: false,
 });
 
 // Atom that check the community name when focused
@@ -26,5 +21,16 @@ export const communityNameCheckerAtom = atom({
   default: {
     showCommunityNameChecker: false,
     remainingChars: "21",
+  },
+});
+
+// Atom for user's info on community
+export const userCommunityInfoAtom = atom({
+  key: "userCommunityInfoAtom",
+  default: {
+    name: "",
+    id: "",
+    isJoined: false,
+    isModerator: false,
   },
 });

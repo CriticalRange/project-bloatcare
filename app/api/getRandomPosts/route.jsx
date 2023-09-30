@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
+
 const db = require("../db");
 
+// GET Request for getRandomPosts api
 export async function GET(req) {
+  // Get communityIds, isAuthenticated and count from parameters
   const url = new URL(req.url);
   const communityIds = url.searchParams.get("communityIds");
   const isAuthenticated = url.searchParams.get("isAuthenticated");
   const count = Number(url.searchParams.get("count"));
 
-  if (count === null || communityIds === null || isAuthenticated === null) {
+  // If any of those 2 are null, return
+  if (count === null || isAuthenticated === null) {
     return NextResponse.json(
       {
         error: {
-          requires: "count and isAuthenticated and communityIds",
+          requires:
+            "count and isAuthenticated (and communityIds if isAuthenticated is true)",
         },
       },
       {
@@ -20,44 +25,24 @@ export async function GET(req) {
     );
   }
   try {
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
-    const communityIdsArray = communityIds.split(",");
+    // Get the communityIds as an array
+    const communityIdsArray =
+      communityIds !== null ? communityIds.split(",") : null;
 
-    console.log(communityIdsArray);
-
+    // If not authenticated, get random posts. Else, get random posts with the included community IDs.
     const postSearchResult =
-      isAuthenticated === "false"
-        ? await pool.request().query`SELECT TOP (${count}) [post_id]
-        ,[createdAt]
-        ,[creatorImage]
-        ,[numberOfLikes]
-        ,[creatorId]
-        ,[description]
-        ,[numberOfDislikes]
-        ,[communityId]
-        ,[title]
-        ,[creatorDisplayName]
-        ,[numberOfComments]
-        FROM [dbo].[posts]
-        ORDER BY NEWID()`
-        : isAuthenticated === "true"
-        ? await pool.request().query`SELECT TOP (${count}) [post_id]
-          ,[createdAt]
-          ,[creatorImage]
-          ,[numberOfLikes]
-          ,[creatorId]
-          ,[description]
-          ,[numberOfDislikes]
-          ,[communityId]
-          ,[title]
-          ,[creatorDisplayName]
-          ,[numberOfComments]
+      communityIdsArray === null
+        ? await pool.request()
+            .query`SELECT TOP (${count}) * FROM [dbo].[posts] TABLESAMPLE(10 PERCENT)`
+        : await pool.request().query`SELECT TOP (${count}) *
           FROM [dbo].[posts]
-          WHERE [communityId] IN (${communityIdsArray})
-          ORDER BY NEWID()`
-        : null;
+          TABLESAMPLE(10 PERCENT)
+          WHERE [communityId] IN (${communityIdsArray})`;
 
+    // If no posts found witht the query, return.
     if (postSearchResult.recordset === undefined) {
       return NextResponse.json(
         {
@@ -71,10 +56,12 @@ export async function GET(req) {
         }
       );
     }
+
+    // Map the recordset and add it all to mappedRecordset
     const mappedRecordset = postSearchResult.recordset.map(
       (recordset, index) => {
         return {
-          Post_Id: recordset.Post_Id,
+          postId: recordset.postId,
           createdAt: recordset.createdAt,
           creatorImage: recordset.creatorImage,
           numberOfLikes: recordset.numberOfLikes,
@@ -88,11 +75,12 @@ export async function GET(req) {
         };
       }
     );
-    pool.close();
+
     return NextResponse.json(mappedRecordset, {
       status: 200,
     });
   } catch (err) {
+    console.log(err);
     return NextResponse.json(
       { error: { message: `${err}` } },
       {

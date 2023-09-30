@@ -9,7 +9,6 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
-  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -18,22 +17,14 @@ import {
   Text,
   Textarea,
   Tooltip,
-  chakra,
   useToast,
 } from "@chakra-ui/react";
-import {
-  doc,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { communityNameCheckerAtom } from "../../../../atoms/communitiesAtom";
 import { createCommunityModalAtom } from "../../../../atoms/modalAtoms";
-import { auth, firestore } from "../../../../firebase/clientApp";
+import { Icon } from "@iconify/react";
 import {
   CustomAnimatedLoadingSpinnerIcon,
   CustomEyeOpen,
@@ -41,15 +32,15 @@ import {
   CustomUserEmptyIcon,
 } from "../../../../Icons/Components/IconComponents";
 import { useDebouncedCallback } from "use-debounce";
+import axios from "axios";
+import { userAtom } from "../../../../atoms/authAtom";
 
 const CreateCommunityForm = () => {
   const toast = useToast();
   const router = useRouter();
 
-  // Get the current user info
-  const [user] = useAuthState(auth);
-
   // States
+  const [user, setUser] = useRecoilState(userAtom);
   const [communityNameChecker, setCommunityNameChecker] = useRecoilState(
     communityNameCheckerAtom
   );
@@ -71,39 +62,35 @@ const CreateCommunityForm = () => {
   const [checkboxSelectedOption, setCheckboxSelectedOption] =
     useState("Public");
 
+  // Title checker debounced for performance
   const debouncedTitle = useDebouncedCallback(async (value) => {
     if (value.length !== 0) {
-      const communitiesDocRef = doc(firestore, "communities", value);
       setTitleChecker((prev) => ({
         ...prev,
         titleLoading: true,
         titleInvalid: false,
       }));
-      await getDoc(communitiesDocRef)
-        .then((docSnapshot) => {
-          if (docSnapshot.exists()) {
+      // Validate the community name not taken
+      await axios
+        .get(`/api/communities/${createCommunityForm.title}`)
+        .then((response) => {
+          if (response.data.response === undefined) {
             setTitleChecker((prev) => ({
               ...prev,
-              titleLoading: false,
               titleInvalid: false,
-              titleStatus: "taken",
+              titleLoading: false,
+              titleStatus: "available",
             }));
-            return;
           } else {
             setTitleChecker((prev) => ({
               ...prev,
-              titleLoading: false,
-              titleStatus: "available",
               titleInvalid: false,
+              titleLoading: false,
+              titleStatus: "taken",
             }));
           }
-        })
-        .catch((error) => {
-          console.log("Error checking community title: ", error);
-          return;
         });
     } else {
-      console.log("Value length is 0");
       setTitleChecker((prev) => ({
         ...prev,
         titleStatus: "unknown",
@@ -115,7 +102,6 @@ const CreateCommunityForm = () => {
   const onFormInfoChange = (event) => {
     const { name, value } = event.target;
     if (name === "title") {
-      console.log("title changed");
       const truncatedValue = value.slice(0, 21);
       if (remainingChars <= 0) {
         setCreateCommunityForm((prev) => ({
@@ -157,70 +143,47 @@ const CreateCommunityForm = () => {
       return;
     }
 
-    // Validate the community name not taken
-    const communityDocRef = doc(
-      firestore,
-      "communities",
-      createCommunityForm.title
-    );
+    // Create the community
 
-    await runTransaction(firestore, async (transaction) => {
-      const communityDoc = await transaction.get(communityDocRef);
-      if (communityDoc.exists()) {
-        setButtonLoading(false);
-        toast({
-          title: "Community name taken!",
-          description: "This community name is taken. Please try another one.",
-          status: "error",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        return;
-      }
-
-      // Create the community (firestore)
-      transaction.set(communityDocRef, {
-        creatorId: user?.uid,
-        createdAt: serverTimestamp(),
-        displayName: createCommunityForm.title,
+    let addedCommunity;
+    await axios
+      .post("/api/communities", {
+        communityName: createCommunityForm.title,
+        communityType: checkboxSelectedOption,
         communityDesc: createCommunityForm.description,
-        numberOfMembers: 1,
-        privacyType: checkboxSelectedOption,
-      });
-
-      // Create community snippets on user
-      transaction.set(
-        doc(
-          firestore,
-          `users/${user?.uid}/communitySnippets`,
-          createCommunityForm.title
-        ),
-        {
-          communityId: createCommunityForm.title,
-          isModerator: true,
+      })
+      .then((communityResponse) => {
+        (addedCommunity = {
+          name: createCommunityForm.title,
+          id: communityResponse.data.id,
           isJoined: true,
-        }
-      );
-      setButtonLoading(false);
-      toast({
-        title: "Creation success!",
-        description: `You successfully created your community named ${
-          createCommunityForm.title
-        }. ${redirectSwitch ? "Redirecting..." : ""}`,
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
+          isModerator: true,
+        }),
+          // @ts-ignore
+          axios
+            .patch("/api/users", {
+              // @ts-ignore
+              Uid: user.Uid,
+              Communities: addedCommunity,
+            })
+            .then((response) => {
+              setUser((prev) => ({
+                ...prev,
+                Communities: [...prev.Communities, addedCommunity],
+              }));
+              localStorage.setItem(
+                "tempCommunities",
+                JSON.stringify([...user.Communities, addedCommunity])
+              );
+              setButtonLoading(false);
+              router.push(`/communities/${createCommunityForm.title}`);
+              router.refresh();
+              setCreateCommunityModal((prev) => ({
+                ...prev,
+                openCreateCommunityModal: false,
+              }));
+            });
       });
-      if (redirectSwitch) {
-        router.push(`/communities/${createCommunityForm.title}`);
-      }
-      setCreateCommunityModal((prev) => ({
-        ...prev,
-        openCreateCommunityModal: false,
-      }));
-    });
   };
 
   return (
@@ -295,6 +258,7 @@ const CreateCommunityForm = () => {
                 isIndeterminate={false}
                 isChecked={checkboxSelectedOption === "Public"}
                 onChange={() => handleCheckboxChange("Public")}
+                name="publicCheckbox"
                 size="xl"
               >
                 <Tooltip
@@ -307,8 +271,7 @@ const CreateCommunityForm = () => {
                   aria-label="Public tooltip"
                   label="Public - Your community is visible to everyone"
                 >
-                  <Icon
-                    as={CustomUserEmptyIcon}
+                  <CustomUserEmptyIcon
                     fill="black"
                     _dark={{ fill: "white" }}
                     height="12"
@@ -324,6 +287,7 @@ const CreateCommunityForm = () => {
                 isChecked={checkboxSelectedOption === "Restricted"}
                 onChange={() => handleCheckboxChange("Restricted")}
                 size="xl"
+                name="RestrictedCheckbox"
               >
                 <Tooltip
                   width={{ base: "200px", md: "350px" }}
@@ -337,11 +301,10 @@ const CreateCommunityForm = () => {
                     level of restriction."
                 >
                   <Icon
-                    as={CustomEyeOpen}
+                    icon="line-md:watch-off-loop"
                     fill="black"
-                    _dark={{ fill: "white" }}
-                    height="12"
-                    width="12"
+                    height="40"
+                    width="40"
                   />
                 </Tooltip>
               </Checkbox>
@@ -353,6 +316,7 @@ const CreateCommunityForm = () => {
                 isChecked={checkboxSelectedOption === "Private"}
                 onChange={() => handleCheckboxChange("Private")}
                 size="xl"
+                name="PrivateCheckbox"
               >
                 <Tooltip
                   width={{ base: "200px", md: "350px" }}
@@ -366,8 +330,7 @@ const CreateCommunityForm = () => {
                   aria-label="Private tooltip"
                   label="Private - Only people with access rights can see your community"
                 >
-                  <Icon
-                    as={CustomLockIcon}
+                  <CustomLockIcon
                     fill="colors.black"
                     _dark={{ fill: "white" }}
                     height="12"
@@ -409,7 +372,6 @@ const CreateCommunityForm = () => {
           titleChecker.titleInvalid ||
           titleChecker.titleStatus === "unknown"
         }
-        isLoading={buttonLoading}
         my="4"
         bg="colors.brand.primary"
         color="white"
@@ -419,7 +381,17 @@ const CreateCommunityForm = () => {
         }}
         type="submit"
       >
-        Create
+        {buttonLoading ? (
+          <CustomAnimatedLoadingSpinnerIcon
+            w="10"
+            h="10"
+            top="50%"
+            left="50%"
+            transform="translate(15%, 15%)"
+          />
+        ) : (
+          "Create"
+        )}
       </Button>
     </form>
   );

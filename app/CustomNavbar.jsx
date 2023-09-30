@@ -7,7 +7,10 @@ const CustomNavbar = () => {
   const pathname = usePathname();
   return (
     <>
-      {pathname === "/auth/twitch" || pathname === "/auth/discord" ? null : (
+      {/* With this dynamic check, we don't show Navbar on twitch, discord and google auth pages */}
+      {pathname === "/auth/twitch" ||
+      pathname === "/auth/discord" ||
+      pathname === "/auth/google" ? null : (
         <Navbar />
       )}
     </>

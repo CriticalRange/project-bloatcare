@@ -12,19 +12,13 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import {
-  createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
 import { useEffect, useState } from "react";
-import { auth } from "../../components/firebase/clientApp";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "../../components/Modal/Auth/Forms/Checkers/PasswordChecker";
 import { passwordCheckerAtom } from "../../components/atoms/passwordsAtom";
 import { useRecoilState } from "recoil";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../components/Icons/Components/IconComponents";
 
 const DiscordAuth = ({ searchParams }) => {
   const toast = useToast();
@@ -58,7 +52,7 @@ const DiscordAuth = ({ searchParams }) => {
   }, [code]);
 
   const DiscordOauthHandler = async () => {
-    try {
+    /* try {
       const tokenResponse = await axios.post(
         discordTokenURL,
         {
@@ -76,7 +70,6 @@ const DiscordAuth = ({ searchParams }) => {
         }
       );
       const accessToken = tokenResponse.data.access_token;
-      console.log(accessToken);
 
       const userResponse = await axios.get(discordUserURL, {
         headers: {
@@ -84,7 +77,6 @@ const DiscordAuth = ({ searchParams }) => {
         },
       });
       const userData = userResponse.data;
-      console.log("User Data: ", userData);
       await fetchSignInMethodsForEmail(
         auth,
         `discord.${userResponse.data.email}`
@@ -107,10 +99,10 @@ const DiscordAuth = ({ searchParams }) => {
       });
     } catch (error) {
       console.log(error);
-    }
+    } */
   };
 
-  const onPasswordChange = (event) => {
+  /* const onPasswordChange = (event) => {
     const { name, value } = event.target;
     if (name === "password") {
       passwordValidateRegex.forEach((regex, i) => {
@@ -162,9 +154,9 @@ const DiscordAuth = ({ searchParams }) => {
       ...prev,
       [name]: value,
     }));
-  };
+  }; */
 
-  const handleDiscordFirebaseAuth = async (event) => {
+  /* const handleDiscordAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
     if (!isFormValid) {
@@ -181,7 +173,6 @@ const DiscordAuth = ({ searchParams }) => {
           displayName: userDataState.displayName,
           photoURL: userDataState.avatarUrl,
         });
-        console.log("Current user: ", auth.currentUser);
       } else {
         await createUserWithEmailAndPassword(
           auth,
@@ -214,7 +205,7 @@ const DiscordAuth = ({ searchParams }) => {
     passwordChecker.testIsNumbers,
     passwordChecker.testIsSpecialChars,
     passwordChecker.testPasswordLength,
-  ]);
+  ]); */
 
   return (
     <Flex w="90%" h="300" mt="10" mx="5" direction="column">
@@ -226,7 +217,7 @@ const DiscordAuth = ({ searchParams }) => {
             : userDataState.email
         }`}
       </Text>
-      <form onSubmit={handleDiscordFirebaseAuth}>
+      <form /* onSubmit={handleDiscordAuth} */>
         <Text fontSize="2xl">
           For your security, please also{" "}
           {accountCreatedBefore ? "login with your" : "create a"} password.{" "}
@@ -243,7 +234,7 @@ const DiscordAuth = ({ searchParams }) => {
               showConfirmPasswordChecker: true,
             }))
           }
-          onChange={onPasswordChange}
+          /* onChange={onPasswordChange} */
           type="password"
           key="discordOauthPassword"
           placeholder="Password"
@@ -255,7 +246,7 @@ const DiscordAuth = ({ searchParams }) => {
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onPasswordChange}
+          /* onChange={onPasswordChange} */
           key="discordOauthPasswordAgain"
           placeholder="Password Again"
         />
@@ -273,11 +264,23 @@ const DiscordAuth = ({ searchParams }) => {
         <PasswordChecker />
         <Button
           aria-label={accountCreatedBefore ? "Login button" : "Signup button"}
-          isLoading={authHandlerLoading}
+          isDisabled={authHandlerLoading}
           type="submit"
           mt="4"
         >
-          {accountCreatedBefore ? "Login" : "Signup"}
+          {authHandlerLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : accountCreatedBefore ? (
+            "Login"
+          ) : (
+            "Signup"
+          )}
         </Button>
       </form>
     </Flex>

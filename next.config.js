@@ -8,7 +8,7 @@ module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     return {
       /* development only config options here */
-      reactStrictMode: true,
+      reactStrictMode: false,
       env: {
         // @see https://github.com/facebookexperimental/Recoil/issues/2135#issuecomment-1362197710
         RECOIL_DUPLICATE_ATOM_KEY_CHECKING_ENABLED: "false",
@@ -31,7 +31,7 @@ module.exports = (phase, { defaultConfig }) => {
       },
       images: {
         loader: "default",
-        domains: ["localhost"],
+        domains: ["localhost", "lh3.googleusercontent.com"],
       },
     };
   }

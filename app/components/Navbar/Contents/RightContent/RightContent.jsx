@@ -1,32 +1,31 @@
 "use client";
 
 import { Button, Flex } from "@chakra-ui/react";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../../atoms/modalAtoms";
-import { auth } from "../../../firebase/clientApp";
-import NavbarProfile from "./NavbarProfile";
-import LightSwitch from "./LightSwitch";
-import { Suspense, useEffect, useState } from "react";
-import AuthModal from "../../../Modal/Auth/AuthModal";
 import dynamic from "next/dynamic";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import AuthModal from "../../../Modal/Auth/AuthModal";
+import { userAtom } from "../../../atoms/authAtom";
+import { authModalAtom } from "../../../atoms/modalAtoms";
 import CommunitiesDropdown from "./CommunitiesDropdown";
+import LightSwitch from "./LightSwitch";
+import NavbarProfile from "./NavbarProfile";
+
+const DynamicEmailConfirmationModal = dynamic(
+  () => import("../../../Modal/Auth/Email/Confirmation/EmailConfirmationModal"),
+  {
+    ssr: false,
+  }
+);
 
 const RightContent = () => {
-  const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
-  const [user, loading, error] = useAuthState(auth);
-
-  const [userIsLoaded, setUserLoaded] = useState(false);
-
-  useEffect(() => {
-    setUserLoaded(true);
-  }, []);
+  const setAuthModalState = useSetRecoilState(authModalAtom);
+  const userInfo = useRecoilValue(userAtom);
 
   return (
     <Flex flex="1" justify="flex-end">
       <LightSwitch />
       <CommunitiesDropdown />
-      {userIsLoaded && user ? (
+      {userInfo.authenticated === true ? (
         <NavbarProfile />
       ) : (
         <Button
@@ -52,6 +51,7 @@ const RightContent = () => {
         </Button>
       )}
       <AuthModal />
+      <DynamicEmailConfirmationModal />
     </Flex>
   );
 };

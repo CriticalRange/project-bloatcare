@@ -12,12 +12,14 @@ import {
   chakra,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
+import * as jose from "jose";
+import Cookies from "js-cookie";
 import { useState } from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
+import { userAtom } from "../../../atoms/authAtom";
 import { authModalAtom } from "../../../atoms/modalAtoms";
-import { auth } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../../Icons/Components/IconComponents";
 
 export default function SigninForm({ InitialFocusRef }) {
   const toast = useToast();
@@ -27,9 +29,13 @@ export default function SigninForm({ InitialFocusRef }) {
     email: "",
     password: "",
   });
-  const [signInWithEmailAndPassword, user, loading, error] =
-    useSignInWithEmailAndPassword(auth);
-
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const [signInLoading, setSignInLoading] = useState(false);
+  const [signInError, setSignInError] = useState({
+    code: "",
+    message: "",
+  });
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
 
   const handleLogin = async (event) => {
@@ -37,18 +43,112 @@ export default function SigninForm({ InitialFocusRef }) {
 
     // Process sign in
     try {
-      await signInWithEmailAndPassword(loginForm.email, loginForm.password);
-      !error && user
-        ? toast({
+      setSignInLoading(true);
+      setSignInError({
+        code: "",
+        message: "",
+      });
+      const alg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+      const accessSecret = new TextEncoder().encode(
+        `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
+      );
+
+      const encodedPassword = await new jose.SignJWT({
+        Password: loginForm.password,
+      })
+        .setProtectedHeader({ alg })
+        .sign(accessSecret);
+
+      await axios
+        .post("/auth/login", {
+          Auth_Type: "password",
+          Email: loginForm.email,
+          Password: encodedPassword,
+        })
+        .then(async (response) => {
+          if (response.data.error !== undefined) {
+            setSignInError({
+              code: response.data.error.code,
+              message: response.data.error.message,
+            });
+            setSignInLoading(false);
+            return;
+          }
+          const userData = await jose.jwtVerify(
+            response.data.access_token,
+            accessSecret
+          );
+          Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
+          Cookies.set("accessToken", response.data.access_token, {
+            expires: 1 / 48,
+            secure: true,
+            sameSite: "strict",
+          });
+          Cookies.set("refreshToken", response.data.refresh_token, {
+            expires: 100,
+            secure: true,
+            sameSite: "strict",
+          });
+          setUserInfo({
+            authenticated: true,
+            authType: "password",
+            Custom_Claims: userData.payload.Custom_Claims,
+            Disabled: !!userData.payload.Disabled,
+            // @ts-ignore
+            Display_Name: userData.payload.Display_Name,
+            // @ts-ignore
+            Email: userData.payload.Email,
+            // @ts-ignore
+            Email_Verified: userData.payload.Email_Verified,
+            // @ts-ignore
+            Metadata: JSON.parse(userData.payload.Metadata),
+            // @ts-ignore
+            Photo_Url: userData.payload.Photo_Url,
+            // @ts-ignore
+            Provider_Data: JSON.parse(userData.payload.Provider_Data),
+            // @ts-ignore
+            Uid: userData.payload.Uid,
+            // @ts-ignore
+            Password_Hash: userData.payload.Password_Hash,
+            // @ts-ignore
+            Phone_Number: userData.payload.Phone_Number,
+            // @ts-ignore
+            Password_Salt: userData.payload.Password_Salt,
+            // @ts-ignore
+            Tokens_Valid_After_Time: userData.payload.Tokens_Valid_After_Time,
+            // @ts-ignore
+            Verification_Code: userData.payload.Verification_Code,
+            // @ts-ignore
+            Communities: JSON.parse(userData.payload.Communities),
+          });
+          localStorage.setItem(
+            "tempCommunities",
+            // @ts-ignore
+            userData.payload.Communities
+          );
+          setSignInLoading(false);
+          toast({
             title: "Login success!",
             description: "You successfully logged in to your account.",
             status: "success",
             duration: 2500,
             position: "bottom-left",
             isClosable: true,
-          })
-        : null;
-    } catch (error) {}
+          });
+          setAuthModal((prev) => ({
+            ...prev,
+            openAuthModal: false,
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+          setSignInError(error.error);
+          setSignInLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onFormInfoChange = (event) => {
@@ -75,6 +175,7 @@ export default function SigninForm({ InitialFocusRef }) {
             placeholder="example@mail.com"
             overflowY="hidden"
             display="block"
+            autoComplete="true"
             w="full"
             h="12"
             borderRadius="0.375rem"
@@ -145,10 +246,14 @@ export default function SigninForm({ InitialFocusRef }) {
             </Text>
           </Button>
         </Flex>
-        {error ? (
+        {signInError?.code !== "" ? (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{FIREBASE_ERRORS[error.message]}</AlertTitle>
+            <AlertTitle>
+              {signInError?.message !== undefined
+                ? signInError?.message
+                : "There was an error, please try again"}
+            </AlertTitle>
           </Alert>
         ) : null}
         <Button
@@ -165,9 +270,19 @@ export default function SigninForm({ InitialFocusRef }) {
           _hover={{
             bg: "#60a5fa",
           }}
-          isLoading={loading}
+          isDisabled={signInLoading}
         >
-          Login
+          {signInLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Login"
+          )}
         </Button>
       </form>
     </Flex>

@@ -1,29 +1,33 @@
 "use client";
 
-import { Box, Flex, IconButton, useColorMode } from "@chakra-ui/react";
-import {
-  CustomMoonIcon,
-  CustomSunIcon,
-} from "../../../Icons/Components/IconComponents";
+import { Box, Button, Flex, IconButton, useColorMode } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 
 const LightSwitch = () => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const switchKey = colorMode === "light" ? "light" : "dark"; // Dinamik bir key oluşturun
+
   return (
-    <Flex>
-      <IconButton
+    <Box>
+      <Button
+        key={switchKey}
         mr="2"
         onClick={toggleColorMode}
         aria-label="Change theme"
-        icon={
-          colorMode === "light" ? (
-            <Icon icon="line-md:sun-rising-loop" width="24" height="24" />
-          ) : (
-            <Icon icon="line-md:moon-filled-loop" width="24" height="24" />
-          )
+      >
+        {
+          <Icon
+            icon={
+              colorMode === "light"
+                ? "line-md:moon-filled-to-sunny-filled-loop-transition"
+                : "line-md:moon-filled-alt-loop"
+            }
+            width="24"
+            height="24"
+          />
         }
-      />{" "}
-    </Flex>
+      </Button>
+    </Box>
   );
 };
 

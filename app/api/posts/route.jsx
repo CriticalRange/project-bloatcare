@@ -1,31 +1,23 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-const db = require("../db");
-const sql = require("mssql");
 
+const db = require("../db");
+
+// GET Request for posts api
 export async function GET(req) {
   try {
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
-    const postSearchResult = await pool.request().query`SELECT [post_id]
-    ,[createdAt]
-    ,[creatorImage]
-    ,[numberOfLikes]
-    ,[creatorId]
-    ,[description]
-    ,[numberOfDislikes]
-    ,[communityId]
-    ,[title]
-    ,[creatorDisplayName]
-    ,[numberOfComments]
+    // Queries all the posts (should be changed later or maybe completely removed)
+    const postSearchResult = await pool.request().query`SELECT *
     FROM [dbo].[posts]`;
 
-    pool.close();
-
+    // Map the recordsets and return it all to user
     const mappedRecordset = postSearchResult.recordset.map(
       (recordset, index) => {
         return {
-          Post_Id: recordset.Post_Id,
+          postId: recordset.postId,
           createdAt: recordset.createdAt,
           creatorImage: recordset.creatorImage,
           numberOfLikes: recordset.numberOfLikes,
@@ -39,6 +31,7 @@ export async function GET(req) {
         };
       }
     );
+
     return NextResponse.json(mappedRecordset, {
       status: 200,
     });
@@ -52,22 +45,26 @@ export async function GET(req) {
   }
 }
 
+// POST Request for posts api
 export async function POST(req) {
   const res = await req.json();
 
   try {
+    // @ts-ignore Connect to server
     const pool = await db.connect();
-    const tableName = "posts";
 
-    const newPostId = uuidv4();
+    // Uid
+    const newPostId = `post_${uuidv4()}`;
+
+    // Date
     const now = new Date();
-    const utcMilllisecondsSinceEpoch =
-      now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-    const utcSecondsSinceEpoch = Math.round(utcMilllisecondsSinceEpoch / 1000);
-    const postRequest = [
+    const dateGetter = new Date(now.getTime());
+
+    // Get all the requests into an array
+    const postCreateRequest = [
       {
-        post_id: newPostId,
-        createdAt: utcSecondsSinceEpoch,
+        postId: newPostId,
+        createdAt: dateGetter,
         creatorImage: res.creatorImage,
         numberOfLikes: 0,
         creatorId: res.creatorId,
@@ -76,18 +73,18 @@ export async function POST(req) {
         communityId: res.communityId,
         title: res.title,
         creatorDisplayName: res.creatorDisplayName,
-        numberOfComments: res.numberOfComments,
+        numberOfComments: 0,
       },
     ];
 
-    // JSON dizisindeki her öğeyi tabloya ekleyin
-    postRequest.forEach(async (item) => {
-      const query = `
-        INSERT INTO ${tableName} (post_id, createdAt, creatorImage, numberOfLikes, creatorId, description, numberOfDislikes, communityId, title, creatorDisplayName, numberOfComments)
-        VALUES ('${item.post_id}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
+    // Add everything inside the array above to query and run the query
+    postCreateRequest.forEach(async (item) => {
+      const postCreateQuery = `
+        INSERT INTO [posts] (postId, createdAt, creatorImage, numberOfLikes, creatorId, description, numberOfDislikes, communityId, title, creatorDisplayName, numberOfComments)
+        VALUES ('${item.postId}', '${item.createdAt}', '${item.creatorImage}', ${item.numberOfLikes}, '${item.creatorId}', '${item.description}', ${item.numberOfDislikes}, '${item.communityId}', '${item.title}', '${item.creatorDisplayName}', '${item.numberOfComments}')
       `;
-      // Sorguyu çalıştırın
-      await pool.query(query);
+      // Run the query
+      await pool.query(postCreateQuery);
     });
 
     return NextResponse.json(
@@ -108,14 +105,17 @@ export async function POST(req) {
   }
 }
 
+// DELETE Request for posts api
 export async function DELETE(req) {
-  const url = new URL(req.url);
-  const postId = url.searchParams.get("postId");
+  const res = await req.json();
+  const { postId } = res;
 
   try {
+    // @ts-ignore Connect to server
     const pool = await db.connect();
 
-    const deleteQuery = `DELETE FROM posts WHERE [post_id] = '${postId}'`;
+    // Run the query that deletes the post with the postId
+    const deleteQuery = `DELETE FROM posts WHERE [postId] = '${postId}'`;
     await pool.query(deleteQuery);
 
     return NextResponse.json(
@@ -123,7 +123,7 @@ export async function DELETE(req) {
         success: "true",
       },
       {
-        status: 200,
+        status: 202,
       }
     );
   } catch (err) {

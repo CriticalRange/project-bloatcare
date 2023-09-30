@@ -15,17 +15,21 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { useResetRecoilState } from "recoil";
-import { CustomUserEmptyIcon } from "../../../Icons/Components/IconComponents";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import {
+  CustomExitIcon,
+  CustomUserEmptyIcon,
+  CustomUserSettingsIcon,
+} from "../../../Icons/Components/IconComponents";
 import { communitiesAtom } from "../../../atoms/communitiesAtom";
-import { auth } from "../../../firebase/clientApp";
+import Cookies from "js-cookie";
+import { userAtom } from "../../../atoms/authAtom";
 
 export default function NavbarProfile() {
   const resetCommunityState = useResetRecoilState(communitiesAtom);
   const toast = useToast();
-  const [user, userLoading, userError] = useAuthState(auth);
-  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
+  const resetUserInfo = useResetRecoilState(userAtom);
 
   return (
     <Flex mr="2">
@@ -37,9 +41,6 @@ export default function NavbarProfile() {
           _dark={{
             textColor: "white",
           }}
-          icon={
-            user?.photoURL === null ? <CustomUserEmptyIcon w="8" h="8" /> : null
-          }
           textOverflow="ellipsis"
         >
           <Stack gap={2} align="center" direction="row" mx="3">
@@ -50,10 +51,10 @@ export default function NavbarProfile() {
                 maxWidth="100"
                 className="notranslate"
               >
-                {user?.displayName}
+                {userInfo.Display_Name}
               </Text>
             </Hide>
-            <Avatar src={user?.photoURL !== null ? user.photoURL : ""} />
+            <Avatar src={`${userInfo.Photo_Url}`} />
           </Stack>
         </MenuButton>
         <MenuList bg="white" _dark={{ bg: "black" }}>
@@ -64,16 +65,42 @@ export default function NavbarProfile() {
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
             >
-              Account
+              <Flex direction="row" align="center">
+                <Avatar
+                  icon={
+                    <CustomUserSettingsIcon
+                      color="black"
+                      _dark={{ color: "white" }}
+                    />
+                  }
+                  w="8"
+                  h="8"
+                  backgroundColor="transparent"
+                />
+                <Text ml="2">Account</Text>
+              </Flex>
             </MenuItem>
           </Link>
-          <Link href="/profile">
+          <Link href={`/profile/${userInfo.Display_Name}`}>
             <MenuItem
               bg="white"
               textColor="black"
               _dark={{ bg: "black", textColor: "white" }}
             >
-              Profile
+              <Flex direction="row" align="center">
+                <Avatar
+                  icon={
+                    <CustomUserEmptyIcon
+                      color="black"
+                      _dark={{ color: "white" }}
+                    />
+                  }
+                  w="8"
+                  h="8"
+                  backgroundColor="transparent"
+                />
+                <Text ml="2">Profile</Text>
+              </Flex>
             </MenuItem>
           </Link>
           <MenuItem
@@ -81,9 +108,17 @@ export default function NavbarProfile() {
             textColor="black"
             _dark={{ bg: "black", textColor: "white" }}
             onClick={async () => {
-              await signOut();
               document.cookie = "";
+              Cookies.remove("accessToken");
+              Cookies.remove("refreshToken");
+              localStorage.removeItem("tempCommunities");
               resetCommunityState;
+              resetUserInfo;
+              setUserInfo((prev) => ({
+                ...prev,
+                authenticated: false,
+                authType: "",
+              }));
               toast({
                 title: "Successfully logged out!.",
                 description: "Logged out of your account.",
@@ -94,7 +129,17 @@ export default function NavbarProfile() {
               });
             }}
           >
-            Sign out
+            <Flex direction="row" align="center">
+              <Avatar
+                icon={
+                  <CustomExitIcon color="black" _dark={{ color: "white" }} />
+                }
+                w="8"
+                h="8"
+                backgroundColor="transparent"
+              />
+              <Text ml="2">Sign out</Text>
+            </Flex>
           </MenuItem>
         </MenuList>
       </Menu>

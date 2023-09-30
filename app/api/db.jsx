@@ -1,39 +1,55 @@
-// db.js
+// Database connections page
 
 const sql = require("mssql");
 
+// SQL Server config resides here
 export const sqlConfig = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_NAME,
-  database: "bloatcare",
+  user: process.env.NEXT_PUBLIC_DB_USERNAME,
+  password: process.env.NEXT_PUBLIC_DB_PASSWORD,
+  server: process.env.NEXT_PUBLIC_DB_ADDRESS,
+  database: "BloatCare",
   pool: {
-    max: 10,
+    max: 20,
     min: 0,
-    idleTimeoutMillis: 30000,
+    idleTimeoutMillis: 50000,
   },
   options: {
     port: 1433,
-    encrypt: true, // for azure
+    encrypt: false, // if azure is used again, change this to true
     trustServerCertificate: true, // change to true for local dev / self-signed certs
   },
 };
 
-// Bağlantı havuzunu oluştur
+export const accessSecret = new TextEncoder().encode(
+  `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
+);
+
+export const refreshSecret = new TextEncoder().encode(
+  `${process.env.NEXT_PUBLIC_JWT_REFRESH_SECRET_KEY}`
+);
+
+export const accessAlg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+
+export const refreshAlg = process.env.NEXT_PUBLIC_REFRESH_JWT_ALGORITHM;
+
+// Create the connection pool
 const pool = new sql.ConnectionPool(sqlConfig);
 
-// Bağlantıyı aç ve bağlantı havuzunu döndür
+// Connect and return the connection pool
 async function connect() {
   try {
     await pool.connect();
-    console.log("Veritabanına başarıyla bağlandı.");
     return pool;
   } catch (err) {
-    console.error("Bağlantı hatası:", err);
+    console.error("Connection error:", err);
     throw err;
   }
 }
 
 module.exports = {
   connect,
+  accessSecret,
+  refreshSecret,
+  accessAlg,
+  refreshAlg,
 };

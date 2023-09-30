@@ -1,12 +1,12 @@
 "use client";
 
 import { Flex } from "@chakra-ui/react";
-import NewPostsForm from "../Posts/Forms/NewPostsForm";
-import NewPostHeader from "../Posts/Forms/NewPostHeader";
-import NewPostTabs from "../Posts/Forms/NewPostTabs";
+import NewPostsForm from "../../Posts/New/Forms/NewPostsForm";
+import NewPostHeader from "../../Posts/New/Forms/NewPostHeader";
+import NewPostTabs from "../../Posts/New/Forms/NewPostTabs";
 import { useRecoilState } from "recoil";
 import { createPostTabAtom } from "../../atoms/postsAtom.jsx";
-import NewPostsMedia from "../Posts/Forms/NewPostsMedia";
+import NewPostsMedia from "../../Posts/New/Forms/NewPostsMedia";
 
 const NewCommunityPost = () => {
   const [selectedTab, setSelectedTab] = useRecoilState(createPostTabAtom);

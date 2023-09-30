@@ -18,37 +18,19 @@ import {
   CustomThumbsUpIcon,
   CustomThumbsUpOutlineIcon,
 } from "../../../Icons/Components/IconComponents";
-import { doc, getDoc } from "firebase/firestore";
 import { useDebouncedCallback } from "use-debounce";
-import { auth, firestore } from "../../../firebase/clientApp";
 import { useRecoilState } from "recoil";
 import { postModalAtom } from "../../../atoms/postsAtom";
-import useMainPosts from "../../../../hooks/Posts/useMainPosts";
 import { authModalAtom } from "../../../atoms/modalAtoms";
-import { useAuthState } from "react-firebase-hooks/auth";
 import moment from "moment";
+import { userAtom } from "../../../atoms/authAtom";
 
 const CommentCards = ({ commentInfo }) => {
-  const {
-    getPostsLogin,
-    getPostsNoLogin,
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-    loading,
-    hasMore,
-    setHasMore,
-    isLiked,
-    isDisliked,
-  } = useMainPosts();
   const [postModal, setPostModal] = useRecoilState(postModalAtom);
   const [currentLikeStatus, setCurrentLikeStatus] = useState(
     postModal.postInfo.numberOfLikes
   );
-  const [user] = useAuthState(auth);
+  const [user, setUser] = useRecoilState(userAtom);
   const [authModal, setAuthModal] = useRecoilState(authModalAtom);
   const toast = useToast();
   const [currentDislikeStatus, setCurrentDislikeStatus] = useState(
@@ -57,158 +39,6 @@ const CommentCards = ({ commentInfo }) => {
   const [isLikedLocal, setIsLikedLocal] = useState(false);
   const [isDislikedLocal, setIsDislikedLocal] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
-
-  const debouncedLike = useDebouncedCallback(async () => {
-    const success = await onLikePost(
-      postModal.postInfo,
-      isLikedLocal,
-      isDislikedLocal
-    );
-    if (!success) {
-      setIsLikedLocal(isLikedLocal);
-      setLikeLoading(false);
-      setCurrentLikeStatus(currentLikeStatus);
-      toast({
-        title: `There was an error while ${
-          isLiked ? "removing the like" : "adding a like"
-        }`,
-        description: "Please try again",
-        status: "error",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-      throw new Error("There was an error while liking the post");
-    }
-  }, 1000);
-
-  const handleDelete = async () => {
-    try {
-      const success = await onDeletePost(postModal.postInfo);
-      if (!success) {
-        throw new Error("There was an error while deleting the post");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleLike = async () => {
-    try {
-      setLikeLoading(true);
-      if (!user) {
-        setAuthModal((prev) => ({
-          ...prev,
-          openAuthModal: true,
-        }));
-        toast({
-          title: "You are not logged in!",
-          description: "You are not allowed to like posts unless you log in",
-          status: "error",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        setLikeLoading(false);
-        return;
-      }
-      setIsLikedLocal(!isLikedLocal);
-      setIsDislikedLocal(false);
-      setCurrentDislikeStatus(
-        isDislikedLocal ? currentDislikeStatus - 1 : currentDislikeStatus
-      );
-      setCurrentLikeStatus(
-        isLikedLocal === false ? currentLikeStatus + 1 : currentLikeStatus - 1
-      );
-      debouncedLike();
-      setLikeLoading(false);
-      toast({
-        title: `Successfully ${isLikedLocal ? "removed like" : "added like"}`,
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDislike = async () => {
-    try {
-      setLikeLoading(true);
-      if (!user) {
-        setAuthModal((prev) => ({
-          ...prev,
-          openAuthModal: true,
-        }));
-        toast({
-          title: "You are not logged in!",
-          description: "You are not allowed to dislike posts unless you log in",
-          status: "error",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        return;
-      }
-      setIsDislikedLocal(!isDislikedLocal);
-      setIsLikedLocal(false);
-      setCurrentLikeStatus(isLiked ? currentLikeStatus - 1 : currentLikeStatus);
-      setCurrentDislikeStatus(
-        isDislikedLocal === false
-          ? currentDislikeStatus + 1
-          : currentDislikeStatus - 1
-      );
-      const success = await onDislikePost(postModal.postInfo);
-      if (!success) {
-        setIsDislikedLocal(isDislikedLocal);
-        setLikeLoading(false);
-        setCurrentDislikeStatus(currentDislikeStatus);
-        toast({
-          title: `There was an error while ${
-            isDisliked ? "removing the dislike" : "adding a dislike"
-          }`,
-          description: "Please try again",
-          status: "error",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-        throw new Error("There was an error while disliking the post");
-      }
-      setLikeLoading(false);
-      toast({
-        title: `Successfully ${
-          isDislikedLocal ? "removed dislike" : "added dislike"
-        }`,
-        status: "success",
-        duration: 2500,
-        position: "bottom-left",
-        isClosable: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getCurrentLikeStatus = async () => {
-    const userPostDocRef = doc(
-      firestore,
-      `users/${user?.uid}/postSnippets/${postModal.postInfo.id}`
-    );
-    const userPostDoc = await getDoc(userPostDocRef);
-    if (!userPostDoc.exists()) {
-      console.warn("User post document on getCurrentLikeStatus doesn't exist");
-      return;
-    }
-    setIsLikedLocal(userPostDoc.data().isLiked);
-    setIsDislikedLocal(userPostDoc.data().isDisliked);
-  };
-
-  useEffect(() => {
-    getCurrentLikeStatus();
-  }, []);
 
   return (
     <Flex w="full" boxShadow="0px 1px" my="1">
@@ -239,7 +69,7 @@ const CommentCards = ({ commentInfo }) => {
           <Flex align="center" justify="space-around">
             <IconButton
               isDisabled={likeLoading}
-              onClick={handleLike}
+              /* onClick={handleLike} */
               backgroundColor="transparent"
               _hover={{ backgroundColor: "transparent" }}
               aria-label="Like"
@@ -260,7 +90,7 @@ const CommentCards = ({ commentInfo }) => {
             </Text>
             <IconButton
               isDisabled={likeLoading}
-              onClick={handleDislike}
+              /* onClick={handleDislike} */
               ml="2"
               backgroundColor="transparent"
               _hover={{ backgroundColor: "transparent" }}

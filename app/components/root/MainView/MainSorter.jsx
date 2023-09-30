@@ -14,39 +14,45 @@ import {
 import { CustomRefreshIcon } from "../../Icons/Components/IconComponents";
 import CustomSortAzSvg from "../../Icons/Custom/CustomIcons/CustomSortAzSvg";
 import CustomSortZaSvg from "../../Icons/Custom/CustomIcons/CustomSortZaSvg";
-import useMainPosts from "../../../hooks/Posts/useMainPosts";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../../atoms/authAtom";
+import usePostInfo from "../../hooks/Posts/usePostInfo";
+import { postsState } from "../../atoms/postsAtom";
 
 const MainSorter = () => {
-  const {
-    getPostsLogin,
-    getPostsNoLogin,
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-    loading,
-    hasMore,
-    setHasMore,
-    isLiked,
-    isDisliked,
-  } = useMainPosts();
-  const [user] = useAuthState(auth);
+  const { getHomePosts } = usePostInfo();
 
-  const refreshMechanism = () => {
-    setPostState((prev) => ({
+  // States
+  const [user, setUser] = useRecoilState(userAtom);
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  const getFirstPosts = async () => {
+    // Getst the posts when page loads
+    setPosts((prev) => ({
       ...prev,
       posts: [],
     }));
-    if (!user) {
-      getPostsNoLogin();
+    // Fetches custom hook
+    const response = await getHomePosts(10, user.authenticated);
+    // We can find out if no community found bu just checking if response is undefined
+    if (response === undefined) {
+      setPosts((prev) => ({
+        isEmpty: true,
+        posts: [],
+        selectedPost: null,
+        isLoaded: true,
+      }));
       return;
     }
-    getPostsLogin();
+    // Update the posts atom with the new posts
+    setPosts((prev) => ({
+      isEmpty: false,
+      posts: [...prev.posts, ...response],
+      selectedPost: null,
+      isLoaded: true,
+    }));
   };
+
   return (
     <Flex
       borderRadius="5px"
@@ -56,7 +62,7 @@ const MainSorter = () => {
       alignItems="center"
       justify="flex-end"
     >
-      <Button mr="2" aria-label="refresh button" onClick={refreshMechanism}>
+      <Button mr="2" aria-label="refresh button" onClick={getFirstPosts}>
         {" "}
         <Icon as={CustomRefreshIcon} w="8" h="10" />
       </Button>

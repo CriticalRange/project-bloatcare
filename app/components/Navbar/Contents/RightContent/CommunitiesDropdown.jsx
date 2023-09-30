@@ -1,6 +1,5 @@
 "use client";
 
-import { Link } from "@chakra-ui/next-js";
 import {
   Avatar,
   Button,
@@ -16,9 +15,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import useCommunities from "../../../../hooks/Communities/useCommunities";
 import CustomAnimatedUserSvg from "../../../Icons/Custom/CustomAnimatedIcons/CustomAnimatedUserSvg";
 import {
   CustomAddCommunityIcon,
@@ -30,33 +27,23 @@ import {
   authModalAtom,
   createCommunityModalAtom,
 } from "../../../atoms/modalAtoms";
-import { auth } from "../../../firebase/clientApp";
+import { userAtom } from "../../../atoms/authAtom";
+import { Link } from "@chakra-ui/next-js";
 
 const CommunitiesDropdown = () => {
   const toast = useToast();
+
+  // Next navigation
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
 
-  const [user] = useAuthState(auth);
-
-  const redirectToNewPostPage = () => {
-    const currentUrl = pathname;
-    if (currentUrl !== `/communities/${params.communityId}`) {
-      console.log("Please make a decent posts selection page");
-      // Make a decent posts selection page later
-      return;
-    }
-
-    const postsUrl = `/communities/${communityData.communityId}/new`;
-    router.push(postsUrl);
-  };
-
+  // States
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [authModalState, setAuthModalState] = useRecoilState(authModalAtom);
   const [createCommunityModal, setCreateCommunityModal] = useRecoilState(
     createCommunityModalAtom
   );
-  const { communityData } = useCommunities();
 
   return (
     <Flex mr="2">
@@ -76,47 +63,54 @@ const CommunitiesDropdown = () => {
         >
           <MenuGroup title="Communities">
             <MenuList
-              overflow={user ? "scroll" : "hidden"}
+              overflow={userInfo.authenticated === true ? "scroll" : "hidden"}
               overflowX="hidden"
               bg="white"
-              h={user ? "300" : "inherit"}
+              h={userInfo.authenticated === true ? "300" : "inherit"}
               _dark={{ bg: "black" }}
             >
-              {user ? (
-                communityData.userSnippets.length !== 0 ? (
-                  communityData.userSnippets.map((snippet) => {
-                    if (snippet.isJoined === true) {
-                      return (
-                        <Link
-                          display={user ? "block" : "none"}
-                          key={snippet.communityId}
-                          href={`/communities/${snippet.communityId}`}
-                        >
-                          <MenuItem
-                            bg="white"
-                            textColor="black"
-                            _dark={{ bg: "black", textColor: "white" }}
-                          >
-                            <Avatar
-                              icon={
-                                <Icon
-                                  as={CustomAnimatedUserSvg}
-                                  color="black"
-                                  _dark={{ color: "white" }}
-                                  w="8"
-                                  h="8"
-                                />
-                              }
-                              bg="transparent"
-                              size="sm"
+              {userInfo.authenticated === true ? (
+                userInfo.Communities.map((community) => {
+                  if (community.name === undefined) {
+                    return;
+                  }
+                  if (community.id === "Unknown") {
+                    return;
+                  }
+                  if (community.isJoined === false) {
+                    return;
+                  }
+                  return (
+                    <Link
+                      display={
+                        userInfo.authenticated === true ? "block" : "none"
+                      }
+                      key={`${community.name}-${community.id}`}
+                      href={`/communities/${community.name}`}
+                    >
+                      <MenuItem
+                        bg="white"
+                        textColor="black"
+                        _dark={{ bg: "black", textColor: "white" }}
+                      >
+                        <Avatar
+                          icon={
+                            <Icon
+                              as={CustomAnimatedUserSvg}
+                              color="black"
+                              _dark={{ color: "white" }}
+                              w="8"
+                              h="8"
                             />
-                            <Text ml="3">{snippet.communityId}</Text>
-                          </MenuItem>
-                        </Link>
-                      );
-                    }
-                  })
-                ) : null
+                          }
+                          bg="transparent"
+                          size="sm"
+                        />
+                        <Text ml="3">{community.name}</Text>
+                      </MenuItem>
+                    </Link>
+                  );
+                })
               ) : (
                 <MenuItem
                   bg="white"
@@ -129,12 +123,7 @@ const CommunitiesDropdown = () => {
                     });
                   }}
                 >
-                  <Flex
-                    h="10"
-                    align="center"
-                    borderRadius="md"
-                    bg="gray.300"
-                  >
+                  <Flex h="10" align="center" borderRadius="md" bg="#1e40af">
                     <Text
                       fontSize="md"
                       fontWeight="semibold"
@@ -148,7 +137,6 @@ const CommunitiesDropdown = () => {
               )}
             </MenuList>
           </MenuGroup>
-          <MenuDivider />
           <MenuGroup title="Create">
             <MenuItem
               bg="white"
@@ -156,9 +144,7 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black", textColor: "white" }}
               icon={<CustomAnimatedDescriptionIcon w="8" h="8" />}
               onClick={() => {
-                if (user) {
-                  redirectToNewPostPage();
-                } else {
+                if (!userInfo.authenticated) {
                   {
                     setAuthModalState({
                       openAuthModal: true,
@@ -174,6 +160,8 @@ const CommunitiesDropdown = () => {
                       isClosable: true,
                     });
                   }
+                } else {
+                  router.push(`/communities/${params.communityId}/new`);
                 }
               }}
             >
@@ -185,7 +173,7 @@ const CommunitiesDropdown = () => {
               _dark={{ bg: "black", textColor: "white" }}
               icon={<CustomAddCommunityIcon w="8" h="8" />}
               onClick={() => {
-                if (user) {
+                if (userInfo.authenticated) {
                   setCreateCommunityModal((prev) => ({
                     ...prev,
                     openCreateCommunityModal: true,

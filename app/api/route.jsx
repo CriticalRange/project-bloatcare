@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
 const db = require("./db");
 
-export async function GET(req, res) {
+// GET Function for /api
+export async function GET(req) {
   try {
+    // @ts-ignore Start the server
     const pool = await db.connect();
-    pool.close();
-    return new NextResponse("API is operational", {
-      status: 200,
-    });
+
+    return new NextResponse(
+      "API is operational, documentation is here: https://app.swaggerhub.com/apis/CriticalRange/BloatCareApi/1.0.0",
+      {
+        status: 200,
+      }
+    );
   } catch (err) {
     console.warn(err);
     return new NextResponse(err, {
-      status: 500,
+      status: 400,
     });
   }
 }

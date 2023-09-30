@@ -1,103 +1,52 @@
 "use client";
 
+import { Box } from "@chakra-ui/react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { communitiesAtom } from "../../components/atoms/communitiesAtom";
-import CommunityHeader from "../../components/Community/CommunityHeader/CommunityHeader";
-import { auth, firestore } from "../../components/firebase/clientApp";
 import CommunityBody from "../../components/Community/CommunityBody/CommunityBody";
-import { useParams } from "next/navigation";
-import { Box, Button, Center, Flex, Text, useToast } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import CommunitySettingsModal from "../../components/Modal/Community/Settings/CommunitySettingsModal";
-import {
-  authModalAtom,
-  createCommunityModalAtom,
-} from "../../components/atoms/modalAtoms";
-import { useAuthState } from "react-firebase-hooks/auth";
+import CommunityHeader from "../../components/Community/CommunityHeader/CommunityHeader";
+import { communitiesAtom } from "../../components/atoms/communitiesAtom";
+import CommunityPageLoading from "../Loading/Communities/CommunityPage/CommunityPageLoading";
+import useCommunityInfo from "../hooks/Community/useCommunityInfo";
+import { postsState } from "../atoms/postsAtom";
 
 const Community = () => {
-  const toast = useToast();
-  const [user] = useAuthState(auth);
-  const router = useRouter();
-  const [communityDataState, setCommunityDataState] =
-    useRecoilState(communitiesAtom);
-  const [pageLoaded, setPageLoaded] = useState(false);
-  const [communityDataExists, setCommunityDataExists] = useState("unknown");
-  const [communityCreateModal, setCreateCommunityModal] = useRecoilState(
-    createCommunityModalAtom
-  );
-  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const { fetchCommunityInfo } = useCommunityInfo();
   const params = useParams();
   const communityIdParam = params.communityId;
 
-  const getCommunityDocuments = async () => {
-    try {
-      const { doc, getDoc } = await import("firebase/firestore");
-      const communityDocRef = doc(firestore, "communities", communityIdParam);
-      const communityDoc = await getDoc(communityDocRef);
-      if (communityDoc.exists()) {
-        setCommunityDataState((prev) => ({
-          ...prev,
-          communityId: communityIdParam,
-          userSnippets: [...prev.userSnippets, communityDoc.data()],
-        }));
-        setCommunityDataExists("yes");
-        return;
-      } else {
-        setCommunityDataExists("no");
-      }
-    } catch (error) {
-      console.log(error);
+  // States
+  const [communityData, setCommunityData] = useRecoilState(communitiesAtom);
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  const getCommunityInfo = async () => {
+    // Fetches custom hook
+    const response = await fetchCommunityInfo(communityIdParam);
+    // We can find out if no community found bu just checking if response is undefined
+    if (response === undefined) {
+      return;
     }
+    // Update the community data with the new community info
+    setCommunityData({
+      CommunityCreatedAt: response.CommunityCreatedAt,
+      CommunityDescription: response.CommunityDescription,
+      CommunityId: response.CommunityId,
+      CommunityName: response.CommunityName,
+      CommunityType: response.CommunityType,
+      communityLoaded: true,
+    });
   };
 
+  // Runs for one time when page loads
   useEffect(() => {
-    getCommunityDocuments();
-    setPageLoaded(true);
+    getCommunityInfo();
   }, []);
 
   return (
-    <Box bgColor="gray.300">
-      {pageLoaded && communityDataExists === "no" ? (
-        <Flex my="10" direction="column">
-          <Text fontSize="3xl" fontWeight="semibold">
-            No community called {communityIdParam} is created yet!
-          </Text>
-
-          <Button
-            aria-label="Create One button"
-            onClick={() =>
-              user
-                ? setCreateCommunityModal((prev) => ({
-                    ...prev,
-                    openCreateCommunityModal: true,
-                    defaultTitle: `${communityIdParam}`,
-                  }))
-                : (setAuthModal((prev) => ({
-                    ...prev,
-                    openAuthModal: true,
-                  })),
-                  toast({
-                    title: "You are not logged in!",
-                    description:
-                      "You are not allowed to create communities unless you log in",
-                    status: "error",
-                    duration: 2500,
-                    position: "bottom-left",
-                    isClosable: true,
-                  }))
-            }
-          >
-            Create One
-          </Button>
-        </Flex>
-      ) : pageLoaded && communityDataExists === "yes" ? (
-        <>
-          <CommunityHeader />
-          <CommunityBody />
-        </>
-      ) : null}
+    <Box>
+      <CommunityHeader />
+      <CommunityBody />
     </Box>
   );
 };

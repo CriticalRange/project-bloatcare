@@ -2,12 +2,11 @@
 
 import { SearchIcon } from "@chakra-ui/icons";
 import {
-  InputGroup,
+  Flex,
   Input,
+  InputGroup,
   InputLeftElement,
   useBreakpointValue,
-  Box,
-  Flex,
 } from "@chakra-ui/react";
 
 const SearchInput = () => {
@@ -22,6 +21,7 @@ const SearchInput = () => {
           <SearchIcon color="gray.300" />
         </InputLeftElement>
         <Input
+          name="CommunitiesSearch"
           type="search"
           _placeholder={{
             color: "gray.500",

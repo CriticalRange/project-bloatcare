@@ -1,16 +1,46 @@
 import { NextResponse } from "next/server";
 
-export async function GET(req, res) {
-  return NextResponse.json(
-    {
-      warning: {
-        code: "requires_username",
-        message:
-          "Please provide the Username to get the information. Example: /api/usernames/cooly",
-      },
-    },
-    {
-      status: 303,
+const db = require("../db");
+
+// POST Request for usernames api
+export async function POST(req) {
+  const res = await req.json();
+  // Get the Username from request body
+  const { Username } = res;
+  try {
+    // @ts-ignore Connect to server
+    const pool = await db.connect();
+
+    // Queries availability of the current Username
+    const userSearchResult = await pool.request().query`SELECT [Display_Name]
+      FROM [dbo].[users]
+      WHERE [Display_Name] = ${Username}`;
+
+    if (userSearchResult.recordset[0] === undefined) {
+      return NextResponse.json(
+        {
+          available: true,
+        },
+        {
+          status: 200,
+        }
+      );
     }
-  );
+
+    return NextResponse.json(
+      {
+        available: false,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      { error: { message: `${err}` } },
+      {
+        status: 400,
+      }
+    );
+  }
 }

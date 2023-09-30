@@ -1,112 +1,105 @@
-import { Flex, Button, Text } from "@chakra-ui/react";
-import dynamic from "next/dynamic";
+"use client";
+
+import { Box } from "@chakra-ui/react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import CommunityLoadingCard from "../../Community/CommunityBody/CommunityLoadingCard";
-import useMainPosts from "../../../hooks/Posts/useMainPosts";
-import useCommunityData from "../../../hooks/Communities/useCommunityData";
-import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
-import { authModalAtom } from "../../atoms/modalAtoms";
-import { auth } from "../../firebase/clientApp";
+import PostCardLoading from "../../Loading/Posts/Cards/PostCardLoading";
+import PostCards from "../../Posts/Card/PostCard";
+import { userAtom } from "../../atoms/authAtom";
+import { postsState } from "../../atoms/postsAtom";
+import usePostInfo from "../../hooks/Posts/usePostInfo";
+import MainSorter from "./MainSorter";
 
-const MainPostPage = () => {
-  const [user] = useAuthState(auth);
-  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
-  const { communityData, onJoinOrLeaveCommunity, communityLoading } =
-    useCommunityData();
-  const {
-    getPostsLogin,
-    getPostsNoLogin,
-    postState,
-    setPostState,
-    onSelectPost,
-    onDeletePost,
-    onLikePost,
-    onDislikePost,
-    loading,
-    hasMore,
-    setHasMore,
-    isLiked,
-    isDisliked,
-  } = useMainPosts();
+const MainPostsPage = () => {
+  const { getHomePosts } = usePostInfo();
+  const params = useParams();
+  const communityIdParam = params.communityId;
 
-  useEffect(() => {
-    setPostState((prev) => ({
+  // States
+  const [user, setUser] = useRecoilState(userAtom);
+  const [communityExists, setCommunityExists] = useState("unknown");
+  const [posts, setPosts] = useRecoilState(postsState);
+
+  const getFirstPosts = async () => {
+    // Getst the posts when page loads
+    setPosts((prev) => ({
       ...prev,
       posts: [],
     }));
-    if (!user) {
-      getPostsNoLogin();
+    // Fetches custom hook
+    const response = await getHomePosts(10, user.authenticated);
+    // We can find out if no community found bu just checking if response is undefined
+    if (response === undefined) {
+      setPosts((prev) => ({
+        isEmpty: true,
+        posts: [],
+        selectedPost: null,
+        isLoaded: true,
+      }));
       return;
     }
-    getPostsLogin();
-  }, [user]);
-
-  const fetchMoreData = () => {
-    if (!user) {
-      getPostsNoLogin().then(() => {
-        // Check if there are more posts to fetch, if not, set hasMore to false
-        // This will disable further loading
-        if (postState.posts?.length === 0) {
-          setHasMore(false);
-        }
-      });
-      return;
-    }
-    getPostsLogin().then(() => {
-      if (postState.posts?.length === 0) {
-        setHasMore(false);
-      }
-    });
+    // Update the posts atom with the new posts
+    setPosts((prev) => ({
+      isEmpty: false,
+      posts: [...prev.posts, ...response],
+      selectedPost: null,
+      isLoaded: true,
+    }));
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }; // scroll to top button action
-  return (
-    <InfiniteScroll
-      dataLength={postState.posts?.length || 0}
-      next={fetchMoreData}
-      hasMore={hasMore}
-      loader={loading && <CommunityLoadingCard />}
-      endMessage={
-        !loading &&
-        postState.posts &&
-        postState.posts?.length !== 0 && (
-          <Flex direction="column" justify="center" align="center">
-            <Text fontSize="3xl" my="2">
-              Looks like no more post left.
-            </Text>
-            <Button aria-label="go up button" onClick={scrollToTop}>
-              Go up
-            </Button>
-          </Flex>
-        )
-      }
-    >
-      {postState.posts?.length === 0 && !loading && !hasMore && (
-        <Flex direction="column" justify="center" align="center">
-          <Text fontSize="3xl" my="2">
-            Looks like there are no posts yet.
-          </Text>
-          <Button aria-label="create one button">Create one</Button>
-        </Flex>
-      )}
+  const getNewPosts = async () => {
+    // Fetches whenever user scrolls deep enough
+    const response = await getHomePosts(10, user.authenticated);
+    // We can find out if no community found bu just checking if response is undefined
+    if (response === undefined) {
+      setPosts((prev) => ({
+        isEmpty: true,
+        posts: [],
+        selectedPost: null,
+        isLoaded: true,
+      }));
+      return;
+    }
+    // Update the posts atom with the new posts
+    setPosts((prev) => ({
+      isEmpty: false,
+      posts: [...prev.posts, ...response],
+      selectedPost: null,
+      isLoaded: true,
+    }));
+  };
 
-      {postState.posts?.map((post, index) => {
-        const DynamicMainCards = dynamic(() => import("./MainCards"), {
-          loading: () => <CommunityLoadingCard />,
-        });
-        // Generate a unique key for each post using post.id and communityData.communityId
-        const uniqueKey = `${post.id}-${communityData.communityId}-${post.createdAt.seconds}-${index}`;
-        return <DynamicMainCards key={uniqueKey} post={post} />;
-      })}
-    </InfiniteScroll>
+  // Runs for one time when page loads
+  useEffect(() => {
+    getFirstPosts();
+  }, []);
+
+  return (
+    <>
+      {!posts.isLoaded ? (
+        <PostCardLoading />
+      ) : (
+        <>
+          <MainSorter />
+          <InfiniteScroll
+            dataLength={posts.posts.length}
+            next={getNewPosts}
+            hasMore={true}
+            loader={<PostCardLoading />}
+          >
+            {posts.posts.map((post, index) => (
+              <PostCards
+                key={`${post.postId}-${post.createdAt}-${index}`}
+                post={post}
+              />
+            ))}
+          </InfiniteScroll>
+        </>
+      )}
+    </>
   );
 };
 
-export default MainPostPage;
+export default MainPostsPage;

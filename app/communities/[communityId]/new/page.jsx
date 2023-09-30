@@ -1,4 +1,3 @@
-import React from "react";
 import NewCommunityPost from "../../../components/Community/New/NewCommunityPost";
 
 const page = () => {

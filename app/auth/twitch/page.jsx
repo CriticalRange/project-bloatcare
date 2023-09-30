@@ -2,14 +2,8 @@
 
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import axios from "axios";
-import {
-  createUserWithEmailAndPassword,
-  fetchSignInMethodsForEmail,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
 import { useEffect, useState } from "react";
-import { auth } from "../../components/firebase/clientApp";
+import { CustomAnimatedLoadingSpinnerIcon } from "../../components/Icons/Components/IconComponents";
 
 const TwitchAuth = ({ searchParams }) => {
   const [twitchOauthPassword, setTwitchOauthPassword] = useState({
@@ -40,7 +34,7 @@ const TwitchAuth = ({ searchParams }) => {
   }, [accountCreatedBefore]);
 
   const TwitchOauthHandler = async () => {
-    try {
+    /* try {
       const tokenResponse = await axios.post(
         twitchTokenURL,
         {
@@ -57,7 +51,6 @@ const TwitchAuth = ({ searchParams }) => {
         }
       );
       const accessToken = tokenResponse.data.access_token;
-      console.log(accessToken);
 
       const userInfoResponse = await axios.get(twitchUserURL, {
         headers: {
@@ -66,7 +59,6 @@ const TwitchAuth = ({ searchParams }) => {
         },
       });
       const userData = userInfoResponse.data.data[0];
-      console.log("User data: ", userData.email);
       await fetchSignInMethodsForEmail(auth, `twitch.${userData.email}`)
         .then(async (signInMethods) => {
           if (signInMethods.length === 0) {
@@ -90,10 +82,10 @@ const TwitchAuth = ({ searchParams }) => {
       });
     } catch (error) {
       console.log(error);
-    }
+    } */
   };
 
-  const onTwitchOauthPasswordChange = (event) => {
+  /* const onTwitchOauthPasswordChange = (event) => {
     const { name, value } = event.target;
     setTwitchOauthPassword((prev) => ({
       ...prev,
@@ -101,10 +93,9 @@ const TwitchAuth = ({ searchParams }) => {
     }));
   };
 
-  const handleTwitchFirebaseAuth = async (event) => {
+  const handleTwitchAuth = async (event) => {
     event.preventDefault();
     setAuthHandlerLoading(true);
-    console.log(userDataState);
     if (
       twitchOauthPassword.twitchOauthPassword !==
         twitchOauthPassword.twitchOauthPasswordAgain ||
@@ -125,7 +116,6 @@ const TwitchAuth = ({ searchParams }) => {
         displayName: userDataState.displayName,
         photoURL: userDataState.avatarUrl,
       });
-      console.log("Current user: ", auth.currentUser);
     } else {
       await createUserWithEmailAndPassword(
         auth,
@@ -139,11 +129,11 @@ const TwitchAuth = ({ searchParams }) => {
     }
     setAuthHandlerLoading(false);
     window.close();
-  };
+  }; */
 
   return (
     <Flex w="90%" h="300" mt="10" mx="5" direction="column">
-      <form onSubmit={handleTwitchFirebaseAuth}>
+      <form /* onSubmit={handleTwitchAuth} */>
         <Text fontSize="2xl">
           For your security, please also{" "}
           {accountCreatedBefore ? "login with your" : "create a"} password.{" "}
@@ -154,7 +144,7 @@ const TwitchAuth = ({ searchParams }) => {
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onTwitchOauthPasswordChange}
+          /* onChange={onTwitchOauthPasswordChange} */
           key="twitchOauthPassword"
           placeholder="Password"
         />
@@ -164,17 +154,27 @@ const TwitchAuth = ({ searchParams }) => {
           onKeyDown={(event) => {
             if (event.code === "Space") event.preventDefault();
           }}
-          onChange={onTwitchOauthPasswordChange}
+          /* onChange={onTwitchOauthPasswordChange} */
           key="twitchOauthPasswordAgain"
           placeholder="Password Again"
         />
         <Button
-          isLoading={authHandlerLoading}
+          isDisabled={authHandlerLoading}
           aria-label="Apply"
           type="submit"
           mt="4"
         >
-          Apply
+          {authHandlerLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Apply"
+          )}
         </Button>
       </form>
     </Flex>

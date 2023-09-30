@@ -39,3 +39,21 @@ export const communitySettingsModalAtom = atom({
     communitySettingsModalView: "unknown",
   },
 });
+
+// Atom that controls email confirmation modal
+export const emailConfirmationModalAtom = atom({
+  key: "emailConfirmationModalAtom",
+  default: {
+    openEmailConfirmationModal: false,
+    emailConfirmationModalView: "unknown",
+  },
+});
+
+// Atom for social onboarding (probably will be removed)
+export const SocialOnboardingModalAtom = atom({
+  key: "SocialOnboardingModalAtom",
+  default: {
+    openSocialOnboardingModal: false,
+    SocialOnboardingModalView: "unknown",
+  },
+});

@@ -1,9 +1,6 @@
 "use client";
 
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Button,
   Flex,
   FormControl,
@@ -16,9 +13,10 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { updateProfile } from "firebase/auth";
+import axios from "axios";
+import * as jose from "jose";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import { useDebouncedCallback } from "use-debounce";
 import {
@@ -26,15 +24,19 @@ import {
   CustomEyeClosed,
   CustomEyeOpen,
 } from "../../../Icons/Components/IconComponents";
-import { passwordCheckerAtom } from "../../../atoms/passwordsAtom";
-import { showPasswordAtom } from "../../../atoms/passwordsAtom";
-import { auth, firestore } from "../../../firebase/clientApp";
-import { FIREBASE_ERRORS } from "../../../firebase/errors";
+import { userAtom } from "../../../atoms/authAtom";
+import {
+  authModalAtom,
+  emailConfirmationModalAtom,
+} from "../../../atoms/modalAtoms";
+import {
+  passwordCheckerAtom,
+  showPasswordAtom,
+} from "../../../atoms/passwordsAtom";
 import ConfirmPasswordChecker from "./Checkers/ConfirmPasswordChecker";
 import PasswordChecker, {
   passwordValidateRegex,
 } from "./Checkers/PasswordChecker";
-import dynamic from "next/dynamic";
 
 export default function SignupForm() {
   const toast = useToast();
@@ -46,6 +48,7 @@ export default function SignupForm() {
     password: "",
     confirmPassword: "",
   });
+  const [createUserLoading, setCreateUserLoading] = useState(false);
   const [isFormValid, setFormValid] = useState(false);
   const [formChecker, setFormChecker] = useState({
     usernameStatus: "unknown",
@@ -54,29 +57,32 @@ export default function SignupForm() {
   });
   const [passwordChecker, setPasswordChecker] =
     useRecoilState(passwordCheckerAtom);
+  const [emailConfirmationModal, setEmailConfirmationModal] = useRecoilState(
+    emailConfirmationModalAtom
+  );
+  const [authModal, setAuthModal] = useRecoilState(authModalAtom);
+  const [userInfo, setUserInfo] = useRecoilState(userAtom);
   const [showPassword, setShowPassword] = useRecoilState(showPasswordAtom);
 
   const debouncedUsername = useDebouncedCallback(async (value) => {
-    const { doc, getDoc, setDoc, updateDoc } = await import(
-      "firebase/firestore"
-    );
     if (value.length != 0) {
-      const usernameDocRef = doc(firestore, "usernames", value);
       setFormChecker((prev) => ({
         ...prev,
         usernameLoading: true,
         usernameInvalid: false,
       }));
-      await getDoc(usernameDocRef)
-        .then((docSnapshot) => {
-          if (docSnapshot.exists()) {
+      axios
+        .post("/api/usernames/", {
+          Username: signupForm.username,
+        })
+        .then((response) => {
+          if (!response.data.available) {
             setFormChecker((prev) => ({
               ...prev,
               usernameLoading: false,
               usernameStatus: "taken",
               usernameInvalid: false,
             }));
-            console.log("Username is taken");
             return;
           } else {
             setFormChecker((prev) => ({
@@ -85,13 +91,11 @@ export default function SignupForm() {
               usernameStatus: "available",
               usernameInvalid: false,
             }));
-            console.log("Username is available");
             return;
           }
         })
         .catch((error) => {
-          console.log("Error checking username: ", error);
-          return;
+          console.log("Error: ", error);
         });
     } else {
       setFormChecker((prev) => ({
@@ -100,10 +104,6 @@ export default function SignupForm() {
       }));
     }
   }, 1000);
-
-  // Firebase auth hook
-  const [createUserWithEmailAndPassword, fbUser, loading, userError] =
-    useCreateUserWithEmailAndPassword(auth);
 
   const handleSignup = async (event) => {
     event.preventDefault();
@@ -122,66 +122,134 @@ export default function SignupForm() {
     }
 
     if (isFormValid) {
-      // Create user (firebase)
-      const { doc, getDoc, setDoc, updateDoc } = await import(
-        "firebase/firestore"
-      );
+      // Create user (Custom api endpoint "/api/users" with a POST Request) and save it in userInfo atom
+      setCreateUserLoading(true);
       try {
-        await createUserWithEmailAndPassword(
-          signupForm.email,
-          signupForm.password
-        ).then(async (userCredential) => {
-          await updateProfile(userCredential.user, {
-            displayName: signupForm.username,
+        const alg = process.env.NEXT_PUBLIC_ACCESS_JWT_ALGORITHM;
+        const accessSecret = new TextEncoder().encode(
+          `${process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET_KEY}`
+        );
+
+        const encodedPassword = await new jose.SignJWT({
+          Password: signupForm.password,
+        })
+          .setProtectedHeader({ alg })
+          .sign(accessSecret);
+        await axios
+          .post("/api/users", {
+            Auth_Type: "password",
+            Display_Name: signupForm.username,
+            Email: signupForm.email,
+            Password: encodedPassword,
+            Phone_Number: "nothereyet",
+          })
+          .then(async (response) => {
+            const accessData = await jose.jwtVerify(
+              response.data.access_token,
+              accessSecret
+            );
+            Cookies.remove("accessToken");
+            Cookies.remove("refreshToken");
+            Cookies.set("accessToken", response.data.access_token, {
+              expires: 1 / 48,
+              secure: true,
+              sameSite: "strict",
+            });
+            Cookies.set("refreshToken", response.data.refresh_token, {
+              expires: 100,
+              secure: true,
+              sameSite: "strict",
+            });
+            // @ts-ignore
+            setUserInfo({
+              authenticated: true,
+              authType: "password",
+              Custom_Claims: accessData.payload.Custom_Claims,
+              Disabled: !!accessData.payload.Disabled,
+              // @ts-ignore
+              Display_Name: accessData.payload.Display_Name,
+              // @ts-ignore
+              Email: accessData.payload.Email,
+              // @ts-ignore
+              Email_Verified: accessData.payload.Email_Verified,
+              // @ts-ignore
+              Metadata: JSON.parse(accessData.payload.Metadata),
+              // @ts-ignore
+              Photo_Url: accessData.payload.Photo_Url,
+              // @ts-ignore
+              Provider_Data: JSON.parse(accessData.payload.Provider_Data),
+              // @ts-ignore
+              Uid: accessData.payload.Uid,
+              // @ts-ignore
+              Password_Hash: accessData.payload.Password_Hash,
+              // @ts-ignore
+              Phone_Number: accessData.payload.Phone_Number,
+              // @ts-ignore
+              Password_Salt: accessData.payload.Password_Salt,
+              // @ts-ignore
+              Tokens_Valid_After_Time:
+                accessData.payload.Tokens_Valid_After_Time,
+              // @ts-ignore
+              Verification_Code: accessData.payload.Verification_Code,
+              // @ts-ignore
+              Communities: JSON.parse(accessData.payload.Communities),
+            });
+
+            localStorage.setItem(
+              "tempCommunities",
+              // @ts-ignore
+              JSON.parse(accessData.payload.Communities)
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            setCreateUserLoading(false);
           });
-          const usernameDocRef = doc(
-            firestore,
-            "usernames",
-            userCredential.user.displayName
-          );
-          await setDoc(usernameDocRef, {
-            userUid: userCredential.user.uid,
+        await axios
+          .post("/auth/sendVerificationCode", {
+            Email: signupForm.email,
+          })
+          .then(() => {
+            setSignupForm({
+              confirmPassword: "",
+              email: "",
+              password: "",
+              username: "",
+            });
+            setPasswordChecker({
+              showPasswordChecker: false,
+              showConfirmPasswordChecker: false,
+              passwordsMatch: false,
+              testIsLowercase: false,
+              testIsUppercase: false,
+              testIsNumbers: false,
+              testIsSpecialChars: false,
+              testPasswordLength: false,
+            });
+            toast({
+              title: "Signup success!",
+              description:
+                "You successfully signed up and logged in to your account.",
+              status: "success",
+              duration: 2500,
+              position: "bottom-left",
+              isClosable: true,
+            });
+            setCreateUserLoading(false);
+            setAuthModal((prev) => ({
+              ...prev,
+              openAuthModal: false,
+            }));
+            setEmailConfirmationModal((prev) => ({
+              ...prev,
+              openEmailConfirmationModal: true,
+            }));
           });
-          const usersDocRef = doc(firestore, "users", userCredential.user.uid);
-          return await updateDoc(usersDocRef, {
-            displayName: signupForm.username,
-          });
-        });
-        setSignupForm({
-          confirmPassword: "",
-          email: "",
-          password: "",
-          username: "",
-        });
-        setPasswordChecker({
-          showPasswordChecker: false,
-          showConfirmPasswordChecker: false,
-          passwordsMatch: false,
-          testIsLowercase: false,
-          testIsUppercase: false,
-          testIsNumbers: false,
-          testIsSpecialChars: false,
-          testPasswordLength: false,
-        });
-        toast({
-          title: "Signup success!",
-          description:
-            "You successfully signed up and logged in to your account.",
-          status: "success",
-          duration: 2500,
-          position: "bottom-left",
-          isClosable: true,
-        });
-      } catch (error) {
-        console.log("Error creating account: ", error.message);
-      }
+      } catch (error) {}
     }
   };
 
   const onFormInfoChange = async (event) => {
-    const { doc, getDoc, setDoc, updateDoc } = await import(
-      "firebase/firestore"
-    );
     const { name, value } = event.target;
     if (name === "username") {
       const truncatedValue = value.slice(0, 21);
@@ -293,6 +361,7 @@ export default function SignupForm() {
               <Input
                 maxLength={21}
                 my="2"
+                autoComplete="true"
                 name="username"
                 onKeyDown={(event) => {
                   if (event.code === "Space") event.preventDefault();
@@ -337,6 +406,7 @@ export default function SignupForm() {
           <FormControl isRequired>
             <FormLabel>Email</FormLabel>
             <Input
+              autoComplete="true"
               my="2"
               name="email"
               onKeyDown={(event) => {
@@ -435,30 +505,32 @@ export default function SignupForm() {
         signupForm.password !== "" ? (
           <ConfirmPasswordChecker />
         ) : null}
-        {userError && (
+        {/* {userError && (
           <Alert status="error" borderRadius="xl" my="2">
             <AlertIcon />
-            <AlertTitle>{FIREBASE_ERRORS[userError.message]}</AlertTitle>
+            <AlertTitle>Error!</AlertTitle>
           </Alert>
-        )}
+        )} */}
         <Button
           aria-label="Signup button"
           type="submit"
           w="full"
           margin="auto"
           marginTop="2"
-          bg="brand.primary"
-          textColor="white"
-          _dark={{
-            textColor: "white",
-          }}
-          _hover={{
-            bg: "brand.secondary",
-          }}
-          isLoading={loading}
           isDisabled={!isFormValid}
         >
-          Signup
+          {" "}
+          {createUserLoading ? (
+            <CustomAnimatedLoadingSpinnerIcon
+              w="10"
+              h="10"
+              top="50%"
+              left="50%"
+              transform="translate(15%, 15%)"
+            />
+          ) : (
+            "Signup"
+          )}
         </Button>
       </form>
     </Flex>
